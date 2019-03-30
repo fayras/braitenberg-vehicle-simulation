@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
-import logoImg from '../assets/logo.png';
+import MainScene from './scenes/MainScene';
 
-const config = {
+const config: GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
   width: 800,
   height: 600,
   backgroundColor: '#CCCCCC',
+  scene: MainScene,
 };
 
 // eslint-disable-next-line
