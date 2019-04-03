@@ -13,22 +13,17 @@ export default class Entity {
     this.components.push(component);
   }
 
-  public removeComponent(component: Component): Component | null {
+  public removeComponent(component: Component): Component | undefined {
     const index = this.components.indexOf(component);
     if (index >= 0) {
       return this.components.splice(index, 1)[0];
     }
 
-    return null;
+    return undefined;
   }
 
-  public getComponent(name: ComponentType): Component | null {
-    const component = this.components.find(c => c.name === name);
-    if (component) {
-      return component;
-    }
-
-    return null;
+  public getComponent(name: ComponentType): Component | undefined {
+    return this.components.find(c => c.name === name);
   }
 
   public hasComponents(...components: ComponentType[]): boolean {
