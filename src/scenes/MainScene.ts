@@ -1,7 +1,14 @@
 import Phaser from 'phaser';
 import logoImg from '../../assets/logo.png';
+import Entity from '../Entity';
+import PhysicsComponent from '../components/PhysicsComponent';
+import MoveSystem from '../systems/MoveSystem';
 
 export default class MainScene extends Phaser.Scene {
+  private systems: System[] = [new MoveSystem()];
+
+  private entities: Entity[] = [];
+
   public constructor() {
     super({ key: 'MainScene' });
   }
@@ -11,15 +18,12 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public create(): void {
-    const logo = this.add.image(400, 150, 'logo');
+    const entity = new Entity();
+    entity.addComponent(new PhysicsComponent());
+    this.entities.push(entity);
+  }
 
-    this.tweens.add({
-      targets: logo,
-      y: 450,
-      duration: 2000,
-      ease: 'Power2',
-      yoyo: true,
-      loop: -1,
-    });
+  public update(time: number, delta: number): void {
+    this.systems.forEach(s => s.update(this.entities, delta));
   }
 }
