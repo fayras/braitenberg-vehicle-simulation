@@ -27,6 +27,7 @@ export default class Entity {
   }
 
   public hasComponents(...components: ComponentType[]): boolean {
-    return this.components.map(c => c.name).every(name => components.includes(name));
+    const available = this.components.map(c => c.name);
+    return components.every(name => available.includes(name));
   }
 }
