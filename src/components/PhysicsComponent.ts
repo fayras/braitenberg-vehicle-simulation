@@ -8,11 +8,8 @@ export default class PhysicsComponent implements Component {
 
   public velocity: Phaser.Math.Vector2;
 
-  public speed: number;
-
-  public constructor() {
-    this.position = new Phaser.Math.Vector2();
-    this.velocity = new Phaser.Math.Vector2();
-    this.speed = 0;
+  public constructor(pos = new Phaser.Math.Vector2(), vel = new Phaser.Math.Vector2()) {
+    this.position = pos;
+    this.velocity = vel;
   }
 }
