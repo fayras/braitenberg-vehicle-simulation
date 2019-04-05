@@ -3,6 +3,8 @@ import ComponentType from '../components/types';
 import PhysicsComponent from '../components/PhysicsComponent';
 
 export default class MoveSystem implements System {
+  public expectedComponents: ComponentType[] = [ComponentType.PHYSICS];
+
   private amount: number = 1;
 
   public update(entities: Entity[], delta: number): void {

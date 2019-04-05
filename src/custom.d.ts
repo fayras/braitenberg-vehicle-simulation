@@ -8,5 +8,7 @@ interface Component {
 }
 
 interface System {
+  expectedComponents: import('./components/types').default[];
+
   update(entities: import('./Entity').default[], delta: number): void;
 }
