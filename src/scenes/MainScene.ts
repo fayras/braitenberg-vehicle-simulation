@@ -8,7 +8,7 @@ import RenderComponent from '../components/RenderComponent';
 import RenderSystem from '../systems/RenderSystem';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new PhysicsSystem(this), new MoveSystem(), new RenderSystem(this)];
+  private systems: System[] = [new MoveSystem(), new PhysicsSystem(this)];
 
   private entities: Entity[] = [];
 
@@ -22,9 +22,14 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     const entity = new Entity();
-    entity.addComponent(new PhysicsComponent());
+    entity.addComponent(new PhysicsComponent(new Phaser.Math.Vector2(100, 50)));
     entity.addComponent(new RenderComponent('logo'));
     this.entities.push(entity);
+
+    const entity2 = new Entity();
+    entity2.addComponent(new PhysicsComponent(new Phaser.Math.Vector2(300, 50), new Phaser.Math.Vector2(-10, 0)));
+    entity2.addComponent(new RenderComponent('logo'));
+    this.entities.push(entity2);
   }
 
   public update(time: number, delta: number): void {

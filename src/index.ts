@@ -10,7 +10,11 @@ const config: GameConfig = {
   scene: MainScene,
   physics: {
     default: 'matter',
-    matter: { gravity: { y: 0 } },
+    matter: {
+      gravity: { y: 0 },
+      debug: true,
+      debugBodyColor: 0xffffff,
+    },
   },
 };
 
