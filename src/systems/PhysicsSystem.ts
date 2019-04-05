@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import Entity from '../Entity';
 import ComponentType from '../components/types';
 import PhysicsComponent from '../components/PhysicsComponent';
