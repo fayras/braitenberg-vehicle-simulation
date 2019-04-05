@@ -57406,3682 +57406,3497 @@ declare namespace Phaser {
         }
 
         namespace Matter {
-            namespace Components {
+            namespace Matter {
                 /**
-                 * A component to set restitution on objects.
+                 * Installs the given plugins on the `Matter` namespace.
+                 * This is a short-hand for `Plugin.use`, see it for more information.
+                 * Call this function once at the start of your code, with all of the plugins you wish to install as arguments.
+                 * Avoid calling this function multiple times unless you intend to manually control installation order.
+                 * @method use
+                 * @param ...plugin {Function} The plugin(s) to install on `base` (multi-argument).
                  */
-                interface Bounce {
+                export function use(...plugins: (Plugin | string)[]): void;
+
+                /**
+                * The `Matter.Axes` module contains methods for creating and manipulating sets of axes.
+                *
+                * @class Axes
+                */
+                export class Axes {
                     /**
-                     * Sets the restitution on the physics object.
-                     * @param value A Number that defines the restitution (elasticity) of the body. The value is always positive and is in the range (0, 1). A value of 0 means collisions may be perfectly inelastic and no bouncing may occur. A value of 0.8 means the body may bounce back with approximately 80% of its kinetic energy. Note that collision response is based on pairs of bodies, and that restitution values are combined with the following formula: `Math.max(bodyA.restitution, bodyB.restitution)`
+                     * Creates a new set of axes from the given vertices.
+                     * @method fromVertices
+                     * @param {vertices} vertices
+                     * @return {axes} A new axes from the given vertices
                      */
-                    setBounce(value: number): Phaser.GameObjects.GameObject;
+                    static fromVertices(vertices: Array<Vector>): Array<Vector>;
+                    /**
+                     * Rotates a set of axes by the given angle.
+                     * @method rotate
+                     * @param {axes} axes
+                     * @param {number} angle
+                     */
+                    static rotate(axes: Array<Vector>, angle: number): void;
+                }
+
+                interface IChamfer {
+                    radius?: number | Array<number>;
+                    quality?: number;
+                    qualityMin?: number;
+                    qualityMax?: number;
+                }
+
+                interface IChamferableBodyDefinition extends IBodyDefinition {
+                    chamfer?: IChamfer;
                 }
 
                 /**
-                 * Contains methods for changing the collision filter of a Matter Body. Should be used as a mixin and not called directly.
-                 */
-                interface Collision {
+                * The `Matter.Bodies` module contains factory methods for creating rigid body models
+                * with commonly used body configurations (such as rectangles, circles and other polygons).
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Bodies
+                */
+                export class Bodies {
                     /**
-                     * Sets the collision category of this Game Object's Matter Body. This number must be a power of two between 2^0 (= 1) and 2^31. Two bodies with different collision groups (see {@link #setCollisionGroup}) will only collide if their collision categories are included in their collision masks (see {@link #setCollidesWith}).
-                     * @param value Unique category bitfield.
+                     * Creates a new rigid body model with a circle hull.
+                     * The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+                     * @method circle
+                     * @param {number} x
+                     * @param {number} y
+                     * @param {number} radius
+                     * @param {object} [options]
+                     * @param {number} [maxSides]
+                     * @return {body} A new circle body
                      */
-                    setCollisionCategory(value: number): Phaser.GameObjects.GameObject;
+                    static circle(x: number, y: number, radius: number, options?: IBodyDefinition, maxSides?: number): Body;
+
                     /**
-                     * Sets the collision group of this Game Object's Matter Body. If this is zero or two Matter Bodies have different values, they will collide according to the usual rules (see {@link #setCollisionCategory} and {@link #setCollisionGroup}). If two Matter Bodies have the same positive value, they will always collide; if they have the same negative value, they will never collide.
-                     * @param value Unique group index.
+                     * Creates a new rigid body model with a regular polygon hull with the given number of sides.
+                     * The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+                     * @method polygon
+                     * @param {number} x
+                     * @param {number} y
+                     * @param {number} sides
+                     * @param {number} radius
+                     * @param {object} [options]
+                     * @return {body} A new regular polygon body
                      */
-                    setCollisionGroup(value: number): Phaser.GameObjects.GameObject;
+                    static polygon(x: number, y: number, sides: number, radius: number, options?: IChamferableBodyDefinition): Body;
+
                     /**
-                     * Sets the collision mask for this Game Object's Matter Body. Two Matter Bodies with different collision groups will only collide if each one includes the other's category in its mask based on a bitwise AND, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0` are both true.
-                     * @param categories A unique category bitfield, or an array of them.
+                     * Creates a new rigid body model with a rectangle hull.
+                     * The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+                     * @method rectangle
+                     * @param {number} x
+                     * @param {number} y
+                     * @param {number} width
+                     * @param {number} height
+                     * @param {object} [options]
+                     * @return {body} A new rectangle body
                      */
-                    setCollidesWith(categories: number | number[]): Phaser.GameObjects.GameObject;
+                    static rectangle(x: number, y: number, width: number, height: number, options?: IChamferableBodyDefinition): Body;
+
+                    /**
+                     * Creates a new rigid body model with a trapezoid hull.
+                     * The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+                     * @method trapezoid
+                     * @param {number} x
+                     * @param {number} y
+                     * @param {number} width
+                     * @param {number} height
+                     * @param {number} slope
+                     * @param {object} [options]
+                     * @return {body} A new trapezoid body
+                     */
+                    static trapezoid(x: number, y: number, width: number, height: number, slope: number, options?: IChamferableBodyDefinition): Body;
+                    /**
+                    * Creates a body using the supplied vertices (or an array containing multiple sets of vertices).
+                    * If the vertices are convex, they will pass through as supplied.
+                    * Otherwise if the vertices are concave, they will be decomposed if [poly-decomp.js](https://github.com/schteppe/poly-decomp.js) is available.
+                    * Note that this process is not guaranteed to support complex sets of vertices (e.g. those with holes may fail).
+                    * By default the decomposition will discard collinear edges (to improve performance).
+                    * It can also optionally discard any parts that have an area less than `minimumArea`.
+                    * If the vertices can not be decomposed, the result will fall back to using the convex hull.
+                    * The options parameter is an object that specifies any `Matter.Body` properties you wish to override the defaults.
+                    * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+                    * @method fromVertices
+                    * @param {number} x
+                    * @param {number} y
+                    * @param [[vector]] vertexSets
+                    * @param {object} [options]
+                    * @param {bool} [flagInternal=false]
+                    * @param {number} [removeCollinear=0.01]
+                    * @param {number} [minimumArea=10]
+                    * @return {body}
+                    */
+                    static fromVertices(x: number, y: number, vertexSets: Array<Array<Vector>>, options?: IBodyDefinition, flagInternal?: boolean, removeCollinear?: number, minimumArea?: number): Body;
+                }
+
+                export interface IBodyDefinition {
+                    /**
+                     * A `Number` specifying the angle of the body, in radians.
+                     *
+                    * @property angle
+                    * @type number
+                    * @default 0
+                    */
+                    angle?: number;
+                    /**
+                     * A `Number` that _measures_ the current angular speed of the body after the last `Body.update`. It is read-only and always positive (it's the magnitude of `body.angularVelocity`).
+                     *
+                    * @readOnly
+                    * @property angularSpeed
+                    * @type number
+                    * @default 0
+                    */
+                    angularSpeed?: number;
+                    /**
+                     * A `Number` that _measures_ the current angular velocity of the body after the last `Body.update`. It is read-only.
+                     * If you need to modify a body's angular velocity directly, you should apply a torque or simply change the body's `angle` (as the engine uses position-Verlet integration).
+                     *
+                    * @readOnly
+                    * @property angularVelocity
+                    * @type number
+                    * @default 0
+                    */
+                    angularVelocity?: number;
+                    /**
+                     * A `Number` that _measures_ the area of the body's convex hull, calculated at creation by `Body.create`.
+                     *
+                    * @property area
+                    * @type string
+                    * @default
+                    */
+                    area?: number;
+                    /**
+                     * An array of unique axis vectors (edge normals) used for collision detection.
+                     * These are automatically calculated from the given convex hull (`vertices` array) in `Body.create`.
+                     * They are constantly updated by `Body.update` during the simulation.
+                     *
+                    * @property axes
+                    * @type vector[]
+                    */
+                    axes?: Array<Vector>;
+                    /**
+                     * A `Bounds` object that defines the AABB region for the body.
+                     * It is automatically calculated from the given convex hull (`vertices` array) in `Body.create` and constantly updated by `Body.update` during simulation.
+                     *
+                    * @property bounds
+                    * @type bounds
+                    */
+                    bounds?: Bounds;
+                    /**
+                     * A `Number` that defines the density of the body, that is its mass per unit area.
+                     * If you pass the density via `Body.create` the `mass` property is automatically calculated for you based on the size (area) of the object.
+                     * This is generally preferable to simply setting mass and allows for more intuitive definition of materials (e.g. rock has a higher density than wood).
+                     *
+                    * @property density
+                    * @type number
+                    * @default 0.001
+                    */
+                    density?: number;
+                    /**
+                     * A `Vector` that specifies the force to apply in the current step. It is zeroed after every `Body.update`. See also `Body.applyForce`.
+                    *
+                    * @property force
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    force?: Vector;
+                    /**
+                     * A `Number` that defines the friction of the body. The value is always positive and is in the range `(0, 1)`.
+                    * A value of `0` means that the body may slide indefinitely.
+                    * A value of `1` means the body may come to a stop almost instantly after a force is applied.
+                    *
+                    * The effects of the value may be non-linear.
+                    * High values may be unstable depending on the body.
+                    * The engine uses a Coulomb friction model including static and kinetic friction.
+                    * Note that collision response is based on _pairs_ of bodies, and that `friction` values are _combined_ with the following formula:
+                    *
+                    *     Math.min(bodyA.friction, bodyB.friction)
+                    *
+                    * @property friction
+                    * @type number
+                    * @default 0.1
+                    */
+                    friction?: number;
+                    /**
+                     * A `Number` that defines the air friction of the body (air resistance).
+                     * A value of `0` means the body will never slow as it moves through space.
+                     * The higher the value, the faster a body slows when moving through space.
+                     * The effects of the value are non-linear.
+                     *
+                    * @property frictionAir
+                    * @type number
+                    * @default 0.01
+                    */
+                    frictionAir?: number;
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Body.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id?: number;
+                    /**
+                     * A `Number` that defines the moment of inertia (i.e. second moment of area) of the body.
+                     * It is automatically calculated from the given convex hull (`vertices` array) and density in `Body.create`.
+                     * If you modify this value, you must also modify the `body.inverseInertia` property (`1 / inertia`).
+                     *
+                    * @property inertia
+                    * @type number
+                    */
+                    inertia?: number;
+                    /**
+                     * A `Number` that defines the inverse moment of inertia of the body (`1 / inertia`).
+                     * If you modify this value, you must also modify the `body.inertia` property.
+                     *
+                    * @property inverseInertia
+                    * @type number
+                    */
+                    inverseInertia?: number;
+                    /**
+                     * A `Number` that defines the inverse mass of the body (`1 / mass`).
+                     * If you modify this value, you must also modify the `body.mass` property.
+                     *
+                    * @property inverseMass
+                    * @type number
+                    */
+                    inverseMass?: number;
+                    /**
+                     * A flag that indicates whether a body is a sensor. Sensor triggers collision events, but doesn't react with colliding body physically.
+                     *
+                     * @property isSensor
+                     * @type boolean
+                     * @default false
+                     */
+                    isSensor?: boolean;
+                    /**
+                     * A flag that indicates whether the body is considered sleeping. A sleeping body acts similar to a static body, except it is only temporary and can be awoken.
+                     * If you need to set a body as sleeping, you should use `Sleeping.set` as this requires more than just setting this flag.
+                     *
+                    * @property isSleeping
+                    * @type boolean
+                    * @default false
+                    */
+                    isSleeping?: boolean;
+                    /**
+                     * A flag that indicates whether a body is considered static. A static body can never change position or angle and is completely fixed.
+                     * If you need to set a body as static after its creation, you should use `Body.setStatic` as this requires more than just setting this flag.
+                     *
+                    * @property isStatic
+                    * @type boolean
+                    * @default false
+                    */
+                    isStatic?: boolean;
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage bodies.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Body"
+                    */
+
+                    label?: string;
+                    /**
+                     * A `Number` that defines the mass of the body, although it may be more appropriate to specify the `density` property instead.
+                     * If you modify this value, you must also modify the `body.inverseMass` property (`1 / mass`).
+                     *
+                    * @property mass
+                    * @type number
+                    */
+                    mass?: number;
+                    /**
+                     * A `Number` that _measures_ the amount of movement a body currently has (a combination of `speed` and `angularSpeed`). It is read-only and always positive.
+                    * It is used and updated by the `Matter.Sleeping` module during simulation to decide if a body has come to rest.
+                    *
+                    * @readOnly
+                    * @property motion
+                    * @type number
+                    * @default 0
+                    */
+                    motion?: number;
+                    /**
+                     * A `Vector` that specifies the current world-space position of the body.
+                     *
+                    * @property position
+                    * @type vector
+                    * @default { x: 0, y:      */
+                    position?: Vector;
+                    /**
+                     * An `Object` that defines the rendering properties to be consumed by the module `Matter.Render`.
+                    *
+                    * @property render
+                    * @type object
+                    */
+                    render?: IBodyRenderOptions;
+                    /**
+                     * A `Number` that defines the restitution (elasticity) of the body. The value is always positive and is in the range `(0, 1)`.
+                     * A value of `0` means collisions may be perfectly inelastic and no bouncing may occur.
+                     * A value of `0.8` means the body may bounce back with approximately 80% of its kinetic energy.
+                     * Note that collision response is based on _pairs_ of bodies, and that `restitution` values are _combined_ with the following formula:
+                     *
+                    *     Math.max(bodyA.restitution, bodyB.restitution)
+                    *
+                    * @property restitution
+                    * @type number
+                    * @default 0
+                    */
+                    restitution?: number;
+                    /**
+                     * A `Number` that defines the number of updates in which this body must have near-zero velocity before it is set as sleeping by the `Matter.Sleeping` module (if sleeping is enabled by the engine).
+                     *
+                    * @property sleepThreshold
+                    * @type number
+                    * @default 60
+                    */
+                    sleepThreshold?: number;
+                    /**
+                     * A `Number` that specifies a tolerance on how far a body is allowed to 'sink' or rotate into other bodies.
+                     * Avoid changing this value unless you understand the purpose of `slop` in physics engines.
+                     * The default should generally suffice, although very large bodies may require larger values for stable stacking.
+                     *
+                    * @property slop
+                    * @type number
+                    * @default 0.05
+                    */
+                    slop?: number;
+                    /**
+                     * A `Number` that _measures_ the current speed of the body after the last `Body.update`. It is read-only and always positive (it's the magnitude of `body.velocity`).
+                     *
+                    * @readOnly
+                    * @property speed
+                    * @type number
+                    * @default 0
+                    */
+                    speed?: number;
+                    /**
+                     * A `Number` that allows per-body time scaling, e.g. a force-field where bodies inside are in slow-motion, while others are at full speed.
+                    *
+                    * @property timeScale
+                    * @type number
+                    * @default 1
+                    */
+                    timeScale?: number;
+                    /**
+                     * A `Number` that specifies the torque (turning force) to apply in the current step. It is zeroed after every `Body.update`.
+                    *
+                    * @property torque
+                    * @type number
+                    * @default 0
+                    */
+                    torque?: number;
+                    /**
+                     * A `String` denoting the type of object.
+                    *
+                    * @property type
+                    * @type string
+                    * @default "body"
+                    */
+                    type?: string;
+                    /**
+                     * A `Vector` that _measures_ the current velocity of the body after the last `Body.update`. It is read-only.
+                     * If you need to modify a body's velocity directly, you should either apply a force or simply change the body's `position` (as the engine uses position-Verlet integration).
+                     *
+                    * @readOnly
+                    * @property velocity
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    velocity?: Vector;
+                    /**
+                     * An array of `Vector` objects that specify the convex hull of the rigid body.
+                     * These should be provided about the origin `(0, 0)`. E.g.
+                     *
+                    *     [{ x: 0, y: 0 }, { x: 25, y: 50 }, { x: 50, y: 0 }]
+                    *
+                    * When passed via `Body.create`, the vertices are translated relative to `body.position` (i.e. world-space, and constantly updated by `Body.update` during simulation).
+                    * The `Vector` objects are also augmented with additional properties required for efficient collision detection.
+                    *
+                    * Other properties such as `inertia` and `bounds` are automatically calculated from the passed vertices (unless provided via `options`).
+                    * Concave hulls are not currently supported. The module `Matter.Vertices` contains useful methods for working with vertices.
+                    *
+                    * @property vertices
+                    * @type vector[]
+                    */
+                    vertices?: Array<Vector>;
+                    /**
+                     * An array of bodies that make up this body.
+                     * The first body in the array must always be a self reference to the current body instance.
+                     * All bodies in the `parts` array together form a single rigid compound body.
+                     * Parts are allowed to overlap, have gaps or holes or even form concave bodies.
+                     * Parts themselves should never be added to a `World`, only the parent body should be.
+                     * Use `Body.setParts` when setting parts to ensure correct updates of all properties.
+                     *
+                    * @property parts
+                    * @type body[]
+                    */
+                    parts?: Array<Body>;
+                    /**
+                     * A self reference if the body is _not_ a part of another body.
+                     * Otherwise this is a reference to the body that this is a part of.
+                     * See `body.parts`.
+                     *
+                    * @property parent
+                    * @type body
+                    */
+                    parent?: Body;
+                    /**
+                     * A `Number` that defines the static friction of the body (in the Coulomb friction model).
+                     * A value of `0` means the body will never 'stick' when it is nearly stationary and only dynamic `friction` is used.
+                     * The higher the value (e.g. `10`), the more force it will take to initially get the body moving when nearly stationary.
+                     * This value is multiplied with the `friction` property to make it easier to change `friction` and maintain an appropriate amount of static friction.
+                     *
+                    * @property frictionStatic
+                    * @type number
+                    * @default 0.5
+                    */
+                    frictionStatic?: number;
+                    /**
+                     * An `Object` that specifies the collision filtering properties of this body.
+                     *
+                    * Collisions between two bodies will obey the following rules:
+                    * - If the two bodies have the same non-zero value of `collisionFilter.group`,
+                    *   they will always collide if the value is positive, and they will never collide
+                    *   if the value is negative.
+                    * - If the two bodies have different values of `collisionFilter.group` or if one
+                    *   (or both) of the bodies has a value of 0, then the category/mask rules apply as follows:
+                    *
+                    * Each body belongs to a collision category, given by `collisionFilter.category`. This
+                    * value is used as a bit field and the category should have only one bit set, meaning that
+                    * the value of this property is a power of two in the range [1, 2^31]. Thus, there are 32
+                    * different collision categories available.
+                    *
+                    * Each body also defines a collision bitmask, given by `collisionFilter.mask` which specifies
+                    * the categories it collides with (the value is the bitwise AND value of all these categories).
+                    *
+                    * Using the category/mask rules, two bodies `A` and `B` collide if each includes the other's
+                    * category in its mask, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0`
+                    * are both true.
+                    *
+                    * @property collisionFilter
+                    * @type object
+                    */
+                    collisionFilter?: ICollisionFilter;
+
+                }
+
+                export interface IBodyRenderOptions {
+
+                    /**
+                     * A flag that indicates if the body should be rendered.
+                     *
+                    * @property render.visible
+                    * @type boolean
+                    * @default true
+                    */
+                    visible?: boolean;
+
+                    /**
+                     * An `Object` that defines the sprite properties to use when rendering, if any.
+                     *
+                    * @property render.sprite
+                    * @type object
+                    */
+                    sprite?: IBodyRenderOptionsSprite;
+
+                    /**
+                     * A String that defines the fill style to use when rendering the body (if a sprite is not defined). It is the same as when using a canvas, so it accepts CSS style property values.
+                     Default: a random colour
+                    */
+                    fillStyle?: string;
+
+                    /**
+                     * A Number that defines the line width to use when rendering the body outline (if a sprite is not defined). A value of 0 means no outline will be rendered.
+                     Default: 1.5
+                    */
+                    lineWidth?: number;
+
+                    /**
+                     * A String that defines the stroke style to use when rendering the body outline (if a sprite is not defined). It is the same as when using a canvas, so it accepts CSS style property values.
+                     Default: a random colour
+                    */
+                    strokeStyle?: string;
+
+
+                    /*
+                     * Sets the opacity. 1.0 is fully opaque. 0.0 is fully translucent
+                     */
+                    opacity?: number;
+                }
+
+                export interface IBodyRenderOptionsSprite {
+                    /**
+                     * An `String` that defines the path to the image to use as the sprite texture, if any.
+                     *
+                    * @property render.sprite.texture
+                    * @type string
+                    */
+                    texture: string;
+
+                    /**
+                     * A `Number` that defines the scaling in the x-axis for the sprite, if any.
+                     *
+                    * @property render.sprite.xScale
+                    * @type number
+                    * @default 1
+                    */
+                    xScale: number;
+
+                    /**
+                     * A `Number` that defines the scaling in the y-axis for the sprite, if any.
+                     *
+                    * @property render.sprite.yScale
+                    * @type number
+                    * @default 1
+                    */
+                    yScale: number;
                 }
 
                 /**
-                 * A component to apply force to Matter.js bodies.
-                 */
-                interface Force {
-                    /**
-                     * Applies a force to a body.
-                     * @param force A Vector that specifies the force to apply.
-                     */
-                    applyForce(force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-                    /**
-                     * Applies a force to a body from a given position.
-                     * @param position The position in which the force comes from.
-                     * @param force A Vector that specifies the force to apply.
-                     */
-                    applyForceFrom(position: Phaser.Math.Vector2, force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-                    /**
-                     * Apply thrust to the forward position of the body.
-                     * @param speed A speed value to be applied to a directional force.
-                     */
-                    thrust(speed: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Apply thrust to the left position of the body.
-                     * @param speed A speed value to be applied to a directional force.
-                     */
-                    thrustLeft(speed: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Apply thrust to the right position of the body.
-                     * @param speed A speed value to be applied to a directional force.
-                     */
-                    thrustRight(speed: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Apply thrust to the back position of the body.
-                     * @param speed A speed value to be applied to a directional force.
-                     */
-                    thrustBack(speed: number): Phaser.GameObjects.GameObject;
-                }
+                * The `Matter.Body` module contains methods for creating and manipulating body models.
+                * A `Matter.Body` is a rigid body that can be simulated by a `Matter.Engine`.
+                * Factories for commonly used body configurations (such as rectangles, circles and other polygons) can be found in the module `Matter.Bodies`.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
 
-                /**
-                 * Contains methods for changing the friction of a Game Object's Matter Body. Should be used a mixin, not called directly.
-                 */
-                interface Friction {
+                * @class Body
+                */
+                export class Body {
                     /**
-                     * Sets new friction values for this Game Object's Matter Body.
-                     * @param value The new friction of the body, between 0 and 1, where 0 allows the Body to slide indefinitely, while 1 allows it to stop almost immediately after a force is applied.
-                     * @param air If provided, the new air resistance of the Body. The higher the value, the faster the Body will slow as it moves through space. 0 means the body has no air resistance.
-                     * @param fstatic If provided, the new static friction of the Body. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary. 0 means the body will never "stick" when it is nearly stationary.
+                     * Applies a force to a body from a given world-space position, including resulting torque.
+                     * @method applyForce
+                     * @param {body} body
+                     * @param {vector} position
+                     * @param {vector} force
                      */
-                    setFriction(value: number, air?: number, fstatic?: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Sets a new air resistance for this Game Object's Matter Body. A value of 0 means the Body will never slow as it moves through space. The higher the value, the faster a Body slows when moving through space.
-                     * @param value The new air resistance for the Body.
-                     */
-                    setFrictionAir(value: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Sets a new static friction for this Game Object's Matter Body. A value of 0 means the Body will never "stick" when it is nearly stationary. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary.
-                     * @param value The new static friction for the Body.
-                     */
-                    setFrictionStatic(value: number): Phaser.GameObjects.GameObject;
-                }
+                    static applyForce(body: Body, position: Vector, force: Vector): void;
 
-                /**
-                 * A component to manipulate world gravity for Matter.js bodies.
-                 */
-                interface Gravity {
                     /**
-                     * A togglable function for ignoring world gravity in real-time on the current body.
-                     * @param value Set to true to ignore the effect of world gravity, or false to not ignore it.
+                     * Creates a new rigid body model. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {} options
+                     * @return {body} body
                      */
-                    setIgnoreGravity(value: boolean): Phaser.GameObjects.GameObject;
-                }
+                    static create(options: IBodyDefinition): Body;
+                    /**
+                     * Rotates a body by a given angle relative to its current angle, without imparting any angular velocity.
+                     * @method rotate
+                     * @param {body} body
+                     * @param {number} rotation
+                     */
+                    static rotate(body: Body, rotation: number): void;
+                    /**
+                     * Returns the next unique group index for which bodies will collide.
+                     * If `isNonColliding` is `true`, returns the next unique group index for which bodies will _not_ collide.
+                     * See `body.collisionFilter` for more information.
+                     * @method nextGroup
+                     * @param {bool} [isNonColliding=false]
+                     * @return {Number} Unique group index
+                     */
+                    static nextGroup(isNonColliding: boolean): number;
+                    /**
+                     * Returns the next unique category bitfield (starting after the initial default category `0x0001`).
+                     * There are 32 available. See `body.collisionFilter` for more information.
+                     * @method nextCategory
+                     * @return {Number} Unique category bitfield
+                     */
+                    static nextCategory(): number;
+                    /**
+                     * Given a property and a value (or map of), sets the property(s) on the body, using the appropriate setter functions if they exist.
+                     * Prefer to use the actual setter functions in performance critical situations.
+                     * @method set
+                     * @param {body} body
+                     * @param {} settings A property name (or map of properties and values) to set on the body.
+                     * @param {} value The value to set if `settings` is a single property name.
+                     */
+                    static set(body: Body, settings: any, value?: any): void;
+                    /**
+                     * Sets the mass of the body. Inverse mass and density are automatically updated to reflect the change.
+                     * @method setMass
+                     * @param {body} body
+                     * @param {number} mass
+                     */
+                    static setMass(body: Body, mass: number): void;
+                    /**
+                     * Sets the density of the body. Mass is automatically updated to reflect the change.
+                     * @method setDensity
+                     * @param {body} body
+                     * @param {number} density
+                     */
+                    static setDensity(body: Body, density: number): void;
+                    /**
+                     * Sets the moment of inertia (i.e. second moment of area) of the body of the body.
+                     * Inverse inertia is automatically updated to reflect the change. Mass is not changed.
+                     * @method setInertia
+                     * @param {body} body
+                     * @param {number} inertia
+                     */
+                    static setInertia(body: Body, interna: number): void;
+                    /**
+                     * Sets the body's vertices and updates body properties accordingly, including inertia, area and mass (with respect to `body.density`).
+                     * Vertices will be automatically transformed to be orientated around their centre of mass as the origin.
+                     * They are then automatically translated to world space based on `body.position`.
+                     *
+                    * The `vertices` argument should be passed as an array of `Matter.Vector` points (or a `Matter.Vertices` array).
+                    * Vertices must form a convex hull, concave hulls are not supported.
+                    *
+                    * @method setVertices
+                    * @param {body} body
+                    * @param {vector[]} vertices
+                    */
+                    static setVertices(body: Body, vertices: Array<Vector>): void;
+                    /**
+                     * Sets the parts of the `body` and updates mass, inertia and centroid.
+                     * Each part will have its parent set to `body`.
+                     * By default the convex hull will be automatically computed and set on `body`, unless `autoHull` is set to `false.`
+                     * Note that this method will ensure that the first part in `body.parts` will always be the `body`.
+                     * @method setParts
+                     * @param {body} body
+                     * @param [body] parts
+                     * @param {bool} [autoHull=true]
+                     */
+                    static setParts(body: Body, parts: Body[], autoHull?: boolean): void;
+                    /**
+                     * Sets the position of the body instantly. Velocity, angle, force etc. are unchanged.
+                     * @method setPosition
+                     * @param {body} body
+                     * @param {vector} position
+                     */
+                    static setPosition(body: Body, position: Vector): void;
+                    /**
+                     * Sets the angle of the body instantly. Angular velocity, position, force etc. are unchanged.
+                     * @method setAngle
+                     * @param {body} body
+                     * @param {number} angle
+                     */
+                    static setAngle(body: Body, angle: number): void;
+                    /**
+                     * Sets the linear velocity of the body instantly. Position, angle, force etc. are unchanged. See also `Body.applyForce`.
+                     * @method setVelocity
+                     * @param {body} body
+                     * @param {vector} velocity
+                     */
+                    static setVelocity(body: Body, velocity: Vector): void;
+                    /**
+                     * Sets the angular velocity of the body instantly. Position, angle, force etc. are unchanged. See also `Body.applyForce`.
+                     * @method setAngularVelocity
+                     * @param {body} body
+                     * @param {number} velocity
+                     */
+                    static setAngularVelocity(body: Body, velocity: number): void;
 
-                /**
-                 * Allows accessing the mass, density, and center of mass of a Matter-enabled Game Object. Should be used as a mixin and not directly.
-                 */
-                interface Mass {
-                    /**
-                     * Sets the mass of the Game Object's Matter Body.
-                     * @param value The new mass of the body.
-                     */
-                    setMass(value: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * Sets density of the body.
-                     * @param value The new density of the body.
-                     */
-                    setDensity(value: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * The body's center of mass.
-                     */
-                    readonly centerOfMass: any;
-                }
 
-                /**
-                 * [description]
-                 */
-                interface Sensor {
-                    /**
-                     * [description]
-                     * @param value [description]
-                     */
-                    setSensor(value: boolean): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     */
-                    isSensor(): boolean;
-                }
 
-                /**
-                 * [description]
-                 */
-                interface SetBody {
                     /**
-                     * Set the body on a Game Object to a rectangle.
-                     * @param width Width of the rectangle.
-                     * @param height Height of the rectangle.
-                     * @param options [description]
+                     * Sets the body as static, including isStatic flag and setting mass and inertia to Infinity.
+                     * @method setStatic
+                     * @param {body} body
+                     * @param {bool} isStatic
                      */
-                    setRectangle(width: number, height: number, options: object): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param radius [description]
-                     * @param options [description]
-                     */
-                    setCircle(radius: number, options: object): Phaser.GameObjects.GameObject;
-                    /**
-                     * Set the body on the Game Object to a polygon shape.
-                     * @param radius The radius of the polygon.
-                     * @param sides The amount of sides creating the polygon.
-                     * @param options A matterjs config object.
-                     */
-                    setPolygon(radius: number, sides: number, options: object): Phaser.GameObjects.GameObject;
-                    /**
-                     * Creates a new matterjs trapezoid body.
-                     * @param width The width of the trapezoid.
-                     * @param height The height of the trapezoid.
-                     * @param slope The angle of slope for the trapezoid.
-                     * @param options A matterjs config object for the body.
-                     */
-                    setTrapezoid(width: number, height: number, slope: number, options: object): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param body [description]
-                     * @param addToWorld [description] Default true.
-                     */
-                    setExistingBody(body: MatterJS.Body, addToWorld?: boolean): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param config [description]
-                     * @param options [description]
-                     */
-                    setBody(config: object, options: object): Phaser.GameObjects.GameObject;
-                }
+                    static setStatic(body: Body, isStatic: boolean): void;
 
-                /**
-                 * [description]
-                 */
-                interface Sleep {
                     /**
-                     * [description]
-                     * @param value [description] Default 60.
+                     * Scales the body, including updating physical properties (mass, area, axes, inertia), from a world-space point (default is body centre).
+                     * @method scale
+                     * @param {body} body
+                     * @param {number} scaleX
+                     * @param {number} scaleY
+                     * @param {vector} [point]
                      */
-                    setSleepThreshold(value?: number): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param start [description]
-                     * @param end [description]
-                     */
-                    setSleepEvents(start: boolean, end: boolean): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param value [description]
-                     */
-                    setSleepStartEvent(value: boolean): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     * @param value [description]
-                     */
-                    setSleepEndEvent(value: boolean): Phaser.GameObjects.GameObject;
-                }
+                    static scale(body: Body, scaleX: number, scaleY: number, point?: Vector): void;
 
-                /**
-                 * [description]
-                 */
-                interface Static {
                     /**
-                     * [description]
-                     * @param value [description]
+                     * Moves a body by a given vector relative to its current position, without imparting any velocity.
+                     * @method translate
+                     * @param {body} body
+                     * @param {vector} translation
                      */
-                    setStatic(value: boolean): Phaser.GameObjects.GameObject;
-                    /**
-                     * [description]
-                     */
-                    isStatic(): boolean;
-                }
+                    static translate(body: Body, translation: Vector): void;
 
-                /**
-                 * Provides methods used for getting and setting the position, scale and rotation of a Game Object.
-                 */
-                interface Transform {
                     /**
-                     * The x position of this Game Object.
+                     * Performs a simulation step for the given `body`, including updating position and angle using Verlet integration.
+                     * @method update
+                     * @param {body} body
+                     * @param {number} deltaTime
+                     * @param {number} timeScale
+                     * @param {number} correction
                      */
-                    x: number;
+                    static update(body: Body, deltaTime: number, timeScale: number, correction: number): void;
+
                     /**
-                     * The y position of this Game Object.
-                     */
-                    y: number;
-                    /**
-                     * The horizontal scale of this Game Object.
-                     */
-                    scaleX: number;
-                    /**
-                     * The vertical scale of this Game Object.
-                     */
-                    scaleY: number;
-                    /**
-                     * Use `angle` to set or get rotation of the physics body associated to this GameObject. Unlike rotation, when using set the value can be in degrees, which will be converted to radians internally.
-                     */
+                     * A `Number` specifying the angle of the body, in radians.
+                     *
+                    * @property angle
+                    * @type number
+                    * @default 0
+                    */
                     angle: number;
                     /**
-                     * Use `rotation` to set or get the rotation of the physics body associated with this GameObject. The value when set must be in radians.
-                     */
-                    rotation: number;
+                     * A `Number` that _measures_ the current angular speed of the body after the last `Body.update`. It is read-only and always positive (it's the magnitude of `body.angularVelocity`).
+                     *
+                    * @readOnly
+                    * @property angularSpeed
+                    * @type number
+                    * @default 0
+                    */
+                    angularSpeed: number;
                     /**
-                     * Sets the position of the physics body along x and y axes. Both the parameters to this function are optional and if not passed any they default to 0.
-                     * @param x The horizontal position of the body. Default 0.
-                     * @param y The vertical position of the body. Default x.
-                     */
-                    setPosition(x?: number, y?: number): this;
+                     * A `Number` that _measures_ the current angular velocity of the body after the last `Body.update`. It is read-only.
+                     * If you need to modify a body's angular velocity directly, you should apply a torque or simply change the body's `angle` (as the engine uses position-Verlet integration).
+                     *
+                    * @readOnly
+                    * @property angularVelocity
+                    * @type number
+                    * @default 0
+                    */
+                    angularVelocity: number;
                     /**
-                     * [description]
-                     * @param radians [description] Default 0.
-                     */
-                    setRotation(radians?: number): this;
+                     * A `Number` that _measures_ the area of the body's convex hull, calculated at creation by `Body.create`.
+                     *
+                    * @property area
+                    * @type string
+                    * @default
+                    */
+                    area: number;
                     /**
-                     * [description]
-                     */
-                    setFixedRotation(): this;
+                     * An array of unique axis vectors (edge normals) used for collision detection.
+                     * These are automatically calculated from the given convex hull (`vertices` array) in `Body.create`.
+                     * They are constantly updated by `Body.update` during the simulation.
+                     *
+                    * @property axes
+                    * @type vector[]
+                    */
+                    axes: Array<Vector>;
                     /**
-                     * [description]
-                     * @param degrees [description] Default 0.
-                     */
-                    setAngle(degrees?: number): this;
+                     * A `Bounds` object that defines the AABB region for the body.
+                     * It is automatically calculated from the given convex hull (`vertices` array) in `Body.create` and constantly updated by `Body.update` during simulation.
+                     *
+                    * @property bounds
+                    * @type bounds
+                    */
+                    bounds: Bounds;
                     /**
-                     * Sets the scale of this Game Object.
-                     * @param x The horizontal scale of this Game Object. Default 1.
-                     * @param y The vertical scale of this Game Object. If not set it will use the x value. Default x.
-                     * @param point The point (Vector2) from which scaling will occur.
-                     */
-                    setScale(x?: number, y?: number, point?: Phaser.Math.Vector2): this;
+                     * A `Number` that defines the density of the body, that is its mass per unit area.
+                     * If you pass the density via `Body.create` the `mass` property is automatically calculated for you based on the size (area) of the object.
+                     * This is generally preferable to simply setting mass and allows for more intuitive definition of materials (e.g. rock has a higher density than wood).
+                     *
+                    * @property density
+                    * @type number
+                    * @default 0.001
+                    */
+                    density: number;
+                    /**
+                     * A `Vector` that specifies the force to apply in the current step. It is zeroed after every `Body.update`. See also `Body.applyForce`.
+                    *
+                    * @property force
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    force: Vector;
+                    /**
+                     * A `Number` that defines the friction of the body. The value is always positive and is in the range `(0, 1)`.
+                    * A value of `0` means that the body may slide indefinitely.
+                    * A value of `1` means the body may come to a stop almost instantly after a force is applied.
+                    *
+                    * The effects of the value may be non-linear.
+                    * High values may be unstable depending on the body.
+                    * The engine uses a Coulomb friction model including static and kinetic friction.
+                    * Note that collision response is based on _pairs_ of bodies, and that `friction` values are _combined_ with the following formula:
+                    *
+                    *     Math.min(bodyA.friction, bodyB.friction)
+                    *
+                    * @property friction
+                    * @type number
+                    * @default 0.1
+                    */
+                    friction: number;
+                    /**
+                     * A `Number` that defines the air friction of the body (air resistance).
+                     * A value of `0` means the body will never slow as it moves through space.
+                     * The higher the value, the faster a body slows when moving through space.
+                     * The effects of the value are non-linear.
+                     *
+                    * @property frictionAir
+                    * @type number
+                    * @default 0.01
+                    */
+                    frictionAir: number;
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Body.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id: number;
+                    /**
+                     * A `Number` that defines the moment of inertia (i.e. second moment of area) of the body.
+                     * It is automatically calculated from the given convex hull (`vertices` array) and density in `Body.create`.
+                     * If you modify this value, you must also modify the `body.inverseInertia` property (`1 / inertia`).
+                     *
+                    * @property inertia
+                    * @type number
+                    */
+                    inertia: number;
+                    /**
+                     * A `Number` that defines the inverse moment of inertia of the body (`1 / inertia`).
+                     * If you modify this value, you must also modify the `body.inertia` property.
+                     *
+                    * @property inverseInertia
+                    * @type number
+                    */
+                    inverseInertia: number;
+                    /**
+                     * A `Number` that defines the inverse mass of the body (`1 / mass`).
+                     * If you modify this value, you must also modify the `body.mass` property.
+                     *
+                    * @property inverseMass
+                    * @type number
+                    */
+                    inverseMass: number;
+                    /**
+                     * A flag that indicates whether the body is considered sleeping. A sleeping body acts similar to a static body, except it is only temporary and can be awoken.
+                     * If you need to set a body as sleeping, you should use `Sleeping.set` as this requires more than just setting this flag.
+                     *
+                    * @property isSleeping
+                    * @type boolean
+                    * @default false
+                    */
+                    isSleeping: boolean;
+                    /**
+                     * A flag that indicates whether a body is considered static. A static body can never change position or angle and is completely fixed.
+                     * If you need to set a body as static after its creation, you should use `Body.setStatic` as this requires more than just setting this flag.
+                     *
+                    * @property isStatic
+                    * @type boolean
+                    * @default false
+                    */
+                    isStatic: boolean;
+                    /**
+                     * A flag that indicates whether a body is a sensor. Sensor triggers collision events, but doesn't react with colliding body physically.
+                     *
+                    * @property isSensor
+                    * @type boolean
+                    * @default false
+                    */
+                    isSensor: boolean;
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage bodies.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Body"
+                    */
+
+                    label: string;
+                    /**
+                     * A `Number` that defines the mass of the body, although it may be more appropriate to specify the `density` property instead.
+                     * If you modify this value, you must also modify the `body.inverseMass` property (`1 / mass`).
+                     *
+                    * @property mass
+                    * @type number
+                    */
+                    mass: number;
+                    /**
+                     * A `Number` that _measures_ the amount of movement a body currently has (a combination of `speed` and `angularSpeed`). It is read-only and always positive.
+                    * It is used and updated by the `Matter.Sleeping` module during simulation to decide if a body has come to rest.
+                    *
+                    * @readOnly
+                    * @property motion
+                    * @type number
+                    * @default 0
+                    */
+                    motion: number;
+                    /**
+                     * A `Vector` that specifies the current world-space position of the body.
+                     *
+                    * @property position
+                    * @type vector
+                    * @default { x: 0, y:      */
+                    position: Vector;
+                    /**
+                     * An `Object` that defines the rendering properties to be consumed by the module `Matter.Render`.
+                    *
+                    * @property render
+                    * @type object
+                    */
+                    render: IBodyRenderOptions;
+                    /**
+                     * A `Number` that defines the restitution (elasticity) of the body. The value is always positive and is in the range `(0, 1)`.
+                     * A value of `0` means collisions may be perfectly inelastic and no bouncing may occur.
+                     * A value of `0.8` means the body may bounce back with approximately 80% of its kinetic energy.
+                     * Note that collision response is based on _pairs_ of bodies, and that `restitution` values are _combined_ with the following formula:
+                     *
+                    *     Math.max(bodyA.restitution, bodyB.restitution)
+                    *
+                    * @property restitution
+                    * @type number
+                    * @default 0
+                    */
+                    restitution: number;
+                    /**
+                     * A `Number` that defines the number of updates in which this body must have near-zero velocity before it is set as sleeping by the `Matter.Sleeping` module (if sleeping is enabled by the engine).
+                     *
+                    * @property sleepThreshold
+                    * @type number
+                    * @default 60
+                    */
+                    sleepThreshold: number;
+                    /**
+                     * A `Number` that specifies a tolerance on how far a body is allowed to 'sink' or rotate into other bodies.
+                     * Avoid changing this value unless you understand the purpose of `slop` in physics engines.
+                     * The default should generally suffice, although very large bodies may require larger values for stable stacking.
+                     *
+                    * @property slop
+                    * @type number
+                    * @default 0.05
+                    */
+                    slop: number;
+                    /**
+                     * A `Number` that _measures_ the current speed of the body after the last `Body.update`. It is read-only and always positive (it's the magnitude of `body.velocity`).
+                     *
+                    * @readOnly
+                    * @property speed
+                    * @type number
+                    * @default 0
+                    */
+                    speed: number;
+                    /**
+                     * A `Number` that allows per-body time scaling, e.g. a force-field where bodies inside are in slow-motion, while others are at full speed.
+                    *
+                    * @property timeScale
+                    * @type number
+                    * @default 1
+                    */
+                    timeScale: number;
+                    /**
+                     * A `Number` that specifies the torque (turning force) to apply in the current step. It is zeroed after every `Body.update`.
+                    *
+                    * @property torque
+                    * @type number
+                    * @default 0
+                    */
+                    torque: number;
+                    /**
+                     * A `String` denoting the type of object.
+                    *
+                    * @property type
+                    * @type string
+                    * @default "body"
+                    */
+                    type: string;
+                    /**
+                     * A `Vector` that _measures_ the current velocity of the body after the last `Body.update`. It is read-only.
+                     * If you need to modify a body's velocity directly, you should either apply a force or simply change the body's `position` (as the engine uses position-Verlet integration).
+                     *
+                    * @readOnly
+                    * @property velocity
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    velocity: Vector;
+                    /**
+                     * An array of `Vector` objects that specify the convex hull of the rigid body.
+                     * These should be provided about the origin `(0, 0)`. E.g.
+                     *
+                    *     [{ x: 0, y: 0 }, { x: 25, y: 50 }, { x: 50, y: 0 }]
+                    *
+                    * When passed via `Body.create`, the vertices are translated relative to `body.position` (i.e. world-space, and constantly updated by `Body.update` during simulation).
+                    * The `Vector` objects are also augmented with additional properties required for efficient collision detection.
+                    *
+                    * Other properties such as `inertia` and `bounds` are automatically calculated from the passed vertices (unless provided via `options`).
+                    * Concave hulls are not currently supported. The module `Matter.Vertices` contains useful methods for working with vertices.
+                    *
+                    * @property vertices
+                    * @type vector[]
+                    */
+                    vertices: Array<Vector>;
+                    /**
+                     * An array of bodies that make up this body.
+                     * The first body in the array must always be a self reference to the current body instance.
+                     * All bodies in the `parts` array together form a single rigid compound body.
+                     * Parts are allowed to overlap, have gaps or holes or even form concave bodies.
+                     * Parts themselves should never be added to a `World`, only the parent body should be.
+                     * Use `Body.setParts` when setting parts to ensure correct updates of all properties.
+                     *
+                    * @property parts
+                    * @type body[]
+                    */
+                    parts: Array<Body>;
+                    /**
+                     * A self reference if the body is _not_ a part of another body.
+                     * Otherwise this is a reference to the body that this is a part of.
+                     * See `body.parts`.
+                     *
+                    * @property parent
+                    * @type body
+                    */
+                    parent: Body;
+                    /**
+                     * A `Number` that defines the static friction of the body (in the Coulomb friction model).
+                     * A value of `0` means the body will never 'stick' when it is nearly stationary and only dynamic `friction` is used.
+                     * The higher the value (e.g. `10`), the more force it will take to initially get the body moving when nearly stationary.
+                     * This value is multiplied with the `friction` property to make it easier to change `friction` and maintain an appropriate amount of static friction.
+                     *
+                    * @property frictionStatic
+                    * @type number
+                    * @default 0.5
+                    */
+                    frictionStatic: number;
+                    /**
+                     * An `Object` that specifies the collision filtering properties of this body.
+                     *
+                    * Collisions between two bodies will obey the following rules:
+                    * - If the two bodies have the same non-zero value of `collisionFilter.group`,
+                    *   they will always collide if the value is positive, and they will never collide
+                    *   if the value is negative.
+                    * - If the two bodies have different values of `collisionFilter.group` or if one
+                    *   (or both) of the bodies has a value of 0, then the category/mask rules apply as follows:
+                    *
+                    * Each body belongs to a collision category, given by `collisionFilter.category`. This
+                    * value is used as a bit field and the category should have only one bit set, meaning that
+                    * the value of this property is a power of two in the range [1, 2^31]. Thus, there are 32
+                    * different collision categories available.
+                    *
+                    * Each body also defines a collision bitmask, given by `collisionFilter.mask` which specifies
+                    * the categories it collides with (the value is the bitwise AND value of all these categories).
+                    *
+                    * Using the category/mask rules, two bodies `A` and `B` collide if each includes the other's
+                    * category in its mask, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0`
+                    * are both true.
+                    *
+                    * @property collisionFilter
+                    * @type object
+                    */
+                    collisionFilter: ICollisionFilter;
+
+                }
+
+                export interface IBound {
+                    min: { x: number, y: number }
+                    max: { x: number, y: number }
                 }
 
                 /**
-                 * [description]
-                 */
-                interface Velocity {
+                * The `Matter.Bounds` module contains methods for creating and manipulating axis-aligned bounding boxes (AABB).
+                *
+                * @class Bounds
+                */
+                export class Bounds {
                     /**
-                     * [description]
-                     * @param value [description]
+                     * Creates a new axis-aligned bounding box (AABB) for the given vertices.
+                     * @method create
+                     * @param {vertices} vertices
+                     * @return {bounds} A new bounds object
                      */
-                    setAngularVelocity(value: number): Phaser.GameObjects.GameObject;
+                    static create (vertices: Vertices): Bounds;
                     /**
-                     * Sets the horizontal velocity of the physics body.
-                     * @param x The horizontal velocity value.
+                     * Updates bounds using the given vertices and extends the bounds given a velocity.
+                     * @method update
+                     * @param {bounds} bounds
+                     * @param {vertices} vertices
+                     * @param {vector} velocity
                      */
-                    setVelocityX(x: number): Phaser.GameObjects.GameObject;
+                    static update(bounds: Bounds, vertices: Vertices, velocity: Vector): void;
                     /**
-                     * Sets vertical velocity of the physics body.
-                     * @param y The vertical velocity value.
+                     * Returns true if the bounds contains the given point.
+                     * @method contains
+                     * @param {bounds} bounds
+                     * @param {vector} point
+                     * @return {boolean} True if the bounds contain the point, otherwise false
                      */
-                    setVelocityY(y: number): Phaser.GameObjects.GameObject;
+                    static contains(bounds: Bounds, point: Vector): boolean;
                     /**
-                     * Sets both the horizontal and vertical velocity of the physics body.
-                     * @param x The horizontal velocity value.
-                     * @param y The vertical velocity value, it can be either positive or negative. If not given, it will be the same as the `x` value. Default x.
+                     * Returns true if the two bounds intersect.
+                     * @method overlaps
+                     * @param {bounds} boundsA
+                     * @param {bounds} boundsB
+                     * @return {boolean} True if the bounds overlap, otherwise false
                      */
-                    setVelocity(x: number, y?: number): Phaser.GameObjects.GameObject;
+                    static overlaps(boundsA: Bounds, boundsB: Bounds): boolean;
+                    /**
+                    * Translates the bounds by the given vector.
+                    * @method translate
+                    * @param {bounds} bounds
+                    * @param {vector} vector
+                    */
+                    static translate(bounds: Bounds, vector: Vector): void;
+                    /**
+                     * Shifts the bounds to the given position.
+                     * @method shift
+                     * @param {bounds} bounds
+                     * @param {vector} position
+                     */
+                    static shift(bounds: Bounds, position: Vector): void;
                 }
 
-            }
-
-            namespace Events {
-                type AfterUpdateEvent = {
+                export interface ICompositeDefinition {
                     /**
-                     * The Matter Engine `timing.timestamp` value for the event.
+                     * An array of `Body` that are _direct_ children of this composite.
+                     * To add or remove bodies you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allBodies` method.
+                     *
+                    * @property bodies
+                    * @type body[]
+                    * @default []
+                    */
+                    bodies?: Array<Body>;
+
+                    /**
+                     * An array of `Composite` that are _direct_ children of this composite.
+                     * To add or remove composites you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allComposites` method.
+                     *
+                    * @property composites
+                    * @type composite[]
+                    * @default []
+                    */
+                    composites?: Array<Composite>;
+
+                    /**
+                     * An array of `Constraint` that are _direct_ children of this composite.
+                     * To add or remove constraints you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allConstraints` method.
+                     *
+                    * @property constraints
+                    * @type constraint[]
+                    * @default []
+                    */
+                    constraints?: Array<Constraint>;
+
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Composite.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id?: number;
+
+                    /**
+                     * A flag that specifies whether the composite has been modified during the current step.
+                     * Most `Matter.Composite` methods will automatically set this flag to `true` to inform the engine of changes to be handled.
+                     * If you need to change it manually, you should use the `Composite.setModified` method.
+                     *
+                    * @property isModified
+                    * @type boolean
+                    * @default false
+                    */
+                    isModified?: boolean;
+
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage composites.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Composite"
+                    */
+                    label?: string;
+
+                    /**
+                    * The `Composite` that is the parent of this composite. It is automatically managed by the `Matter.Composite` methods.
+                    *
+                    * @property parent
+                    * @type composite
+                    * @default null
+                    */
+                    parent?: Composite;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "composite"
+                    */
+                    type?: String;
+                }
+
+                /**
+                * The `Matter.Composite` module contains methods for creating and manipulating composite bodies.
+                * A composite body is a collection of `Matter.Body`, `Matter.Constraint` and other `Matter.Composite`, therefore composites form a tree structure.
+                * It is important to use the functions in this module to modify composites, rather than directly modifying their properties.
+                * Note that the `Matter.World` object is also a type of `Matter.Composite` and as such all composite methods here can also operate on a `Matter.World`.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Composite
+                */
+                export class Composite {
+                    /**
+                     * Generic add function. Adds one or many body(s), constraint(s) or a composite(s) to the given composite.
+                     * Triggers `beforeAdd` and `afterAdd` events on the `composite`.
+                     * @method add
+                     * @param {composite} composite
+                     * @param {} object
+                     * @return {composite} The original composite with the objects added
+                     */
+                    static add(composite: Composite, object: Body | Composite | Constraint): Composite;
+
+                    /**
+                     * Returns all bodies in the given composite, including all bodies in its children, recursively.
+                     * @method allBodies
+                     * @param {composite} composite
+                     * @return {body[]} All the bodies
+                     */
+                    static allBodies(composite: Composite): Array<Body>;
+
+                    /**
+                     * Returns all composites in the given composite, including all composites in its children, recursively.
+                     * @method allComposites
+                     * @param {composite} composite
+                     * @return {composite[]} All the composites
+                     */
+                    static allComposites(composite: Composite): Array<Composite>;
+
+                    /**
+                     * Returns all constraints in the given composite, including all constraints in its children, recursively.
+                     * @method allConstraints
+                     * @param {composite} composite
+                     * @return {constraint[]} All the constraints
+                     */
+                    static allConstraints(composite: Composite): Array<Composite>;
+
+                    /**
+                     * Removes all bodies, constraints and composites from the given composite.
+                     * Optionally clearing its children recursively.
+                     * @method clear
+                     * @param {composite} composite
+                     * @param {boolean} keepStatic
+                     * @param {boolean} [deep=false]
+                     */
+                    static clear(composite: Composite, keepStatic: boolean, deep?: boolean): void;
+
+                    /**
+                     * Creates a new composite. The options parameter is an object that specifies any properties you wish to override the defaults.
+                    * See the properites section below for detailed information on what you can pass via the `options` object.
+                    * @method create
+                    * @param {} [options]
+                    * @return {composite} A new composite
+                    */
+                    static create(options?: ICompositeDefinition): Composite;
+
+                    /**
+                     * Searches the composite recursively for an object matching the type and id supplied, null if not found.
+                     * @method get
+                     * @param {composite} composite
+                     * @param {number} id
+                     * @param {string} type
+                     * @return {object} The requested object, if found
+                     */
+                    static get(composite: Composite, id: number, type: string): Body | Composite | Constraint;
+
+                    /**
+                     * Moves the given object(s) from compositeA to compositeB (equal to a remove followed by an add).
+                     * @method move
+                     * @param {compositeA} compositeA
+                     * @param {object[]} objects
+                     * @param {compositeB} compositeB
+                     * @return {composite} Returns compositeA
+                     */
+                    static move(compositeA: Composite, objects: Array<Body | Composite | Constraint>, compositeB: Composite): Composite;
+
+                    /**
+                     * Assigns new ids for all objects in the composite, recursively.
+                     * @method rebase
+                     * @param {composite} composite
+                     * @return {composite} Returns composite
+                     */
+                    static rebase(composite: Composite): Composite;
+
+                    /**
+                     * Generic remove function. Removes one or many body(s), constraint(s) or a composite(s) to the given composite.
+                     * Optionally searching its children recursively.
+                     * Triggers `beforeRemove` and `afterRemove` events on the `composite`.
+                     * @method remove
+                     * @param {composite} composite
+                     * @param {} object
+                     * @param {boolean} [deep=false]
+                     * @return {composite} The original composite with the objects removed
+                     */
+                    static remove(composite: Composite, object: Body | Composite | Constraint, deep?: boolean): Composite;
+
+
+
+                    /**
+                     * Sets the composite's `isModified` flag.
+                     * If `updateParents` is true, all parents will be set (default: false).
+                     * If `updateChildren` is true, all children will be set (default: false).
+                     * @method setModified
+                     * @param {composite} composite
+                     * @param {boolean} isModified
+                     * @param {boolean} [updateParents=false]
+                     * @param {boolean} [updateChildren=false]
+                     */
+                    static setModified(composite: Composite, isModified: boolean, updateParents?: boolean, updateChildren?: boolean): void;
+                    /**
+                     * Translates all children in the composite by a given vector relative to their current positions,
+                     * without imparting any velocity.
+                     * @method translate
+                     * @param {composite} composite
+                     * @param {vector} translation
+                     * @param {bool} [recursive=true]
+                     */
+                    static translate(composite: Composite, translation: Vector, recursive?: boolean): void;
+                    /**
+                     * Rotates all children in the composite by a given angle about the given point, without imparting any angular velocity.
+                     * @method rotate
+                     * @param {composite} composite
+                     * @param {number} rotation
+                     * @param {vector} point
+                     * @param {bool} [recursive=true]
+                     */
+                    static rotate(composite: Composite, rotation: number, point: Vector, recursive?: boolean): void;
+                    /**
+                     * Scales all children in the composite, including updating physical properties (mass, area, axes, inertia), from a world-space point.
+                     * @method scale
+                     * @param {composite} composite
+                     * @param {number} scaleX
+                     * @param {number} scaleY
+                     * @param {vector} point
+                     * @param {bool} [recursive=true]
+                     */
+                    static scale(composite: Composite, scaleX: number, scaleY: number, point: Vector, recursive?: boolean): void;
+
+
+                    /**
+                     * An array of `Body` that are _direct_ children of this composite.
+                     * To add or remove bodies you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allBodies` method.
+                     *
+                    * @property bodies
+                    * @type body[]
+                    * @default []
+                    */
+                    bodies: Array<Body>;
+
+                    /**
+                     * An array of `Composite` that are _direct_ children of this composite.
+                     * To add or remove composites you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allComposites` method.
+                     *
+                    * @property composites
+                    * @type composite[]
+                    * @default []
+                    */
+                    composites: Array<Composite>;
+
+                    /**
+                     * An array of `Constraint` that are _direct_ children of this composite.
+                     * To add or remove constraints you should use `Composite.add` and `Composite.remove` methods rather than directly modifying this property.
+                     * If you wish to recursively find all descendants, you should use the `Composite.allConstraints` method.
+                     *
+                    * @property constraints
+                    * @type constraint[]
+                    * @default []
+                    */
+                    constraints: Array<Constraint>;
+
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Composite.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id: number;
+
+                    /**
+                     * A flag that specifies whether the composite has been modified during the current step.
+                    * Most `Matter.Composite` methods will automatically set this flag to `true` to inform the engine of changes to be handled.
+                    * If you need to change it manually, you should use the `Composite.setModified` method.
+                    *
+                    * @property isModified
+                    * @type boolean
+                    * @default false
+                    */
+                    isModified: boolean;
+
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage composites.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Composite"
+                    */
+                    label: string;
+
+                    /**
+                     * The `Composite` that is the parent of this composite. It is automatically managed by the `Matter.Composite` methods.
+                     *
+                    * @property parent
+                    * @type composite
+                    * @default null
+                    */
+                    parent: Composite;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "composite"
+                    */
+                    type: String;
+
+                }
+
+                /**
+                * The `Matter.Composites` module contains factory methods for creating composite bodies
+                * with commonly used configurations (such as stacks and chains).
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Composites
+                */
+                export class Composites {
+                    /**
+                     * Creates a composite with simple car setup of bodies and constraints.
+                     * @method car
+                     * @param {number} xx
+                     * @param {number} yy
+                     * @param {number} width
+                     * @param {number} height
+                     * @param {number} wheelSize
+                     * @return {composite} A new composite car body
+                     */
+                    static car(xx: number, yy: number, width: number, height: number, wheelSize: number): Composite;
+
+                    /**
+                     * Chains all bodies in the given composite together using constraints.
+                     * @method chain
+                     * @param {composite} composite
+                     * @param {number} xOffsetA
+                     * @param {number} yOffsetA
+                     * @param {number} xOffsetB
+                     * @param {number} yOffsetB
+                     * @param {object} options
+                     * @return {composite} A new composite containing objects chained together with constraints
+                     */
+                    static chain(composite: Composite, xOffsetA: number, yOffsetA: number, xOffsetB: number, yOffsetB: number, options: any): Composite;
+
+                    /**
+                     * Connects bodies in the composite with constraints in a grid pattern, with optional cross braces.
+                     * @method mesh
+                     * @param {composite} composite
+                     * @param {number} columns
+                     * @param {number} rows
+                     * @param {boolean} crossBrace
+                     * @param {object} options
+                     * @return {composite} The composite containing objects meshed together with constraints
+                     */
+                    static mesh(composite: Composite, columns: number, rows: number, crossBrace: boolean, options: any): Composite;
+
+                    /**
+                     * Creates a composite with a Newton's Cradle setup of bodies and constraints.
+                     * @method newtonsCradle
+                     * @param {number} xx
+                     * @param {number} yy
+                     * @param {number} number
+                     * @param {number} size
+                     * @param {number} length
+                     * @return {composite} A new composite newtonsCradle body
+                     */
+                    newtonsCradle(xx: number, yy: number, _number: number, size: number, length: number): Composite;
+
+                    /**
+                     * Create a new composite containing bodies created in the callback in a pyramid arrangement.
+                    * This function uses the body's bounds to prevent overlaps.
+                    * @method pyramid
+                    * @param {number} xx
+                    * @param {number} yy
+                    * @param {number} columns
+                    * @param {number} rows
+                    * @param {number} columnGap
+                    * @param {number} rowGap
+                    * @param {function} callback
+                    * @return {composite} A new composite containing objects created in the callback
+                    */
+                    static pyramid(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: Function): Composite;
+
+                    /**
+                     * Creates a simple soft body like object.
+                     * @method softBody
+                     * @param {number} xx
+                     * @param {number} yy
+                     * @param {number} columns
+                     * @param {number} rows
+                     * @param {number} columnGap
+                     * @param {number} rowGap
+                     * @param {boolean} crossBrace
+                     * @param {number} particleRadius
+                     * @param {} particleOptions
+                     * @param {} constraintOptions
+                     * @return {composite} A new composite softBody
+                     */
+                    static softBody(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, crossBrace: boolean, particleRadius: number, particleOptions: any, constraintOptions: any): Composite;
+
+                    /**
+                     * Create a new composite containing bodies created in the callback in a grid arrangement.
+                     * This function uses the body's bounds to prevent overlaps.
+                     * @method stack
+                     * @param {number} xx
+                     * @param {number} yy
+                     * @param {number} columns
+                     * @param {number} rows
+                     * @param {number} columnGap
+                     * @param {number} rowGap
+                     * @param {function} callback
+                     * @return {composite} A new composite containing objects created in the callback
+                     */
+                    static stack(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: Function): Composite;
+                }
+
+                export interface IConstraintDefinition {
+                    /**
+                     * The first possible `Body` that this constraint is attached to.
+                     *
+                    * @property bodyA
+                    * @type body
+                    * @default null
+                    */
+                    bodyA?: Body;
+
+                    /**
+                     * The second possible `Body` that this constraint is attached to.
+                     *
+                    * @property bodyB
+                    * @type body
+                    * @default null
+                    */
+                    bodyB?: Body;
+
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Composite.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id?: number;
+
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage bodies.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Constraint"
+                    */
+                    label?: string;
+
+                    /**
+                     * A `Number` that specifies the target resting length of the constraint.
+                     * It is calculated automatically in `Constraint.create` from initial positions of the `constraint.bodyA` and `constraint.bodyB`.
+                     *
+                    * @property length
+                    * @type number
+                    */
+                    length?: number;
+
+                    /**
+                     * A `Vector` that specifies the offset of the constraint from center of the `constraint.bodyA` if defined, otherwise a world-space position.
+                     *
+                    * @property pointA
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    pointA?: Vector;
+
+                    /**
+                     * A `Vector` that specifies the offset of the constraint from center of the `constraint.bodyA` if defined, otherwise a world-space position.
+                     *
+                    * @property pointB
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    pointB?: Vector;
+
+                    /**
+                     * An `Object` that defines the rendering properties to be consumed by the module `Matter.Render`.
+                     *
+                    * @property render
+                    * @type object
+                    */
+                    render?: IConstraintRenderDefinition;
+
+                    /**
+                     * A `Number` that specifies the stiffness of the constraint, i.e. the rate at which it returns to its resting `constraint.length`.
+                     * A value of `1` means the constraint should be very stiff.
+                     * A value of `0.2` means the constraint acts like a soft spring.
+                     *
+                    * @property stiffness
+                    * @type number
+                    * @default 1
+                    */
+                    stiffness?: number;
+
+                    /**
+                     * A `Number` that specifies the damping of the constraint,
+                     * i.e. the amount of resistance applied to each body based on their velocities to limit the amount of oscillation.
+                     * Damping will only be apparent when the constraint also has a very low `stiffness`.
+                     * A value of `0.1` means the constraint will apply heavy damping, resulting in little to no oscillation.
+                     * A value of `0` means the constraint will apply no damping.
+                     *
+                     * @property damping
+                     * @type number
+                     * @default 0
+                     */
+                    damping?: number;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "constraint"
+                    */
+                    type?: string;
+                }
+
+                export interface IConstraintRenderDefinition {
+                    /**
+                     * A `Number` that defines the line width to use when rendering the constraint outline.
+                     * A value of `0` means no outline will be rendered.
+                     *
+                    * @property render.lineWidth
+                    * @type number
+                    * @default 2
+                    */
+                    lineWidth: number;
+
+                    /**
+                     * A `String` that defines the stroke style to use when rendering the constraint outline.
+                     * It is the same as when using a canvas, so it accepts CSS style property values.
+                     *
+                    * @property render.strokeStyle
+                    * @type string
+                    * @default a random colour
+                    */
+                    strokeStyle: string;
+
+                    /**
+                     * A flag that indicates if the constraint should be rendered.
+                     *
+                    * @property render.visible
+                    * @type boolean
+                    * @default true
+                    */
+                    visible: boolean;
+                }
+
+
+                /**
+                * The `Matter.Constraint` module contains methods for creating and manipulating constraints.
+                * Constraints are used for specifying that a fixed distance must be maintained between two bodies (or a body and a fixed world-space position).
+                * The stiffness of constraints can be modified to create springs or elastic.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Constraint
+                */
+                export class Constraint {
+                    /**
+                     * Creates a new constraint.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {} options
+                     * @return {constraint} constraint
+                     */
+                    static create(options: IConstraintDefinition): Constraint;
+
+                    /**
+                     * The first possible `Body` that this constraint is attached to.
+                     *
+                    * @property bodyA
+                    * @type body
+                    * @default null
+                    */
+                    bodyA: Body;
+
+                    /**
+                     * The second possible `Body` that this constraint is attached to.
+                     *
+                    * @property bodyB
+                    * @type body
+                    * @default null
+                    */
+                    bodyB: Body;
+
+                    /**
+                     * An integer `Number` uniquely identifying number generated in `Composite.create` by `Common.nextId`.
+                     *
+                    * @property id
+                    * @type number
+                    */
+                    id: number;
+
+                    /**
+                     * An arbitrary `String` name to help the user identify and manage bodies.
+                     *
+                    * @property label
+                    * @type string
+                    * @default "Constraint"
+                    */
+                    label: string;
+
+                    /**
+                     * A `Number` that specifies the target resting length of the constraint.
+                     * It is calculated automatically in `Constraint.create` from initial positions of the `constraint.bodyA` and `constraint.bodyB`.
+                     *
+                    * @property length
+                    * @type number
+                    */
+                    length: number;
+
+                    /**
+                     * A `Vector` that specifies the offset of the constraint from center of the `constraint.bodyA` if defined, otherwise a world-space position.
+                     *
+                    * @property pointA
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    pointA: Vector;
+
+                    /**
+                     * A `Vector` that specifies the offset of the constraint from center of the `constraint.bodyA` if defined, otherwise a world-space position.
+                     *
+                    * @property pointB
+                    * @type vector
+                    * @default { x: 0, y: 0 }
+                    */
+                    pointB: Vector;
+
+                    /**
+                     * An `Object` that defines the rendering properties to be consumed by the module `Matter.Render`.
+                     *
+                    * @property render
+                    * @type object
+                    */
+                    render: IConstraintRenderDefinition;
+
+                    /**
+                     * A `Number` that specifies the stiffness of the constraint, i.e. the rate at which it returns to its resting `constraint.length`.
+                     * A value of `1` means the constraint should be very stiff.
+                     * A value of `0.2` means the constraint acts like a soft spring.
+                     *
+                    * @property stiffness
+                    * @type number
+                    * @default 1
+                    */
+                    stiffness: number;
+
+                    /**
+                     * A `Number` that specifies the damping of the constraint,
+                     * i.e. the amount of resistance applied to each body based on their velocities to limit the amount of oscillation.
+                     * Damping will only be apparent when the constraint also has a very low `stiffness`.
+                     * A value of `0.1` means the constraint will apply heavy damping, resulting in little to no oscillation.
+                     * A value of `0` means the constraint will apply no damping.
+                     *
+                     * @property damping
+                     * @type number
+                     * @default 0
+                     */
+                    damping: number;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "constraint"
+                    */
+                    type: string;
+                }
+
+
+
+                export interface IEngineDefinition {
+                    /**
+                     * An integer `Number` that specifies the number of position iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     *
+                    * @property positionIterations
+                    * @type number
+                    * @default 6
+                    */
+                    positionIterations?: number;
+                    /**
+                     * An integer `Number` that specifies the number of velocity iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     *
+                    * @property velocityIterations
+                    * @type number
+                    * @default 4
+                    */
+                    velocityIterations?: number;
+                    /**
+                     * An integer `Number` that specifies the number of constraint iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     * The default value of `2` is usually very adequate.
+                     *
+                    * @property constraintIterations
+                    * @type number
+                    * @default 2
+                    */
+                    constraintIterations?: number;
+
+                    /**
+                     * A flag that specifies whether the engine should allow sleeping via the `Matter.Sleeping` module.
+                     * Sleeping can improve stability and performance, but often at the expense of accuracy.
+                     *
+                    * @property enableSleeping
+                    * @type boolean
+                    * @default false
+                    */
+                    enableSleeping?: boolean;
+                    /**
+                     * An `Object` containing properties regarding the timing systems of the engine.
+                    *
+                    * @property timing
+                    * @type object
+                    */
+                    timing?: IEngineTimingOptions;
+                    /**
+                     * An instance of a broadphase controller. The default value is a `Matter.Grid` instance created by `Engine.create`.
+                     *
+                    * @property broadphase
+                    * @type grid
+                    * @default a Matter.Grid instance
+                    */
+                    grid?: Grid;
+                    /**
+                     * A `World` composite object that will contain all simulated bodies and constraints.
+                     *
+                    * @property world
+                    * @type world
+                    * @default a Matter.World instance
+                    */
+                    world?: World;
+
+                }
+
+                export interface IEngineTimingOptions {
+                    /**
+                     * A `Number` that specifies the global scaling factor of time for all bodies.
+                     * A value of `0` freezes the simulation.
+                     * A value of `0.1` gives a slow-motion effect.
+                     * A value of `1.2` gives a speed-up effect.
+                     *
+                    * @property timing.timeScale
+                    * @type number
+                    * @default 1
+                    */
+                    timeScale: number;
+
+                    /**
+                     * A `Number` that specifies the current simulation-time in milliseconds starting from `0`.
+                     * It is incremented on every `Engine.update` by the given `delta` argument.
+                     *
+                    * @property timing.timestamp
+                    * @type number
+                    * @default 0
+                    */
+                    timestamp: number;
+                }
+
+                /**
+                * The `Matter.Engine` module contains methods for creating and manipulating engines.
+                * An engine is a controller that manages updating the simulation of the world.
+                * See `Matter.Runner` for an optional game loop utility.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Engine
+                */
+                export class Engine {
+                    /**
+                     * Clears the engine including the world, pairs and broadphase.
+                     * @method clear
+                     * @param {engine} engine
+                     */
+                    static clear(engine: Engine): void;
+
+                    /**
+                     * Creates a new engine. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {HTMLElement} element
+                     * @param {object} [options]
+                     * @return {engine} engine
+                     * @deprecated
+                     */
+                    static create(element?: HTMLElement | IEngineDefinition, options?: IEngineDefinition): Engine;
+
+                    /**
+                     * Creates a new engine. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {object} [options]
+                     * @return {engine} engine
+                     * @deprecated
+                     */
+                    static create(options?: IEngineDefinition): Engine;
+
+                    /**
+                     * Merges two engines by keeping the configuration of `engineA` but replacing the world with the one from `engineB`.
+                     * @method merge
+                     * @param {engine} engineA
+                     * @param {engine} engineB
+                     */
+                    static merge(engineA: Engine, engineB: Engine): void;
+
+
+                    /**
+                     * Moves the simulation forward in time by `delta` ms.
+                     * The `correction` argument is an optional `Number` that specifies the time correction factor to apply to the update.
+                     * This can help improve the accuracy of the simulation in cases where `delta` is changing between updates.
+                     * The value of `correction` is defined as `delta / lastDelta`, i.e. the percentage change of `delta` over the last step.
+                     * Therefore the value is always `1` (no correction) when `delta` constant (or when no correction is desired, which is the default).
+                     * See the paper on <a href="http://lonesock.net/article/verlet.html">Time Corrected Verlet</a> for more information.
+                     *
+                     * Triggers `beforeUpdate` and `afterUpdate` events.
+                     * Triggers `collisionStart`, `collisionActive` and `collisionEnd` events.
+                     * @method update
+                     * @param {engine} engine
+                     * @param {number} [delta=16.666]
+                     * @param {number} [correction=1]
+                     */
+                    static update(engine: Engine, delta?: number, correction?: number): Engine;
+
+                    /**
+                     * An alias for `Runner.run`, see `Matter.Runner` for more information.
+                     * @method run
+                     * @param {engine} engine
+                     */
+                    static run(enige: Engine): void;
+
+                    /**
+                     * An instance of a broadphase controller. The default value is a `Matter.Grid` instance created by `Engine.create`.
+                     *
+                    * @property broadphase
+                    * @type grid
+                    * @default a Matter.Grid instance
+                    */
+                    broadphase: Grid;
+                    /**
+                     * An integer `Number` that specifies the number of constraint iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     * The default value of `2` is usually very adequate.
+                     *
+                    * @property constraintIterations
+                    * @type number
+                    * @default 2
+                    */
+                    constraintIterations: number;
+
+                    /**
+                     * A flag that specifies whether the engine is running or not.
+                     */
+                    enabled: boolean;
+
+                    /**
+                     * A flag that specifies whether the engine should allow sleeping via the `Matter.Sleeping` module.
+                     * Sleeping can improve stability and performance, but often at the expense of accuracy.
+                     *
+                    * @property enableSleeping
+                    * @type boolean
+                    * @default false
+                    */
+                    enableSleeping: boolean;
+
+                    /**
+                     * Collision pair set for this `Engine`.
+                     */
+                    pairs: any;
+
+                    /**
+                     * An integer `Number` that specifies the number of position iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     *
+                    * @property positionIterations
+                    * @type number
+                    * @default 6
+                    */
+                    positionIterations: number;
+
+                    /**
+                     * An instance of a `Render` controller. The default value is a `Matter.Render` instance created by `Engine.create`.
+                     * One may also develop a custom renderer module based on `Matter.Render` and pass an instance of it to `Engine.create` via `options.render`.
+                     *
+                    * A minimal custom renderer object must define at least three functions: `create`, `clear` and `world` (see `Matter.Render`).
+                    * It is also possible to instead pass the _module_ reference via `options.render.controller` and `Engine.create` will instantiate one for you.
+                    *
+                    * @property render
+                    * @type render
+                    * @default a Matter.Render instance
+                    */
+                    render: Render;
+
+                    /**
+                     * An `Object` containing properties regarding the timing systems of the engine.
+                     *
+                    * @property timing
+                    * @type object
+                    */
+                    timing: IEngineTimingOptions;
+
+                    /**
+                     * An integer `Number` that specifies the number of velocity iterations to perform each update.
+                     * The higher the value, the higher quality the simulation will be at the expense of performance.
+                     *
+                    * @property velocityIterations
+                    * @type number
+                    * @default 4
+                    */
+                    velocityIterations: number;
+
+                    /**
+                     * A `World` composite object that will contain all simulated bodies and constraints.
+                     *
+                    * @property world
+                    * @type world
+                    * @default a Matter.World instance
+                    */
+                    world: World;
+                }
+
+
+                export interface IGridDefinition {
+
+                }
+
+                /**
+                * The `Matter.Grid` module contains methods for creating and manipulating collision broadphase grid structures.
+                *
+                * @class Grid
+                */
+                export class Grid {
+                    /**
+                     * Creates a new grid.
+                     * @method create
+                     * @param {} options
+                     * @return {grid} A new grid
+                     */
+                    static create(options?: IGridDefinition): Grid;
+
+                    /**
+                     * Updates the grid.
+                     * @method update
+                     * @param {grid} grid
+                     * @param {body[]} bodies
+                     * @param {engine} engine
+                     * @param {boolean} forceUpdate
+                     */
+                    static update(grid: Grid, bodies: Array<Body>, engine: Engine, forceUpdate: boolean): void;
+
+                    /**
+                     * Clears the grid.
+                     * @method clear
+                     * @param {grid} grid
+                     */
+                    static clear(grid: Grid): void;
+
+                }
+
+                export interface IMouseConstraintDefinition {
+                    /**
+                     * The `Constraint` object that is used to move the body during interaction.
+                     *
+                    * @property constraint
+                    * @type constraint
+                    */
+                    constraint?: Constraint;
+
+                    /**
+                    * An `Object` that specifies the collision filter properties.
+                    * The collision filter allows the user to define which types of body this mouse constraint can interact with.
+                    * See `body.collisionFilter` for more information.
+                    *
+                    * @property collisionFilter
+                    * @type object
+                    */
+                    collisionFilter?: ICollisionFilter;
+
+                    /**
+                     * The `Body` that is currently being moved by the user, or `null` if no body.
+                     *
+                    * @property body
+                    * @type body
+                    * @default null
+                    */
+                    body?: Body;
+
+                    /**
+                     * The `Mouse` instance in use. If not supplied in `MouseConstraint.create`, one will be created.
+                     *
+                    * @property mouse
+                    * @type mouse
+                    * @default mouse
+                    */
+                    mouse?: Mouse;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "constraint"
+                    */
+
+                    type?: string;
+                }
+
+                /**
+                * The `Matter.MouseConstraint` module contains methods for creating mouse constraints.
+                * Mouse constraints are used for allowing user interaction, providing the ability to move bodies via the mouse or touch.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class MouseConstraint
+                */
+                export class MouseConstraint {
+                    /**
+                     * Creates a new mouse constraint.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {engine} engine
+                     * @param {} options
+                     * @return {MouseConstraint} A new MouseConstraint
+                     */
+                    static create(engine: Engine, options?: IMouseConstraintDefinition): MouseConstraint;
+
+                    /**
+                     * The `Constraint` object that is used to move the body during interaction.
+                     *
+                    * @property constraint
+                    * @type constraint
+                    */
+                    constraint: Constraint;
+
+                    /**
+                    * An `Object` that specifies the collision filter properties.
+                    * The collision filter allows the user to define which types of body this mouse constraint can interact with.
+                    * See `body.collisionFilter` for more information.
+                    *
+                    * @property collisionFilter
+                    * @type object
+                    */
+                    collisionFilter: ICollisionFilter;
+
+                    /**
+                    * The `Body` that is currently being moved by the user, or `null` if no body.
+                    *
+                    * @property body
+                    * @type body
+                    * @default null
+                    */
+                    body: Body;
+
+                    /**
+                     * The `Mouse` instance in use. If not supplied in `MouseConstraint.create`, one will be created.
+                     *
+                    * @property mouse
+                    * @type mouse
+                    * @default mouse
+                    */
+                    mouse: Mouse;
+
+                    /**
+                     * A `String` denoting the type of object.
+                     *
+                    * @property type
+                    * @type string
+                    * @default "constraint"
+                    */
+
+                    type: string;
+                }
+
+                /**
+                * The `Matter.Pairs` module contains methods for creating and manipulating collision pair sets.
+                *
+                * @class Pairs
+                */
+                export class Pairs {
+                    /**
+                     * Clears the given pairs structure.
+                     * @method clear
+                     * @param {pairs} pairs
+                     * @return {pairs} pairs
+                     */
+                    static clear(pairs: any): any;
+                }
+
+                export interface IPair {
+                    id: number;
+                    bodyA: Body;
+                    bodyB: Body;
+                    contacts: any;
+                    activeContacts: any;
+                    separation: number;
+                    isActive: boolean;
+                    timeCreated: number;
+                    timeUpdated: number,
+                    inverseMass: number;
+                    friction: number;
+                    frictionStatic: number;
+                    restitution: number;
+                    slop: number;
+                }
+
+                /**
+                * The `Matter.Query` module contains methods for performing collision queries.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Query
+                */
+                export class Query {
+                    /**
+                     * Casts a ray segment against a set of bodies and returns all collisions, ray width is optional. Intersection points are not provided.
+                     * @method ray
+                     * @param {body[]} bodies
+                     * @param {vector} startPoint
+                     * @param {vector} endPoint
+                     * @param {number} [rayWidth]
+                     * @return {object[]} Collisions
+                     */
+                    static ray(bodies: Array<Body>, startPoint: Vector, endPoint: Vector, rayWidth?: number): Array<any>;
+
+                    /**
+                     * Returns all bodies whose bounds are inside (or outside if set) the given set of bounds, from the given set of bodies.
+                     * @method region
+                     * @param {body[]} bodies
+                     * @param {bounds} bounds
+                     * @param {bool} [outside=false]
+                     * @return {body[]} The bodies matching the query
+                     */
+                    static region(bodies: Array<Body>, bounds: Bounds, outside?: boolean): Array<Body>;
+
+                    /**
+                     * Returns all bodies whose vertices contain the given point, from the given set of bodies.
+                     * @method point
+                     * @param {body[]} bodies
+                     * @param {vector} point
+                     * @return {body[]} The bodies matching the query
+                     */
+                    static point(bodies: Array<Body>, point: Vector): Array<Body>;
+                }
+
+                export interface IRenderDefinition {
+                    /**
+                     * A back-reference to the `Matter.Render` module.
+                     *
+                    * @property controller
+                    * @type render
+                    */
+                    controller?: any;
+                    /**
+                    * A reference to the `Matter.Engine` instance to be used.
+                    *
+                    * @property engine
+                    * @type engine
+                    */
+                    engine: Engine;
+                    /**
+                     * A reference to the element where the canvas is to be inserted (if `render.canvas` has not been specified)
+                    *
+                    * @property element
+                    * @type HTMLElement
+                    * @default null
+                    * @deprecated
+                    */
+                    element?: HTMLElement;
+                    /**
+                     * The canvas element to render to. If not specified, one will be created if `render.element` has been specified.
+                     *
+                    * @property canvas
+                    * @type HTMLCanvasElement
+                    * @default null
+                    */
+                    canvas?: HTMLCanvasElement;
+
+                    /**
+                     * The configuration options of the renderer.
+                     *
+                    * @property options
+                    * @type {}
+                    */
+                    options?: IRendererOptions;
+
+                    /**
+                     * A `Bounds` object that specifies the drawing view region.
+                     * Rendering will be automatically transformed and scaled to fit within the canvas size (`render.options.width` and `render.options.height`).
+                     * This allows for creating views that can pan or zoom around the scene.
+                     * You must also set `render.options.hasBounds` to `true` to enable bounded rendering.
+                     *
+                    * @property bounds
+                    * @type bounds
+                    */
+                    bounds?: Bounds;
+
+                    /**
+                     * The 2d rendering context from the `render.canvas` element.
+                     *
+                    * @property context
+                    * @type CanvasRenderingContext2D
+                    */
+                    context?: CanvasRenderingContext2D;
+
+                    /**
+                     * The sprite texture cache.
+                     *
+                    * @property textures
+                    * @type {}
+                    */
+                    textures?: any;
+
+
+                }
+
+                export interface IRendererOptions {
+                    /**
+                     * The target width in pixels of the `render.canvas` to be created.
+                     *
+                    * @property options.width
+                    * @type number
+                    * @default 800
+                    */
+                    width?: number;
+
+                    /**
+                     * The target height in pixels of the `render.canvas` to be created.
+                     *
+                    * @property options.height
+                    * @type number
+                    * @default 600
+                    */
+                    height?: number;
+
+                    /**
+                     * A flag that specifies if `render.bounds` should be used when rendering.
+                     *
+                    * @property options.hasBounds
+                    * @type boolean
+                    * @default false
+                    */
+                    hasBounds?: boolean;
+
+                    /**
+                     * Render wireframes only
+                     * @type boolean
+                     * @default true
+                     */
+                    wireframes?: boolean;
+                }
+
+                /**
+                * The `Matter.Render` module is a simple HTML5 canvas based renderer for visualising instances of `Matter.Engine`.
+                * It is intended for development and debugging purposes, but may also be suitable for simple games.
+                * It includes a number of drawing options including wireframe, vector with support for sprites and viewports.
+                *
+                * @class Render
+                */
+                export class Render {
+                    /**
+                     * Creates a new renderer. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * All properties have default values, and many are pre-calculated automatically based on other properties.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @param {object} [options]
+                     * @return {render} A new renderer
+                     */
+                    static create(options: IRenderDefinition): Render;
+                    /**
+                     * Continuously updates the render canvas on the `requestAnimationFrame` event.
+                     * @method run
+                     * @param {render} render
+                     */
+                    static run(render: Render): void;
+                    /**
+                     * Ends execution of `Render.run` on the given `render`, by canceling the animation frame request event loop.
+                     * @method stop
+                     * @param {render} render
+                     */
+                    static stop(render: Render): void;
+                    /**
+                     * Sets the pixel ratio of the renderer and updates the canvas.
+                     * To automatically detect the correct ratio, pass the string `'auto'` for `pixelRatio`.
+                     * @method setPixelRatio
+                     * @param {render} render
+                     * @param {number} pixelRatio
+                     */
+                    static setPixelRatio(render: Render, pixelRatio: number): void;
+                    /**
+                     * Renders the given `engine`'s `Matter.World` object.
+                     * This is the entry point for all rendering and should be called every time the scene changes.
+                     * @method world
+                     * @param {engine} engine
+                     */
+                    static world(render: Render): void;
+
+                    /**
+                    * A back-reference to the `Matter.Render` module.
+                    *
+                    * @property controller
+                    * @type render
+                    */
+                    controller: any;
+                    /**
+                     * A reference to the element where the canvas is to be inserted (if `render.canvas` has not been specified)
+                    *
+                    * @property element
+                    * @type HTMLElement
+                    * @default null
+                    */
+                    element: HTMLElement;
+                    /**
+                     * The canvas element to render to. If not specified, one will be created if `render.element` has been specified.
+                     *
+                    * @property canvas
+                    * @type HTMLCanvasElement
+                    * @default null
+                    */
+                    canvas: HTMLCanvasElement;
+
+                    /**
+                     * The configuration options of the renderer.
+                     *
+                    * @property options
+                    * @type {}
+                    */
+                    options: IRendererOptions;
+
+                    /**
+                     * A `Bounds` object that specifies the drawing view region.
+                     * Rendering will be automatically transformed and scaled to fit within the canvas size (`render.options.width` and `render.options.height`).
+                     * This allows for creating views that can pan or zoom around the scene.
+                     * You must also set `render.options.hasBounds` to `true` to enable bounded rendering.
+                     *
+                    * @property bounds
+                    * @type bounds
+                    */
+                    bounds: Bounds;
+
+                    /**
+                     * The 2d rendering context from the `render.canvas` element.
+                     *
+                    * @property context
+                    * @type CanvasRenderingContext2D
+                    */
+                    context: CanvasRenderingContext2D;
+
+                    /**
+                     * The sprite texture cache.
+                     *
+                    * @property textures
+                    * @type {}
+                    */
+                    textures: any;
+                }
+
+
+
+                export interface IRunnerOptions {
+                    /**
+                     * A `Boolean` that specifies if the runner should use a fixed timestep (otherwise it is variable).
+                     * If timing is fixed, then the apparent simulation speed will change depending on the frame rate (but behaviour will be deterministic).
+                     * If the timing is variable, then the apparent simulation speed will be constant (approximately, but at the cost of determininism).
+                     *
+                    * @property isFixed
+                    * @type boolean
+                    * @default false
+                    */
+                    isFixed?: boolean;
+
+                    /**
+                     * A `Number` that specifies the time step between updates in milliseconds.
+                     * If `engine.timing.isFixed` is set to `true`, then `delta` is fixed.
+                     * If it is `false`, then `delta` can dynamically change to maintain the correct apparent simulation speed.
+                     *
+                    * @property delta
+                    * @type number
+                    * @default 1000 / 60
+                    */
+                    delta?: number;
+                }
+
+                /**
+                * The `Matter.Runner` module is an optional utility which provides a game loop,
+                * that handles updating and rendering a `Matter.Engine` for you within a browser.
+                * It is intended for demo and testing purposes, but may be adequate for simple games.
+                * If you are using your own game loop instead, then you do not need the `Matter.Runner` module.
+                * Instead just call `Engine.update(engine, delta)` in your own loop.
+                * Note that the method `Engine.run` is an alias for `Runner.run`.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Runner
+                */
+                export class Runner {
+                    /**
+                     * Creates a new Runner. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * @method create
+                     * @param {} options
+                     */
+                    static create(options:IRunnerOptions): Runner;
+                    /**
+                     * Continuously ticks a `Matter.Engine` by calling `Runner.tick` on the `requestAnimationFrame` event.
+                     * @method run
+                     * @param {engine} engine
+                     */
+                    static run(runner: Runner, engine: Engine): Runner;
+                    /**
+                    * Continuously ticks a `Matter.Engine` by calling `Runner.tick` on the `requestAnimationFrame` event.
+                    * @method run
+                    * @param {engine} engine
+                    */
+                    static run(engine: Engine): Runner;
+                    /**
+                     * A game loop utility that updates the engine and renderer by one step (a 'tick').
+                     * Features delta smoothing, time correction and fixed or dynamic timing.
+                     * Triggers `beforeTick`, `tick` and `afterTick` events on the engine.
+                     * Consider just `Engine.update(engine, delta)` if you're using your own loop.
+                     * @method tick
+                     * @param {runner} runner
+                     * @param {engine} engine
+                     * @param {number} time
+                     */
+                    static tick(runner: Runner, engine: Engine, time: number): void;
+                    /**
+                     * Ends execution of `Runner.run` on the given `runner`, by canceling the animation frame request event loop.
+                     * If you wish to only temporarily pause the engine, see `engine.enabled` instead.
+                     * @method stop
+                     * @param {runner} runner
+                     */
+                    static stop(runner: Runner): void;
+                    /**
+                     * Alias for `Runner.run`.
+                    * @method start
+                    * @param {runner} runner
+                    * @param {engine} engine
+                    */
+                    static start(runner: Runner, engine: Engine): void;
+
+                    /**
+                     * A flag that specifies whether the runner is running or not.
+                     *
+                    * @property enabled
+                    * @type boolean
+                    * @default true
+                    */
+                    enabled: boolean;
+
+                    /**
+                     * A `Boolean` that specifies if the runner should use a fixed timestep (otherwise it is variable).
+                     * If timing is fixed, then the apparent simulation speed will change depending on the frame rate (but behaviour will be deterministic).
+                     * If the timing is variable, then the apparent simulation speed will be constant (approximately, but at the cost of determininism).
+                     *
+                    * @property isFixed
+                    * @type boolean
+                    * @default false
+                    */
+                    isFixed: boolean;
+
+                    /**
+                     * A `Number` that specifies the time step between updates in milliseconds.
+                     * If `engine.timing.isFixed` is set to `true`, then `delta` is fixed.
+                     * If it is `false`, then `delta` can dynamically change to maintain the correct apparent simulation speed.
+                     *
+                    * @property delta
+                    * @type number
+                    * @default 1000 / 60
+                    */
+                    delta: number;
+                }
+
+                /**
+                * The `Matter.Sleeping` module contains methods to manage the sleeping state of bodies.
+                *
+                * @class Sleeping
+                */
+                export class Sleeping {
+                    static set(body: Body, isSleeping: boolean): void;
+                }
+
+                /**
+                * The `Matter.Svg` module contains methods for converting SVG images into an array of vector points.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Svg
+                */
+                export class Svg {
+                    /**
+                     * Converts an SVG path into an array of vector points.
+                     * If the input path forms a concave shape, you must decompose the result into convex parts before use.
+                     * See `Bodies.fromVertices` which provides support for this.
+                     * Note that this function is not guaranteed to support complex paths (such as those with holes).
+                     * @method pathToVertices
+                     * @param {SVGPathElement} path
+                     * @param {Number} [sampleLength=15]
+                     * @return {Vector[]} points
+                     */
+                    static pathToVertices(path: SVGPathElement, sampleLength: number): Array<Vector>;
+                }
+
+                /**
+                * The `Matter.Vector` module contains methods for creating and manipulating vectors.
+                * Vectors are the basis of all the geometry related operations in the engine.
+                * A `Matter.Vector` object is of the form `{ x: 0, y: 0 }`.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Vector
+                */
+                export class Vector {
+
+                    x: number;
+                    y: number;
+
+                    /**
+                     * Creates a new vector.
+                     * @method create
+                     * @param {number} x
+                     * @param {number} y
+                     * @return {vector} A new vector
+                     */
+                    static create(x?: number, y?: number): Vector;
+
+                    /**
+                     * Returns a new vector with `x` and `y` copied from the given `vector`.
+                     * @method clone
+                     * @param {vector} vector
+                     * @return {vector} A new cloned vector
+                     */
+                    static clone(vector: Vector): Vector;
+
+
+                    /**
+                     * Returns the cross-product of three vectors.
+                     * @method cross3
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @param {vector} vectorC
+                     * @return {number} The cross product of the three vectors
+                     */
+                    static cross3(vectorA: Vector, vectorB: Vector, vectorC: Vector):number;
+
+                    /**
+                     * Adds the two vectors.
+                     * @method add
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @param {vector} [output]
+                     * @return {vector} A new vector of vectorA and vectorB added
+                     */
+                    static add(vectorA: Vector, vectorB: Vector, output?: Vector): Vector;
+
+                    /**
+                     * Returns the angle in radians between the two vectors relative to the x-axis.
+                     * @method angle
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @return {number} The angle in radians
+                     */
+                    static angle(vectorA: Vector, vectorB: Vector): number;
+
+                    /**
+                     * Returns the cross-product of two vectors.
+                     * @method cross
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @return {number} The cross product of the two vectors
+                     */
+                    static cross(vectorA: Vector, vectorB: Vector): number;
+
+                    /**
+                     * Divides a vector and a scalar.
+                     * @method div
+                     * @param {vector} vector
+                     * @param {number} scalar
+                     * @return {vector} A new vector divided by scalar
+                     */
+                    static div(vector: Vector, scalar: number): Vector;
+
+                    /**
+                     * Returns the dot-product of two vectors.
+                     * @method dot
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @return {number} The dot product of the two vectors
+                     */
+                    static dot(vectorA: Vector, vectorB: Vector): Number;
+
+                    /**
+                     * Returns the magnitude (length) of a vector.
+                     * @method magnitude
+                     * @param {vector} vector
+                     * @return {number} The magnitude of the vector
+                     */
+                    static magnitude(vector: Vector): number;
+
+                    /**
+                     * Returns the magnitude (length) of a vector (therefore saving a `sqrt` operation).
+                     * @method magnitudeSquared
+                     * @param {vector} vector
+                     * @return {number} The squared magnitude of the vector
+                     */
+                    static magnitudeSquared(vector: Vector): number;
+
+                    /**
+                     * Multiplies a vector and a scalar.
+                     * @method mult
+                     * @param {vector} vector
+                     * @param {number} scalar
+                     * @return {vector} A new vector multiplied by scalar
+                     */
+                    static mult(vector: Vector, scalar: number): Vector;
+
+                    /**
+                     * Negates both components of a vector such that it points in the opposite direction.
+                     * @method neg
+                     * @param {vector} vector
+                     * @return {vector} The negated vector
+                     */
+                    static neg(vector: Vector): Vector;
+
+                    /**
+                     * Normalises a vector (such that its magnitude is `1`).
+                     * @method normalise
+                     * @param {vector} vector
+                     * @return {vector} A new vector normalised
+                     */
+                    static normalise(vector: Vector): Vector;
+
+                    /**
+                     * Returns the perpendicular vector. Set `negate` to true for the perpendicular in the opposite direction.
+                     * @method perp
+                     * @param {vector} vector
+                     * @param {bool} [negate=false]
+                     * @return {vector} The perpendicular vector
+                     */
+                    static perp(vector: Vector, negate?: boolean): Vector;
+
+                    /**
+                     * Rotates the vector about (0, 0) by specified angle.
+                     * @method rotate
+                     * @param {vector} vector
+                     * @param {number} angle
+                     * @return {vector} A new vector rotated about (0, 0)
+                     */
+                    static rotate(vector: Vector, angle: number): Vector;
+
+                    /**
+                     * Rotates the vector about a specified point by specified angle.
+                     * @method rotateAbout
+                     * @param {vector} vector
+                     * @param {number} angle
+                     * @param {vector} point
+                     * @param {vector} [output]
+                     * @return {vector} A new vector rotated about the point
+                     */
+                    static rotateAbout(vector: Vector, angle: number, point: Vector, output?: Vector): Vector;
+
+                    /**
+                     * Subtracts the two vectors.
+                     * @method sub
+                     * @param {vector} vectorA
+                     * @param {vector} vectorB
+                     * @param {vector} [output]
+                     * @return {vector} A new vector of vectorA and vectorB subtracted
+                     */
+                    static sub(vectorA: Vector, vectorB: Vector, optional?: Vector): Vector;
+                }
+
+                /**
+                * The `Matter.Vertices` module contains methods for creating and manipulating sets of vertices.
+                * A set of vertices is an array of `Matter.Vector` with additional indexing properties inserted by `Vertices.create`.
+                * A `Matter.Body` maintains a set of vertices to represent the shape of the object (its convex hull).
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class Vertices
+                */
+                export class Vertices {
+                    /**
+                     * Returns the average (mean) of the set of vertices.
+                     * @method mean
+                     * @param {vertices} vertices
+                     * @return {vector} The average point
+                     */
+                    static mean(vertices: Array<Vector>): Array<Vector>;
+
+                    /**
+                     * Sorts the input vertices into clockwise order in place.
+                     * @method clockwiseSort
+                     * @param {vertices} vertices
+                     * @return {vertices} vertices
+                     */
+                    static clockwiseSort(vertices: Array<Vector>): Array<Vector>;
+
+                    /**
+                     * Returns true if the vertices form a convex shape (vertices must be in clockwise order).
+                     * @method isConvex
+                     * @param {vertices} vertices
+                     * @return {bool} `true` if the `vertices` are convex, `false` if not (or `null` if not computable).
+                     */
+                    static isConvex(vertices: Array<Vector>): boolean;
+
+                    /**
+                     * Returns the convex hull of the input vertices as a new array of points.
+                     * @method hull
+                     * @param {vertices} vertices
+                     * @return [vertex] vertices
+                     */
+                    static hull(vertices: Array<Vector>): Array<Vector>;
+
+                    /**
+                     * Returns the area of the set of vertices.
+                     * @method area
+                     * @param {vertices} vertices
+                     * @param {bool} signed
+                     * @return {number} The area
+                     */
+                    static area(vertices: Array<Vector>, signed: boolean): number;
+
+                    /**
+                     * Returns the centre (centroid) of the set of vertices.
+                     * @method centre
+                     * @param {vertices} vertices
+                     * @return {vector} The centre point
+                     */
+                    static centre(vertices: Array<Vector>): Vector;
+
+                    /**
+                     * Chamfers a set of vertices by giving them rounded corners, returns a new set of vertices.
+                     * The radius parameter is a single number or an array to specify the radius for each vertex.
+                     * @method chamfer
+                     * @param {vertices} vertices
+                     * @param {number[]} radius
+                     * @param {number} quality
+                     * @param {number} qualityMin
+                     * @param {number} qualityMax
+                     */
+                    static chamfer(vertices: Array<Vector>, radius: number | Array<number>, quality: number, qualityMin: number, qualityMax: number): void;
+
+
+                    /**
+                     * Returns `true` if the `point` is inside the set of `vertices`.
+                     * @method contains
+                     * @param {vertices} vertices
+                     * @param {vector} point
+                     * @return {boolean} True if the vertices contains point, otherwise false
+                     */
+                    static contains(vertices: Array<Vector>, point: Vector): boolean;
+
+                    /**
+                     * Creates a new set of `Matter.Body` compatible vertices.
+                     * The `points` argument accepts an array of `Matter.Vector` points orientated around the origin `(0, 0)`, for example:
+                     *
+                    *     [{ x: 0, y: 0 }, { x: 25, y: 50 }, { x: 50, y: 0 }]
+                    *
+                    * The `Vertices.create` method returns a new array of vertices, which are similar to Matter.Vector objects,
+                    * but with some additional references required for efficient collision detection routines.
+                    *
+                    * Note that the `body` argument is not optional, a `Matter.Body` reference must be provided.
+                    *
+                    * @method create
+                    * @param {vector[]} points
+                    * @param {body} body
+                    */
+                    static create(points: Array<Vector>, body: Body): void;
+
+                    /**
+                     * Parses a string containing ordered x y pairs separated by spaces (and optionally commas),
+                     * into a `Matter.Vertices` object for the given `Matter.Body`.
+                     * For parsing SVG paths, see `Svg.pathToVertices`.
+                     * @method fromPath
+                     * @param {string} path
+                     * @param {body} body
+                     * @return {vertices} vertices
+                     */
+                    static fromPath(path: string, body: Body): Array<Vector>;
+
+                    /**
+                     * Returns the moment of inertia (second moment of area) of the set of vertices given the total mass.
+                     * @method inertia
+                     * @param {vertices} vertices
+                     * @param {number} mass
+                     * @return {number} The polygon's moment of inertia
+                     */
+                    static inertia(vertices: Array<Vector>, mass: number): number;
+
+                    /**
+                     * Rotates the set of vertices in-place.
+                     * @method rotate
+                     * @param {vertices} vertices
+                     * @param {number} angle
+                     * @param {vector} point
+                     */
+                    static rotate(vertices: Array<Vector>, angle: number, point: Vector): void;
+
+                    /**
+                     * Scales the vertices from a point (default is centre) in-place.
+                     * @method scale
+                     * @param {vertices} vertices
+                     * @param {number} scaleX
+                     * @param {number} scaleY
+                     * @param {vector} point
+                     */
+                    static scale(vertices: Array<Vector>, scaleX: number, scaleY: number, point: Vector): void;
+
+                    /**
+                     * Translates the set of vertices in-place.
+                     * @method translate
+                     * @param {vertices} vertices
+                     * @param {vector} vector
+                     * @param {number} scalar
+                     */
+                    static translate(vertices: Array<Vector>, vector: Vector, scalar: number): void;
+                }
+
+                interface IWorldDefinition extends ICompositeDefinition {
+                    gravity?: Gravity;
+                    bounds?: Bounds;
+                }
+
+                interface Gravity extends Vector {
+                  scale: number;
+                }
+
+                /**
+                * The `Matter.World` module contains methods for creating and manipulating the world composite.
+                * A `Matter.World` is a `Matter.Composite` body, which is a collection of `Matter.Body`, `Matter.Constraint` and other `Matter.Composite`.
+                * A `Matter.World` has a few additional properties including `gravity` and `bounds`.
+                * It is important to use the functions in the `Matter.Composite` module to modify the world composite, rather than directly modifying its properties.
+                * There are also a few methods here that alias those in `Matter.Composite` for easier readability.
+                *
+                * See the included usage [examples](https://github.com/liabru/matter-js/tree/master/examples).
+                *
+                * @class World
+                * @extends Composite
+                */
+                export class World extends Composite {
+                    /**
+                     * Add objects or arrays of objects of types: Body, Constraint, Composite
+                     * @param world
+                     * @param body
+                     * @returns world
+                     */
+                    static add(world: World, body: Body | Array<Body> | Composite | Array<Composite> | Constraint | Array<Constraint> | MouseConstraint): World;
+
+                    /**
+                     * An alias for Composite.addBody since World is also a Composite
+                     * @method addBody
+                     * @param {world} world
+                     * @param {body} body
+                     * @return {world} The original world with the body added
+                     */
+                    static addBody(world: World, body: Body): World;
+
+                    /**
+                     * An alias for Composite.add since World is also a Composite
+                     * @method addComposite
+                     * @param {world} world
+                     * @param {composite} composite
+                     * @return {world} The original world with the objects from composite added
+                     */
+                    static addComposite(world: World, composite: Composite): World;
+
+                    /**
+                     * An alias for Composite.addConstraint since World is also a Composite
+                     * @method addConstraint
+                     * @param {world} world
+                     * @param {constraint} constraint
+                     * @return {world} The original world with the constraint added
+                     */
+                    static addConstraint(world: World, constraint: Constraint): World;
+
+                    /**
+                     * An alias for Composite.clear since World is also a Composite
+                     * @method clear
+                     * @param {world} world
+                     * @param {boolean} keepStatic
+                     */
+                    static clear(world: World, keepStatic: boolean): void;
+
+                    /**
+                     * Creates a new world composite. The options parameter is an object that specifies any properties you wish to override the defaults.
+                     * See the properties section below for detailed information on what you can pass via the `options` object.
+                     * @method create
+                     * @constructor
+                     * @param {} options
+                     * @return {world} A new world
+                     */
+                    static create(options: IWorldDefinition): World;
+
+                    gravity: Gravity;
+                    bounds: Bounds;
+
+                }
+
+                export interface ICollisionFilter {
+                    category: number;
+                    mask: number;
+                    group: number;
+                }
+
+                export interface IMousePoint {
+                    x: number;
+                    y: number;
+                }
+
+                export class Mouse {
+                    static create(element: HTMLElement): Mouse;
+                    static setElement(mouse: Mouse, element: HTMLElement): void;
+                    static clearSourceEvents(mouse: Mouse): void;
+                    static setOffset(mouse: Mouse, offset: Vector): void;
+                    static setScale(mouse: Mouse, scale: Vector): void;
+
+                    element: HTMLElement;
+                    absolute: IMousePoint;
+                    position: IMousePoint;
+                    mousedownPosition: IMousePoint;
+                    mouseupPosition: IMousePoint;
+                    offset: IMousePoint;
+                    scale: IMousePoint;
+                    wheelDelta: number;
+                    button: number;
+                    pixelRatio: number;
+                }
+
+                export interface IEvent<T> {
+                    /**
+                     * The name of the event
+                     */
+                    name: string;
+                    /**
+                     * The source object of the event
+                     */
+                    source: T;
+                }
+
+                export interface IEventComposite<T> extends IEvent<T> {
+                    /**
+                     * EventObjects (may be a single body, constraint, composite or a mixed array of these)
+                     */
+                    object: any;
+                }
+
+                export interface IEventTimestamped<T> extends IEvent<T> {
+                    /**
+                     * The engine.timing.timestamp of the event
                      */
                     timestamp: number;
+                }
+
+                export interface IEventCollision<T> extends IEventTimestamped<T> {
                     /**
-                     * The source object of the event.
+                     * The collision pair
                      */
-                    source: any;
+                    pairs: Array<IPair>;
+                }
+
+
+                export class Events {
+
                     /**
-                     * The name of the event.
+                    * Fired when a body starts sleeping (where `this` is the body).
+                    *
+                    * @event sleepStart
+                    * @this {body} The body that has started sleeping
+                    * @param {} event An event object
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Body, name: "sleepStart", callback: (e: IEvent<Body>) => void): void;
+                    /**
+                     * Fired when a body ends sleeping (where `this` is the body).
+                     *
+                    * @event sleepEnd
+                    * @this {body} The body that has ended sleeping
+                    * @param {} event An event object
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Body, name: "sleepEnd", callback: (e: IEvent<Body>) => void): void;
+
+                    /**
+                    * Fired when a call to `Composite.add` is made, before objects have been added.
+                    *
+                    * @event beforeAdd
+                    * @param {} event An event object
+                    * @param {} event.object The object(s) to be added (may be a single body, constraint, composite or a mixed array of these)
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeAdd", callback: (e: IEventComposite<Composite>) => void): void;
+
+                    /**
+                     * Fired when a call to `Composite.add` is made, after objects have been added.
+                    *
+                    * @event afterAdd
+                    * @param {} event An event object
+                    * @param {} event.object The object(s) that have been added (may be a single body, constraint, composite or a mixed array of these)
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterAdd", callback: (e: IEventComposite<Composite>) => void): void;
+
+                    /**
+                    * Fired when a call to `Composite.remove` is made, before objects have been removed.
+                    *
+                    * @event beforeRemove
+                    * @param {} event An event object
+                    * @param {} event.object The object(s) to be removed (may be a single body, constraint, composite or a mixed array of these)
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeRemove", callback: (e: IEventComposite<Composite>) => void): void;
+
+                    /**
+                    * Fired when a call to `Composite.remove` is made, after objects have been removed.
+                    *
+                    * @event afterRemove
+                    * @param {} event An event object
+                    * @param {} event.object The object(s) that have been removed (may be a single body, constraint, composite or a mixed array of these)
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterRemove", callback: (e: IEventComposite<Composite>) => void): void;
+
+
+                    /**
+                    * Fired after engine update and all collision events
+                    *
+                    * @event afterUpdate
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterUpdate", callback: (e: IEventTimestamped<Engine>) => void): void;
+
+                    /**
+                    * Fired before rendering
+                    *
+                    * @event beforeRender
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeRender", callback: (e: IEventTimestamped<Render>) => void): void;
+                    /**
+                    * Fired after rendering
+                    *
+                    * @event afterRender
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterRender", callback: (e: IEventTimestamped<Render>) => void): void;
+
+
+                    /**
+                    * Fired just before an update
+                    *
+                    * @event beforeUpdate
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeUpdate", callback: (e: IEventTimestamped<Engine>) => void): void;
+
+                    /**
+                    * Fired after engine update, provides a list of all pairs that are colliding in the current tick (if any)
+                    *
+                    * @event collisionActive
+                    * @param {} event An event object
+                    * @param {} event.pairs List of affected pairs
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "collisionActive", callback: (e: IEventCollision<Engine>) => void): void;
+
+
+                    /**
+                    * Fired after engine update, provides a list of all pairs that have ended collision in the current tick (if any)
+                    *
+                    * @event collisionEnd
+                    * @param {} event An event object
+                    * @param {} event.pairs List of affected pairs
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "collisionEnd", callback: (e: IEventCollision<Engine>) => void): void;
+
+                    /**
+                    * Fired after engine update, provides a list of all pairs that have started to collide in the current tick (if any)
+                    *
+                    * @event collisionStart
+                    * @param {} event An event object
+                    * @param {} event.pairs List of affected pairs
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "collisionStart", callback: (e: IEventCollision<Engine>) => void): void;
+
+                    /**
+                    * Fired at the start of a tick, before any updates to the engine or timing
+                    *
+                    * @event beforeTick
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeTick", callback: (e: IEventTimestamped<Runner>) => void): void;
+
+                    /**
+                     * Fired after engine timing updated, but just before update
+                    *
+                    * @event tick
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "tick", callback: (e: IEventTimestamped<Runner>) => void): void;
+
+                    /**
+                    * Fired at the end of a tick, after engine update and after rendering
+                    *
+                    * @event afterTick
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterTick", callback: (e: IEventTimestamped<Runner>) => void): void;
+
+                    /**
+                    * Fired before rendering
+                    *
+                    * @event beforeRender
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "beforeRender", callback: (e: IEventTimestamped<Runner>) => void): void;
+
+                    /**
+                    * Fired after rendering
+                    *
+                    * @event afterRender
+                    * @param {} event An event object
+                    * @param {number} event.timestamp The engine.timing.timestamp of the event
+                    * @param {} event.source The source object of the event
+                    * @param {} event.name The name of the event
+                    */
+                    static on(obj: Engine, name: "afterRender", callback: (e: IEventTimestamped<Runner>) => void): void;
+
+                    /**
+                     * Fired when the mouse is down (or a touch has started) during the last step
+                     * @param obj
+                     * @param name
+                     * @param callback
                      */
+                    static on(obj: MouseConstraint, name: "mousedown", callback: (e: any) => void): void;
+
+                    /**
+                     * Fired when the mouse has moved (or a touch moves) during the last step
+                     * @param obj
+                     * @param name
+                     * @param callback
+                     */
+                    static on(obj: MouseConstraint, name: "mousemove", callback: (e: any) => void): void;
+
+                    /**
+                     * Fired when the mouse is up (or a touch has ended) during the last step
+                     * @param obj
+                     * @param name
+                     * @param callback
+                     */
+                    static on(obj: MouseConstraint, name: "mouseup", callback: (e: any) => void): void;
+
+
+                    static on(obj: any, name: string, callback: (e: any) => void): void;
+
+                    /**
+                     * Removes the given event callback. If no callback, clears all callbacks in eventNames. If no eventNames, clears all events.
+                     *
+                    * @param obj
+                    * @param eventName
+                    * @param callback
+                    */
+                    static off(obj: any, eventName: string, callback: (e: any) => void): void;
+
+                    /**
+                     * Fires all the callbacks subscribed to the given object's eventName, in the order they subscribed, if any.
+                     *
+                    * @param object
+                    * @param eventNames
+                    * @param event
+                    */
+                    static trigger(object: any, eventNames: string, event?: (e: any) => void): void;
+
+                }
+
+                type Dependency = {name: string, range: string}
+                                | {name: string, version: string}
+                                | string;
+
+                export class Plugin {
                     name: string;
-                };
+                    version: string;
+                    install: () => void;
+                    for?: string;
 
-                /**
-                 * The Matter Physics After Update Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance after the engine has updated and all collision events have resolved.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('afterupdate', listener)`.
-                 */
-                const AFTER_UPDATE: any;
+                    /**
+                     * Registers a plugin object so it can be resolved later by name.
+                     * @method register
+                     * @param plugin {} The plugin to register.
+                     * @return {object} The plugin.
+                     */
+                    static register(plugin: Plugin): Plugin;
 
-                type BeforeUpdateEvent = {
                     /**
-                     * The Matter Engine `timing.timestamp` value for the event.
+                     * Resolves a dependency to a plugin object from the registry if it exists.
+                     * The `dependency` may contain a version, but only the name matters when resolving.
+                     * @method resolve
+                     * @param dependency {string} The dependency.
+                     * @return {object} The plugin if resolved, otherwise `undefined`.
                      */
-                    timestamp: number;
-                    /**
-                     * The source object of the event.
-                     */
-                    source: any;
-                    /**
-                     * The name of the event.
-                     */
-                    name: string;
-                };
+                    static resolve(dependency: string): Plugin | undefined;
 
-                /**
-                 * The Matter Physics Before Update Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance right before all the collision processing takes place.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('beforeupdate', listener)`.
-                 */
-                const BEFORE_UPDATE: any;
-
-                type CollisionActiveEvent = {
                     /**
-                     * A list of all affected pairs in the collision.
+                     * Returns `true` if the object meets the minimum standard to be considered a plugin.
+                     * This means it must define the following properties:
+                     * - `name`
+                     * - `version`
+                     * - `install`
+                     * @method isPlugin
+                     * @param obj {} The obj to test.
+                     * @return {boolean} `true` if the object can be considered a plugin otherwise `false`.
                      */
-                    pairs: any[];
-                    /**
-                     * The Matter Engine `timing.timestamp` value for the event.
-                     */
-                    timestamp: number;
-                    /**
-                     * The source object of the event.
-                     */
-                    source: any;
-                    /**
-                     * The name of the event.
-                     */
-                    name: string;
-                };
+                    static isPlugin(obj: {}): boolean;
 
-                /**
-                 * The Matter Physics Collision Active Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance after the engine has updated.
-                 * It provides a list of all pairs that are colliding in the current tick (if any).
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('collisionactive', listener)`.
-                 */
-                const COLLISION_ACTIVE: any;
-
-                type CollisionEndEvent = {
                     /**
-                     * A list of all affected pairs in the collision.
+                     * Returns a pretty printed plugin name and version.
+                     * @method toString
+                     * @param plugin {} The plugin.
+                     * @return {string} Pretty printed plugin name and version.
                      */
-                    pairs: any[];
+                    static toString(plugin: string | Plugin): string;
+
                     /**
-                     * The Matter Engine `timing.timestamp` value for the event.
+                     * Returns `true` if `plugin.for` is applicable to `module` by comparing against `module.name` and `module.version`.
+                     * If `plugin.for` is not specified then it is assumed to be applicable.
+                     * The value of `plugin.for` is a string of the format `'module-name'` or `'module-name@version'`.
+                     * @method isFor
+                     * @param plugin {} The plugin.
+                     * @param module {} The module.
+                     * @return {boolean} `true` if `plugin.for` is applicable to `module`, otherwise `false`.
                      */
-                    timestamp: number;
+                    static isFor(plugin: Plugin, module: {name?: string, [_: string]: any}): boolean;
+
                     /**
-                     * The source object of the event.
+                     * Installs the plugins by calling `plugin.install` on each plugin specified in `plugins` if passed, otherwise `module.uses`.
+                     * For installing plugins on `Matter` see the convenience function `Matter.use`.
+                     * Plugins may be specified either by their name or a reference to the plugin object.
+                     * Plugins themselves may specify further dependencies, but each plugin is installed only once.
+                     * Order is important, a topological sort is performed to find the best resulting order of installation.
+                     * This sorting attempts to satisfy every dependency's requested ordering, but may not be exact in all cases.
+                     * This function logs the resulting status of each dependency in the console, along with any warnings.
+                     * - A green tick ✅ indicates a dependency was resolved and installed.
+                     * - An orange diamond 🔶 indicates a dependency was resolved but a warning was thrown for it or one if its dependencies.
+                     * - A red cross ❌ indicates a dependency could not be resolved.
+                     * Avoid calling this function multiple times on the same module unless you intend to manually control installation order.
+                     * @method use
+                     * @param module {} The module install plugins on.
+                     * @param [plugins=module.uses] {} The plugins to install on module (optional, defaults to `module.uses`).
                      */
-                    source: any;
+                    static use(
+                        module: {uses?: (Plugin | string)[]; [_: string]: any},
+                        plugins: (Plugin | string)[]
+                    ): void;
+
                     /**
-                     * The name of the event.
+                     * Recursively finds all of a module's dependencies and returns a flat dependency graph.
+                     * @method dependencies
+                     * @param module {} The module.
+                     * @return {object} A dependency graph.
                      */
-                    name: string;
-                };
+                    static dependencies(
+                        module: Dependency,
+                        tracked?: {[_: string]: string[]}
+                    ): {[_: string]: string[]} | string | undefined
 
-                /**
-                 * The Matter Physics Collision End Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance after the engine has updated.
-                 * It provides a list of all pairs that have finished colliding in the current tick (if any).
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('collisionend', listener)`.
-                 */
-                const COLLISION_END: any;
-
-                type CollisionStartEvent = {
                     /**
-                     * A list of all affected pairs in the collision.
+                     * Parses a dependency string into its components.
+                     * The `dependency` is a string of the format `'module-name'` or `'module-name@version'`.
+                     * See documentation for `Plugin.versionParse` for a description of the format.
+                     * This function can also handle dependencies that are already resolved (e.g. a module object).
+                     * @method dependencyParse
+                     * @param dependency {string} The dependency of the format `'module-name'` or `'module-name@version'`.
+                     * @return {object} The dependency parsed into its components.
                      */
-                    pairs: any[];
+                    static dependencyParse(dependency: Dependency) : {name: string, range: string};
+
                     /**
-                     * The Matter Engine `timing.timestamp` value for the event.
+                     * Parses a version string into its components.
+                     * Versions are strictly of the format `x.y.z` (as in [semver](http://semver.org/)).
+                     * Versions may optionally have a prerelease tag in the format `x.y.z-alpha`.
+                     * Ranges are a strict subset of [npm ranges](https://docs.npmjs.com/misc/semver#advanced-range-syntax).
+                     * Only the following range types are supported:
+                     * - Tilde ranges e.g. `~1.2.3`
+                     * - Caret ranges e.g. `^1.2.3`
+                     * - Exact version e.g. `1.2.3`
+                     * - Any version `*`
+                     * @method versionParse
+                     * @param range {string} The version string.
+                     * @return {object} The version range parsed into its components.
                      */
-                    timestamp: number;
+                    static versionParse(range: string) : {
+                        isRange: boolean,
+                        version: string,
+                        range: string,
+                        operator: string
+                        parts: number[],
+                        prerelease: string,
+                        number: number
+                    };
+
                     /**
-                     * The source object of the event.
+                     * Returns `true` if `version` satisfies the given `range`.
+                     * See documentation for `Plugin.versionParse` for a description of the format.
+                     * If a version or range is not specified, then any version (`*`) is assumed to satisfy.
+                     * @method versionSatisfies
+                     * @param version {string} The version string.
+                     * @param range {string} The range string.
+                     * @return {boolean} `true` if `version` satisfies `range`, otherwise `false`.
                      */
-                    source: any;
-                    /**
-                     * The name of the event.
-                     */
-                    name: string;
-                };
+                    static versionSatisfies(version: string, range: string): boolean;
 
-                /**
-                 * The Matter Physics Collision Start Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance after the engine has updated.
-                 * It provides a list of all pairs that have started to collide in the current tick (if any).
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('collisionstart', listener)`.
-                 */
-                const COLLISION_START: any;
-
-                /**
-                 * The Matter Physics Drag End Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance when a Pointer Constraint
-                 * stops dragging a body.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('dragend', listener)`.
-                 */
-                const DRAG_END: any;
-
-                /**
-                 * The Matter Physics Drag Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance when a Pointer Constraint
-                 * is actively dragging a body. It is emitted each time the pointer moves.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('drag', listener)`.
-                 */
-                const DRAG: any;
-
-                /**
-                 * The Matter Physics Drag Start Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance when a Pointer Constraint
-                 * starts dragging a body.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('dragstart', listener)`.
-                 */
-                const DRAG_START: any;
-
-                /**
-                 * The Matter Physics World Pause Event.
-                 *
-                 * This event is dispatched by an Matter Physics World instance when it is paused.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('pause', listener)`.
-                 */
-                const PAUSE: any;
-
-                /**
-                 * The Matter Physics World Resume Event.
-                 *
-                 * This event is dispatched by an Matter Physics World instance when it resumes from a paused state.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('resume', listener)`.
-                 */
-                const RESUME: any;
-
-                type SleepEndEvent = {
-                    /**
-                     * The source object of the event.
-                     */
-                    source: any;
-                    /**
-                     * The name of the event.
-                     */
-                    name: string;
-                };
-
-                /**
-                 * The Matter Physics Sleep End Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance when a Body stop sleeping.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('sleepend', listener)`.
-                 */
-                const SLEEP_END: any;
-
-                type SleepStartEvent = {
-                    /**
-                     * The source object of the event.
-                     */
-                    source: any;
-                    /**
-                     * The name of the event.
-                     */
-                    name: string;
-                };
-
-                /**
-                 * The Matter Physics Sleep Start Event.
-                 *
-                 * This event is dispatched by a Matter Physics World instance when a Body goes to sleep.
-                 *
-                 * Listen to it from a Scene using: `this.matter.world.on('sleepstart', listener)`.
-                 */
-                const SLEEP_START: any;
-
+                }
             }
-
-            /**
-             * The Matter Factory can create different types of bodies and them to a physics world.
-             */
-            class Factory {
-                /**
-                 *
-                 * @param world The Matter World which this Factory adds to.
-                 */
-                constructor(world: Phaser.Physics.Matter.World);
-
-                /**
-                 * The Matter World which this Factory adds to.
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * The Scene which this Factory's Matter World belongs to.
-                 */
-                scene: Phaser.Scene;
-
-                /**
-                 * A reference to the Scene.Systems this Matter Physics instance belongs to.
-                 */
-                sys: Phaser.Scenes.Systems;
-
-                /**
-                 * Creates a new rigid rectangular Body and adds it to the World.
-                 * @param x The X coordinate of the center of the Body.
-                 * @param y The Y coordinate of the center of the Body.
-                 * @param width The width of the Body.
-                 * @param height The height of the Body.
-                 * @param options An object of properties to set on the Body. You can also specify a `chamfer` property to automatically adjust the body.
-                 */
-                rectangle(x: number, y: number, width: number, height: number, options: object): MatterJS.Body;
-
-                /**
-                 * Creates a new rigid trapezoidal Body and adds it to the World.
-                 * @param x The X coordinate of the center of the Body.
-                 * @param y The Y coordinate of the center of the Body.
-                 * @param width The width of the trapezoid of the Body.
-                 * @param height The height of the trapezoid of the Body.
-                 * @param slope The slope of the trapezoid. 0 creates a rectangle, while 1 creates a triangle. Positive values make the top side shorter, while negative values make the bottom side shorter.
-                 * @param options An object of properties to set on the Body. You can also specify a `chamfer` property to automatically adjust the body.
-                 */
-                trapezoid(x: number, y: number, width: number, height: number, slope: number, options: object): MatterJS.Body;
-
-                /**
-                 * Creates a new rigid circular Body and adds it to the World.
-                 * @param x The X coordinate of the center of the Body.
-                 * @param y The Y coordinate of the center of the Body.
-                 * @param radius The radius of the circle.
-                 * @param options An object of properties to set on the Body. You can also specify a `chamfer` property to automatically adjust the body.
-                 * @param maxSides The maximum amount of sides to use for the polygon which will approximate this circle.
-                 */
-                circle(x: number, y: number, radius: number, options: object, maxSides: number): MatterJS.Body;
-
-                /**
-                 * Creates a new rigid polygonal Body and adds it to the World.
-                 * @param x The X coordinate of the center of the Body.
-                 * @param y The Y coordinate of the center of the Body.
-                 * @param sides The number of sides the polygon will have.
-                 * @param radius The "radius" of the polygon, i.e. the distance from its center to any vertex. This is also the radius of its circumcircle.
-                 * @param options An object of properties to set on the Body. You can also specify a `chamfer` property to automatically adjust the body.
-                 */
-                polygon(x: number, y: number, sides: number, radius: number, options: object): MatterJS.Body;
-
-                /**
-                 * Creates a body using the supplied vertices (or an array containing multiple sets of vertices) and adds it to the World.
-                 * If the vertices are convex, they will pass through as supplied. Otherwise, if the vertices are concave, they will be decomposed. Note that this process is not guaranteed to support complex sets of vertices, e.g. ones with holes.
-                 * @param x The X coordinate of the center of the Body.
-                 * @param y The Y coordinate of the center of the Body.
-                 * @param vertexSets [description]
-                 * @param options [description]
-                 * @param flagInternal Flag internal edges (coincident part edges)
-                 * @param removeCollinear Whether Matter.js will discard collinear edges (to improve performance).
-                 * @param minimumArea During decomposition discard parts that have an area less than this
-                 */
-                fromVertices(x: number, y: number, vertexSets: any[], options: object, flagInternal: boolean, removeCollinear: boolean, minimumArea: number): MatterJS.Body;
-
-                /**
-                 * Create a new composite containing Matter Image objects created in a grid arrangement.
-                 * This function uses the body bounds to prevent overlaps.
-                 * @param key The key of the Texture this Game Object will use to render with, as stored in the Texture Manager.
-                 * @param frame An optional frame from the Texture this Game Object is rendering with. Set to `null` to skip this value.
-                 * @param x The horizontal position of this composite in the world.
-                 * @param y The vertical position of this composite in the world.
-                 * @param columns The number of columns in the grid.
-                 * @param rows The number of rows in the grid.
-                 * @param columnGap The distance between each column. Default 0.
-                 * @param rowGap The distance between each row. Default 0.
-                 * @param options [description]
-                 */
-                imageStack(key: string, frame: string | integer, x: number, y: number, columns: number, rows: number, columnGap?: number, rowGap?: number, options?: object): MatterJS.Composite;
-
-                /**
-                 * Create a new composite containing bodies created in the callback in a grid arrangement.
-                 * This function uses the body bounds to prevent overlaps.
-                 * @param x The horizontal position of this composite in the world.
-                 * @param y The vertical position of this composite in the world.
-                 * @param columns The number of columns in the grid.
-                 * @param rows The number of rows in the grid.
-                 * @param columnGap The distance between each column.
-                 * @param rowGap The distance between each row.
-                 * @param callback The callback that creates the stack.
-                 */
-                stack(x: number, y: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: Function): MatterJS.Composite;
-
-                /**
-                 * Create a new composite containing bodies created in the callback in a pyramid arrangement.
-                 * This function uses the body bounds to prevent overlaps.
-                 * @param x The horizontal position of this composite in the world.
-                 * @param y The vertical position of this composite in the world.
-                 * @param columns The number of columns in the pyramid.
-                 * @param rows The number of rows in the pyramid.
-                 * @param columnGap The distance between each column.
-                 * @param rowGap The distance between each row.
-                 * @param callback The callback function to be invoked.
-                 */
-                pyramid(x: number, y: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: Function): MatterJS.Composite;
-
-                /**
-                 * Chains all bodies in the given composite together using constraints.
-                 * @param composite [description]
-                 * @param xOffsetA [description]
-                 * @param yOffsetA [description]
-                 * @param xOffsetB [description]
-                 * @param yOffsetB [description]
-                 * @param options [description]
-                 */
-                chain(composite: MatterJS.Composite, xOffsetA: number, yOffsetA: number, xOffsetB: number, yOffsetB: number, options: object): MatterJS.Composite;
-
-                /**
-                 * Connects bodies in the composite with constraints in a grid pattern, with optional cross braces.
-                 * @param composite [description]
-                 * @param columns [description]
-                 * @param rows [description]
-                 * @param crossBrace [description]
-                 * @param options [description]
-                 */
-                mesh(composite: MatterJS.Composite, columns: number, rows: number, crossBrace: boolean, options: object): MatterJS.Composite;
-
-                /**
-                 * Creates a composite with a Newton's Cradle setup of bodies and constraints.
-                 * @param x [description]
-                 * @param y [description]
-                 * @param number [description]
-                 * @param size [description]
-                 * @param length [description]
-                 */
-                newtonsCradle(x: number, y: number, number: number, size: number, length: number): MatterJS.Composite;
-
-                /**
-                 * Creates a composite with simple car setup of bodies and constraints.
-                 * @param x [description]
-                 * @param y [description]
-                 * @param width [description]
-                 * @param height [description]
-                 * @param wheelSize [description]
-                 */
-                car(x: number, y: number, width: number, height: number, wheelSize: number): MatterJS.Composite;
-
-                /**
-                 * Creates a simple soft body like object.
-                 * @param x The horizontal position of this composite in the world.
-                 * @param y The vertical position of this composite in the world.
-                 * @param columns The number of columns in the Composite.
-                 * @param rows The number of rows in the Composite.
-                 * @param columnGap The distance between each column.
-                 * @param rowGap The distance between each row.
-                 * @param crossBrace [description]
-                 * @param particleRadius The radius of this circlular composite.
-                 * @param particleOptions [description]
-                 * @param constraintOptions [description]
-                 */
-                softBody(x: number, y: number, columns: number, rows: number, columnGap: number, rowGap: number, crossBrace: boolean, particleRadius: number, particleOptions: object, constraintOptions: object): MatterJS.Composite;
-
-                /**
-                 * [description]
-                 * @param bodyA [description]
-                 * @param bodyB [description]
-                 * @param length [description]
-                 * @param stiffness [description] Default 1.
-                 * @param options [description] Default {}.
-                 */
-                joint(bodyA: MatterJS.Body, bodyB: MatterJS.Body, length: number, stiffness?: number, options?: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param bodyA The first possible `Body` that this constraint is attached to.
-                 * @param bodyB The second possible `Body` that this constraint is attached to.
-                 * @param length A Number that specifies the target resting length of the constraint. It is calculated automatically in `Constraint.create` from initial positions of the `constraint.bodyA` and `constraint.bodyB`
-                 * @param stiffness A Number that specifies the stiffness of the constraint, i.e. the rate at which it returns to its resting `constraint.length`. A value of `1` means the constraint should be very stiff. A value of `0.2` means the constraint acts as a soft spring. Default 1.
-                 * @param options [description] Default {}.
-                 */
-                spring(bodyA: MatterJS.Body, bodyB: MatterJS.Body, length: number, stiffness?: number, options?: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param bodyA [description]
-                 * @param bodyB [description]
-                 * @param length [description]
-                 * @param stiffness [description] Default 1.
-                 * @param options [description] Default {}.
-                 */
-                constraint(bodyA: MatterJS.Body, bodyB: MatterJS.Body, length: number, stiffness?: number, options?: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param bodyB [description]
-                 * @param length [description]
-                 * @param stiffness [description] Default 1.
-                 * @param options [description] Default {}.
-                 */
-                worldConstraint(bodyB: MatterJS.Body, length: number, stiffness?: number, options?: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param options [description]
-                 */
-                mouseSpring(options: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param options [description]
-                 */
-                pointerConstraint(options: object): MatterJS.Constraint;
-
-                /**
-                 * [description]
-                 * @param x The horizontal position of this Game Object in the world.
-                 * @param y The vertical position of this Game Object in the world.
-                 * @param key The key of the Texture this Game Object will use to render with, as stored in the Texture Manager.
-                 * @param frame An optional frame from the Texture this Game Object is rendering with. Set to `null` to skip this value.
-                 * @param options [description] Default {}.
-                 */
-                image(x: number, y: number, key: string, frame?: string | integer, options?: object): Phaser.Physics.Matter.Image;
-
-                /**
-                 * [description]
-                 * @param tile [description]
-                 * @param options [description]
-                 */
-                tileBody(tile: Phaser.Tilemaps.Tile, options: object): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * [description]
-                 * @param x The horizontal position of this Game Object in the world.
-                 * @param y The vertical position of this Game Object in the world.
-                 * @param key The key of the Texture this Game Object will use to render with, as stored in the Texture Manager.
-                 * @param frame An optional frame from the Texture this Game Object is rendering with. Set to `null` to skip this value.
-                 * @param options [description] Default {}.
-                 */
-                sprite(x: number, y: number, key: string, frame?: string | integer, options?: object): Phaser.Physics.Matter.Sprite;
-
-                /**
-                 * [description]
-                 * @param gameObject The Game Object to inject the Matter Body in to.
-                 * @param options [description]
-                 */
-                gameObject(gameObject: Phaser.GameObjects.GameObject, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Destroys this Factory.
-                 */
-                destroy(): void;
-
-            }
-
-            /**
-             * [description]
-             * @param world The Matter world to add the body to.
-             * @param gameObject The Game Object that will have the Matter body applied to it.
-             * @param options Matter options config object.
-             */
-            function MatterGameObject(world: Phaser.Physics.Matter.World, gameObject: Phaser.GameObjects.GameObject, options: object): Phaser.GameObjects.GameObject;
-
-            /**
-             * A Matter Physics Image Game Object.
-             *
-             * An Image is a light-weight Game Object useful for the display of static images in your game,
-             * such as logos, backgrounds, scenery or other non-animated elements. Images can have input
-             * events and physics bodies, or be tweened, tinted or scrolled. The main difference between an
-             * Image and a Sprite is that you cannot animate an Image as they do not have the Animation component.
-             */
-            class Image extends Phaser.GameObjects.Image implements Phaser.Physics.Matter.Components.Bounce, Phaser.Physics.Matter.Components.Collision, Phaser.Physics.Matter.Components.Force, Phaser.Physics.Matter.Components.Friction, Phaser.Physics.Matter.Components.Gravity, Phaser.Physics.Matter.Components.Mass, Phaser.Physics.Matter.Components.Sensor, Phaser.Physics.Matter.Components.SetBody, Phaser.Physics.Matter.Components.Sleep, Phaser.Physics.Matter.Components.Static, Phaser.Physics.Matter.Components.Transform, Phaser.Physics.Matter.Components.Velocity, Phaser.GameObjects.Components.Alpha, Phaser.GameObjects.Components.BlendMode, Phaser.GameObjects.Components.Depth, Phaser.GameObjects.Components.Flip, Phaser.GameObjects.Components.GetBounds, Phaser.GameObjects.Components.Origin, Phaser.GameObjects.Components.Pipeline, Phaser.GameObjects.Components.ScaleMode, Phaser.GameObjects.Components.ScrollFactor, Phaser.GameObjects.Components.Size, Phaser.GameObjects.Components.Texture, Phaser.GameObjects.Components.Tint, Phaser.GameObjects.Components.Transform, Phaser.GameObjects.Components.Visible {
-                /**
-                 *
-                 * @param world [description]
-                 * @param x The horizontal position of this Game Object in the world.
-                 * @param y The vertical position of this Game Object in the world.
-                 * @param texture The key of the Texture this Game Object will use to render with, as stored in the Texture Manager.
-                 * @param frame An optional frame from the Texture this Game Object is rendering with.
-                 * @param options Matter.js configuration object. Default {}.
-                 */
-                constructor(world: Phaser.Physics.Matter.World, x: number, y: number, texture: string, frame?: string | integer, options?: object);
-
-                /**
-                 * [description]
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * Clears all alpha values associated with this Game Object.
-                 *
-                 * Immediately sets the alpha levels back to 1 (fully opaque).
-                 */
-                clearAlpha(): this;
-
-                /**
-                 * Set the Alpha level of this Game Object. The alpha controls the opacity of the Game Object as it renders.
-                 * Alpha values are provided as a float between 0, fully transparent, and 1, fully opaque.
-                 *
-                 * If your game is running under WebGL you can optionally specify four different alpha values, each of which
-                 * correspond to the four corners of the Game Object. Under Canvas only the `topLeft` value given is used.
-                 * @param topLeft The alpha value used for the top-left of the Game Object. If this is the only value given it's applied across the whole Game Object. Default 1.
-                 * @param topRight The alpha value used for the top-right of the Game Object. WebGL only.
-                 * @param bottomLeft The alpha value used for the bottom-left of the Game Object. WebGL only.
-                 * @param bottomRight The alpha value used for the bottom-right of the Game Object. WebGL only.
-                 */
-                setAlpha(topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number): this;
-
-                /**
-                 * The alpha value of the Game Object.
-                 *
-                 * This is a global value, impacting the entire Game Object, not just a region of it.
-                 */
-                alpha: number;
-
-                /**
-                 * The alpha value starting from the top-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaTopLeft: number;
-
-                /**
-                 * The alpha value starting from the top-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaTopRight: number;
-
-                /**
-                 * The alpha value starting from the bottom-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaBottomLeft: number;
-
-                /**
-                 * The alpha value starting from the bottom-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaBottomRight: number;
-
-                /**
-                 * Sets the Blend Mode being used by this Game Object.
-                 *
-                 * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
-                 *
-                 * Under WebGL only the following Blend Modes are available:
-                 *
-                 * * ADD
-                 * * MULTIPLY
-                 * * SCREEN
-                 * * ERASE
-                 *
-                 * Canvas has more available depending on browser support.
-                 *
-                 * You can also create your own custom Blend Modes in WebGL.
-                 *
-                 * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
-                 * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-                 * reasons try to be careful about the construction of your Scene and the frequency of which blend modes
-                 * are used.
-                 */
-                blendMode: Phaser.BlendModes | string;
-
-                /**
-                 * Sets the Blend Mode being used by this Game Object.
-                 *
-                 * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
-                 *
-                 * Under WebGL only the following Blend Modes are available:
-                 *
-                 * * ADD
-                 * * MULTIPLY
-                 * * SCREEN
-                 * * ERASE (only works when rendering to a framebuffer, like a Render Texture)
-                 *
-                 * Canvas has more available depending on browser support.
-                 *
-                 * You can also create your own custom Blend Modes in WebGL.
-                 *
-                 * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
-                 * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-                 * reasons try to be careful about the construction of your Scene and the frequency in which blend modes
-                 * are used.
-                 * @param value The BlendMode value. Either a string or a CONST.
-                 */
-                setBlendMode(value: string | Phaser.BlendModes): this;
-
-                /**
-                 * The depth of this Game Object within the Scene.
-                 *
-                 * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
-                 * of Game Objects, without actually moving their position in the display list.
-                 *
-                 * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
-                 * value will always render in front of one with a lower value.
-                 *
-                 * Setting the depth will queue a depth sort event within the Scene.
-                 */
-                depth: number;
-
-                /**
-                 * The depth of this Game Object within the Scene.
-                 *
-                 * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
-                 * of Game Objects, without actually moving their position in the display list.
-                 *
-                 * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
-                 * value will always render in front of one with a lower value.
-                 *
-                 * Setting the depth will queue a depth sort event within the Scene.
-                 * @param value The depth of this Game Object.
-                 */
-                setDepth(value: integer): this;
-
-                /**
-                 * The horizontally flipped state of the Game Object.
-                 * A Game Object that is flipped horizontally will render inversed on the horizontal axis.
-                 * Flipping always takes place from the middle of the texture and does not impact the scale value.
-                 */
-                flipX: boolean;
-
-                /**
-                 * The vertically flipped state of the Game Object.
-                 * A Game Object that is flipped vertically will render inversed on the vertical axis (i.e. upside down)
-                 * Flipping always takes place from the middle of the texture and does not impact the scale value.
-                 */
-                flipY: boolean;
-
-                /**
-                 * Toggles the horizontal flipped state of this Game Object.
-                 */
-                toggleFlipX(): this;
-
-                /**
-                 * Toggles the vertical flipped state of this Game Object.
-                 */
-                toggleFlipY(): this;
-
-                /**
-                 * Sets the horizontal flipped state of this Game Object.
-                 * @param value The flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlipX(value: boolean): this;
-
-                /**
-                 * Sets the vertical flipped state of this Game Object.
-                 * @param value The flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlipY(value: boolean): this;
-
-                /**
-                 * Sets the horizontal and vertical flipped state of this Game Object.
-                 * @param x The horizontal flipped state. `false` for no flip, or `true` to be flipped.
-                 * @param y The horizontal flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlip(x: boolean, y: boolean): this;
-
-                /**
-                 * Resets the horizontal and vertical flipped state of this Game Object back to their default un-flipped state.
-                 */
-                resetFlip(): this;
-
-                /**
-                 * Gets the center coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 */
-                getCenter<O extends Phaser.Math.Vector2>(output?: O): O;
-
-                /**
-                 * Gets the top-left corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getTopLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the top-right corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getTopRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bottom-left corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getBottomLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bottom-right corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getBottomRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bounds of this Game Object, regardless of origin.
-                 * The values are stored and returned in a Rectangle, or Rectangle-like, object.
-                 * @param output An object to store the values in. If not provided a new Rectangle will be created.
-                 */
-                getBounds<O extends Phaser.Geom.Rectangle>(output?: O): O;
-
-                /**
-                 * The Mask this Game Object is using during render.
-                 */
-                mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask;
-
-                /**
-                 * Sets the mask that this Game Object will use to render with.
-                 *
-                 * The mask must have been previously created and can be either a GeometryMask or a BitmapMask.
-                 * Note: Bitmap Masks only work on WebGL. Geometry Masks work on both WebGL and Canvas.
-                 *
-                 * If a mask is already set on this Game Object it will be immediately replaced.
-                 *
-                 * Masks are positioned in global space and are not relative to the Game Object to which they
-                 * are applied. The reason for this is that multiple Game Objects can all share the same mask.
-                 *
-                 * Masks have no impact on physics or input detection. They are purely a rendering component
-                 * that allows you to limit what is visible during the render pass.
-                 * @param mask The mask this Game Object will use when rendering.
-                 */
-                setMask(mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask): this;
-
-                /**
-                 * Clears the mask that this Game Object was using.
-                 * @param destroyMask Destroy the mask before clearing it? Default false.
-                 */
-                clearMask(destroyMask?: boolean): this;
-
-                /**
-                 * Creates and returns a Bitmap Mask. This mask can be used by any Game Object,
-                 * including this one.
-                 *
-                 * To create the mask you need to pass in a reference to a renderable Game Object.
-                 * A renderable Game Object is one that uses a texture to render with, such as an
-                 * Image, Sprite, Render Texture or BitmapText.
-                 *
-                 * If you do not provide a renderable object, and this Game Object has a texture,
-                 * it will use itself as the object. This means you can call this method to create
-                 * a Bitmap Mask from any renderable Game Object.
-                 * @param renderable A renderable Game Object that uses a texture, such as a Sprite.
-                 */
-                createBitmapMask(renderable?: Phaser.GameObjects.GameObject): Phaser.Display.Masks.BitmapMask;
-
-                /**
-                 * Creates and returns a Geometry Mask. This mask can be used by any Game Object,
-                 * including this one.
-                 *
-                 * To create the mask you need to pass in a reference to a Graphics Game Object.
-                 *
-                 * If you do not provide a graphics object, and this Game Object is an instance
-                 * of a Graphics object, then it will use itself to create the mask.
-                 *
-                 * This means you can call this method to create a Geometry Mask from any Graphics Game Object.
-                 * @param graphics A Graphics Game Object. The geometry within it will be used as the mask.
-                 */
-                createGeometryMask(graphics?: Phaser.GameObjects.Graphics): Phaser.Display.Masks.GeometryMask;
-
-                /**
-                 * The horizontal origin of this Game Object.
-                 * The origin maps the relationship between the size and position of the Game Object.
-                 * The default value is 0.5, meaning all Game Objects are positioned based on their center.
-                 * Setting the value to 0 means the position now relates to the left of the Game Object.
-                 */
-                originX: number;
-
-                /**
-                 * The vertical origin of this Game Object.
-                 * The origin maps the relationship between the size and position of the Game Object.
-                 * The default value is 0.5, meaning all Game Objects are positioned based on their center.
-                 * Setting the value to 0 means the position now relates to the top of the Game Object.
-                 */
-                originY: number;
-
-                /**
-                 * The horizontal display origin of this Game Object.
-                 * The origin is a normalized value between 0 and 1.
-                 * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
-                 */
-                displayOriginX: number;
-
-                /**
-                 * The vertical display origin of this Game Object.
-                 * The origin is a normalized value between 0 and 1.
-                 * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
-                 */
-                displayOriginY: number;
-
-                /**
-                 * Sets the origin of this Game Object.
-                 *
-                 * The values are given in the range 0 to 1.
-                 * @param x The horizontal origin value. Default 0.5.
-                 * @param y The vertical origin value. If not defined it will be set to the value of `x`. Default x.
-                 */
-                setOrigin(x?: number, y?: number): this;
-
-                /**
-                 * Sets the origin of this Game Object based on the Pivot values in its Frame.
-                 */
-                setOriginFromFrame(): this;
-
-                /**
-                 * Sets the display origin of this Game Object.
-                 * The difference between this and setting the origin is that you can use pixel values for setting the display origin.
-                 * @param x The horizontal display origin value. Default 0.
-                 * @param y The vertical display origin value. If not defined it will be set to the value of `x`. Default x.
-                 */
-                setDisplayOrigin(x?: number, y?: number): this;
-
-                /**
-                 * Updates the Display Origin cached values internally stored on this Game Object.
-                 * You don't usually call this directly, but it is exposed for edge-cases where you may.
-                 */
-                updateDisplayOrigin(): this;
-
-                /**
-                 * The initial WebGL pipeline of this Game Object.
-                 */
-                defaultPipeline: Phaser.Renderer.WebGL.WebGLPipeline;
-
-                /**
-                 * The current WebGL pipeline of this Game Object.
-                 */
-                pipeline: Phaser.Renderer.WebGL.WebGLPipeline;
-
-                /**
-                 * Sets the initial WebGL Pipeline of this Game Object.
-                 * This should only be called during the instantiation of the Game Object.
-                 * @param pipelineName The name of the pipeline to set on this Game Object. Defaults to the Texture Tint Pipeline. Default TextureTintPipeline.
-                 */
-                initPipeline(pipelineName?: string): boolean;
-
-                /**
-                 * Sets the active WebGL Pipeline of this Game Object.
-                 * @param pipelineName The name of the pipeline to set on this Game Object.
-                 */
-                setPipeline(pipelineName: string): this;
-
-                /**
-                 * Resets the WebGL Pipeline of this Game Object back to the default it was created with.
-                 */
-                resetPipeline(): boolean;
-
-                /**
-                 * Gets the name of the WebGL Pipeline this Game Object is currently using.
-                 */
-                getPipelineName(): string;
-
-                /**
-                 * The Scale Mode being used by this Game Object.
-                 * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
-                 */
-                scaleMode: Phaser.ScaleModes;
-
-                /**
-                 * Sets the Scale Mode being used by this Game Object.
-                 * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
-                 * @param value The Scale Mode to be used by this Game Object.
-                 */
-                setScaleMode(value: Phaser.ScaleModes): this;
-
-                /**
-                 * The horizontal scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 */
-                scrollFactorX: number;
-
-                /**
-                 * The vertical scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 */
-                scrollFactorY: number;
-
-                /**
-                 * Sets the scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 * @param x The horizontal scroll factor of this Game Object.
-                 * @param y The vertical scroll factor of this Game Object. If not set it will use the `x` value. Default x.
-                 */
-                setScrollFactor(x: number, y?: number): this;
-
-                /**
-                 * The native (un-scaled) width of this Game Object.
-                 *
-                 * Changing this value will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or use
-                 * the `displayWidth` property.
-                 */
-                width: number;
-
-                /**
-                 * The native (un-scaled) height of this Game Object.
-                 *
-                 * Changing this value will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or use
-                 * the `displayHeight` property.
-                 */
-                height: number;
-
-                /**
-                 * The displayed width of this Game Object.
-                 *
-                 * This value takes into account the scale factor.
-                 *
-                 * Setting this value will adjust the Game Object's scale property.
-                 */
-                displayWidth: number;
-
-                /**
-                 * The displayed height of this Game Object.
-                 *
-                 * This value takes into account the scale factor.
-                 *
-                 * Setting this value will adjust the Game Object's scale property.
-                 */
-                displayHeight: number;
-
-                /**
-                 * Sets the size of this Game Object to be that of the given Frame.
-                 *
-                 * This will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or call the
-                 * `setDisplaySize` method, which is the same thing as changing the scale but allows you
-                 * to do so by giving pixel values.
-                 *
-                 * If you have enabled this Game Object for input, changing the size will _not_ change the
-                 * size of the hit area. To do this you should adjust the `input.hitArea` object directly.
-                 * @param frame The frame to base the size of this Game Object on.
-                 */
-                setSizeToFrame(frame: Phaser.Textures.Frame): this;
-
-                /**
-                 * Sets the internal size of this Game Object, as used for frame or physics body creation.
-                 *
-                 * This will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or call the
-                 * `setDisplaySize` method, which is the same thing as changing the scale but allows you
-                 * to do so by giving pixel values.
-                 *
-                 * If you have enabled this Game Object for input, changing the size will _not_ change the
-                 * size of the hit area. To do this you should adjust the `input.hitArea` object directly.
-                 * @param width The width of this Game Object.
-                 * @param height The height of this Game Object.
-                 */
-                setSize(width: number, height: number): this;
-
-                /**
-                 * Sets the display size of this Game Object.
-                 *
-                 * Calling this will adjust the scale.
-                 * @param width The width of this Game Object.
-                 * @param height The height of this Game Object.
-                 */
-                setDisplaySize(width: number, height: number): this;
-
-                /**
-                 * The Texture this Game Object is using to render with.
-                 */
-                texture: Phaser.Textures.Texture | Phaser.Textures.CanvasTexture;
-
-                /**
-                 * The Texture Frame this Game Object is using to render with.
-                 */
-                frame: Phaser.Textures.Frame;
-
-                /**
-                 * A boolean flag indicating if this Game Object is being cropped or not.
-                 * You can toggle this at any time after `setCrop` has been called, to turn cropping on or off.
-                 * Equally, calling `setCrop` with no arguments will reset the crop and disable it.
-                 */
-                isCropped: boolean;
-
-                /**
-                 * Applies a crop to a texture based Game Object, such as a Sprite or Image.
-                 *
-                 * The crop is a rectangle that limits the area of the texture frame that is visible during rendering.
-                 *
-                 * Cropping a Game Object does not change its size, dimensions, physics body or hit area, it just
-                 * changes what is shown when rendered.
-                 *
-                 * The crop coordinates are relative to the texture frame, not the Game Object, meaning 0 x 0 is the top-left.
-                 *
-                 * Therefore, if you had a Game Object that had an 800x600 sized texture, and you wanted to show only the left
-                 * half of it, you could call `setCrop(0, 0, 400, 600)`.
-                 *
-                 * It is also scaled to match the Game Object scale automatically. Therefore a crop rect of 100x50 would crop
-                 * an area of 200x100 when applied to a Game Object that had a scale factor of 2.
-                 *
-                 * You can either pass in numeric values directly, or you can provide a single Rectangle object as the first argument.
-                 *
-                 * Call this method with no arguments at all to reset the crop, or toggle the property `isCropped` to `false`.
-                 *
-                 * You should do this if the crop rectangle becomes the same size as the frame itself, as it will allow
-                 * the renderer to skip several internal calculations.
-                 * @param x The x coordinate to start the crop from. Or a Phaser.Geom.Rectangle object, in which case the rest of the arguments are ignored.
-                 * @param y The y coordinate to start the crop from.
-                 * @param width The width of the crop rectangle in pixels.
-                 * @param height The height of the crop rectangle in pixels.
-                 */
-                setCrop(x?: number | Phaser.Geom.Rectangle, y?: number, width?: number, height?: number): this;
-
-                /**
-                 * Sets the texture and frame this Game Object will use to render with.
-                 *
-                 * Textures are referenced by their string-based keys, as stored in the Texture Manager.
-                 * @param key The key of the texture to be used, as stored in the Texture Manager.
-                 * @param frame The name or index of the frame within the Texture.
-                 */
-                setTexture(key: string, frame?: string | integer): this;
-
-                /**
-                 * Sets the frame this Game Object will use to render with.
-                 *
-                 * The Frame has to belong to the current Texture being used.
-                 *
-                 * It can be either a string or an index.
-                 *
-                 * Calling `setFrame` will modify the `width` and `height` properties of your Game Object.
-                 * It will also change the `origin` if the Frame has a custom pivot point, as exported from packages like Texture Packer.
-                 * @param frame The name or index of the frame within the Texture.
-                 * @param updateSize Should this call adjust the size of the Game Object? Default true.
-                 * @param updateOrigin Should this call adjust the origin of the Game Object? Default true.
-                 */
-                setFrame(frame: string | integer, updateSize?: boolean, updateOrigin?: boolean): this;
-
-                /**
-                 * Fill or additive?
-                 */
-                tintFill: boolean;
-
-                /**
-                 * Clears all tint values associated with this Game Object.
-                 *
-                 * Immediately sets the color values back to 0xffffff and the tint type to 'additive',
-                 * which results in no visible change to the texture.
-                 */
-                clearTint(): this;
-
-                /**
-                 * Sets an additive tint on this Game Object.
-                 *
-                 * The tint works by taking the pixel color values from the Game Objects texture, and then
-                 * multiplying it by the color value of the tint. You can provide either one color value,
-                 * in which case the whole Game Object will be tinted in that color. Or you can provide a color
-                 * per corner. The colors are blended together across the extent of the Game Object.
-                 *
-                 * To modify the tint color once set, either call this method again with new values or use the
-                 * `tint` property to set all colors at once. Or, use the properties `tintTopLeft`, `tintTopRight,
-                 * `tintBottomLeft` and `tintBottomRight` to set the corner color values independently.
-                 *
-                 * To remove a tint call `clearTint`.
-                 *
-                 * To swap this from being an additive tint to a fill based tint set the property `tintFill` to `true`.
-                 * @param topLeft The tint being applied to the top-left of the Game Object. If no other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
-                 * @param topRight The tint being applied to the top-right of the Game Object.
-                 * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
-                 * @param bottomRight The tint being applied to the bottom-right of the Game Object.
-                 */
-                setTint(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
-
-                /**
-                 * Sets a fill-based tint on this Game Object.
-                 *
-                 * Unlike an additive tint, a fill-tint literally replaces the pixel colors from the texture
-                 * with those in the tint. You can use this for effects such as making a player flash 'white'
-                 * if hit by something. You can provide either one color value, in which case the whole
-                 * Game Object will be rendered in that color. Or you can provide a color per corner. The colors
-                 * are blended together across the extent of the Game Object.
-                 *
-                 * To modify the tint color once set, either call this method again with new values or use the
-                 * `tint` property to set all colors at once. Or, use the properties `tintTopLeft`, `tintTopRight,
-                 * `tintBottomLeft` and `tintBottomRight` to set the corner color values independently.
-                 *
-                 * To remove a tint call `clearTint`.
-                 *
-                 * To swap this from being a fill-tint to an additive tint set the property `tintFill` to `false`.
-                 * @param topLeft The tint being applied to the top-left of the Game Object. If not other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
-                 * @param topRight The tint being applied to the top-right of the Game Object.
-                 * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
-                 * @param bottomRight The tint being applied to the bottom-right of the Game Object.
-                 */
-                setTintFill(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
-
-                /**
-                 * The tint value being applied to the top-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintTopLeft: integer;
-
-                /**
-                 * The tint value being applied to the top-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintTopRight: integer;
-
-                /**
-                 * The tint value being applied to the bottom-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintBottomLeft: integer;
-
-                /**
-                 * The tint value being applied to the bottom-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintBottomRight: integer;
-
-                /**
-                 * The tint value being applied to the whole of the Game Object.
-                 */
-                tint: integer;
-
-                /**
-                 * Does this Game Object have a tint applied to it or not?
-                 */
-                readonly isTinted: boolean;
-
-                /**
-                 * The x position of this Game Object.
-                 */
-                x: number;
-
-                /**
-                 * The y position of this Game Object.
-                 */
-                y: number;
-
-                /**
-                 * The z position of this Game Object.
-                 * Note: Do not use this value to set the z-index, instead see the `depth` property.
-                 */
-                z: number;
-
-                /**
-                 * The w position of this Game Object.
-                 */
-                w: number;
-
-                /**
-                 * The horizontal scale of this Game Object.
-                 */
-                scaleX: number;
-
-                /**
-                 * The vertical scale of this Game Object.
-                 */
-                scaleY: number;
-
-                /**
-                 * The angle of this Game Object as expressed in degrees.
-                 *
-                 * Where 0 is to the right, 90 is down, 180 is left.
-                 *
-                 * If you prefer to work in radians, see the `rotation` property instead.
-                 */
-                angle: integer;
-
-                /**
-                 * The angle of this Game Object in radians.
-                 *
-                 * If you prefer to work in degrees, see the `angle` property instead.
-                 */
-                rotation: number;
-
-                /**
-                 * Sets the position of this Game Object.
-                 * @param x The x position of this Game Object. Default 0.
-                 * @param y The y position of this Game Object. If not set it will use the `x` value. Default x.
-                 * @param z The z position of this Game Object. Default 0.
-                 * @param w The w position of this Game Object. Default 0.
-                 */
-                setPosition(x?: number, y?: number, z?: number, w?: number): this;
-
-                /**
-                 * Sets the position of this Game Object to be a random position within the confines of
-                 * the given area.
-                 *
-                 * If no area is specified a random position between 0 x 0 and the game width x height is used instead.
-                 *
-                 * The position does not factor in the size of this Game Object, meaning that only the origin is
-                 * guaranteed to be within the area.
-                 * @param x The x position of the top-left of the random area. Default 0.
-                 * @param y The y position of the top-left of the random area. Default 0.
-                 * @param width The width of the random area.
-                 * @param height The height of the random area.
-                 */
-                setRandomPosition(x?: number, y?: number, width?: number, height?: number): this;
-
-                /**
-                 * Sets the rotation of this Game Object.
-                 * @param radians The rotation of this Game Object, in radians. Default 0.
-                 */
-                setRotation(radians?: number): this;
-
-                /**
-                 * Sets the angle of this Game Object.
-                 * @param degrees The rotation of this Game Object, in degrees. Default 0.
-                 */
-                setAngle(degrees?: number): this;
-
-                /**
-                 * Sets the scale of this Game Object.
-                 * @param x The horizontal scale of this Game Object.
-                 * @param y The vertical scale of this Game Object. If not set it will use the `x` value. Default x.
-                 */
-                setScale(x: number, y?: number): this;
-
-                /**
-                 * Sets the x position of this Game Object.
-                 * @param value The x position of this Game Object. Default 0.
-                 */
-                setX(value?: number): this;
-
-                /**
-                 * Sets the y position of this Game Object.
-                 * @param value The y position of this Game Object. Default 0.
-                 */
-                setY(value?: number): this;
-
-                /**
-                 * Sets the z position of this Game Object.
-                 * @param value The z position of this Game Object. Default 0.
-                 */
-                setZ(value?: number): this;
-
-                /**
-                 * Sets the w position of this Game Object.
-                 * @param value The w position of this Game Object. Default 0.
-                 */
-                setW(value?: number): this;
-
-                /**
-                 * Gets the local transform matrix for this Game Object.
-                 * @param tempMatrix The matrix to populate with the values from this Game Object.
-                 */
-                getLocalTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
-
-                /**
-                 * Gets the world transform matrix for this Game Object, factoring in any parent Containers.
-                 * @param tempMatrix The matrix to populate with the values from this Game Object.
-                 * @param parentMatrix A temporary matrix to hold parent values during the calculations.
-                 */
-                getWorldTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix, parentMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
-
-                /**
-                 * The visible state of the Game Object.
-                 *
-                 * An invisible Game Object will skip rendering, but will still process update logic.
-                 */
-                visible: boolean;
-
-                /**
-                 * Sets the visibility of this Game Object.
-                 *
-                 * An invisible Game Object will skip rendering, but will still process update logic.
-                 * @param value The visible state of the Game Object.
-                 */
-                setVisible(value: boolean): this;
-
-                /**
-                 * Sets the restitution on the physics object.
-                 * @param value A Number that defines the restitution (elasticity) of the body. The value is always positive and is in the range (0, 1). A value of 0 means collisions may be perfectly inelastic and no bouncing may occur. A value of 0.8 means the body may bounce back with approximately 80% of its kinetic energy. Note that collision response is based on pairs of bodies, and that restitution values are combined with the following formula: `Math.max(bodyA.restitution, bodyB.restitution)`
-                 */
-                setBounce(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision category of this Game Object's Matter Body. This number must be a power of two between 2^0 (= 1) and 2^31. Two bodies with different collision groups (see {@link #setCollisionGroup}) will only collide if their collision categories are included in their collision masks (see {@link #setCollidesWith}).
-                 * @param value Unique category bitfield.
-                 */
-                setCollisionCategory(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision group of this Game Object's Matter Body. If this is zero or two Matter Bodies have different values, they will collide according to the usual rules (see {@link #setCollisionCategory} and {@link #setCollisionGroup}). If two Matter Bodies have the same positive value, they will always collide; if they have the same negative value, they will never collide.
-                 * @param value Unique group index.
-                 */
-                setCollisionGroup(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision mask for this Game Object's Matter Body. Two Matter Bodies with different collision groups will only collide if each one includes the other's category in its mask based on a bitwise AND, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0` are both true.
-                 * @param categories A unique category bitfield, or an array of them.
-                 */
-                setCollidesWith(categories: number | number[]): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Applies a force to a body.
-                 * @param force A Vector that specifies the force to apply.
-                 */
-                applyForce(force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Applies a force to a body from a given position.
-                 * @param position The position in which the force comes from.
-                 * @param force A Vector that specifies the force to apply.
-                 */
-                applyForceFrom(position: Phaser.Math.Vector2, force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the forward position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrust(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the left position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustLeft(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the right position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustRight(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the back position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustBack(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets new friction values for this Game Object's Matter Body.
-                 * @param value The new friction of the body, between 0 and 1, where 0 allows the Body to slide indefinitely, while 1 allows it to stop almost immediately after a force is applied.
-                 * @param air If provided, the new air resistance of the Body. The higher the value, the faster the Body will slow as it moves through space. 0 means the body has no air resistance.
-                 * @param fstatic If provided, the new static friction of the Body. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary. 0 means the body will never "stick" when it is nearly stationary.
-                 */
-                setFriction(value: number, air?: number, fstatic?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new air resistance for this Game Object's Matter Body. A value of 0 means the Body will never slow as it moves through space. The higher the value, the faster a Body slows when moving through space.
-                 * @param value The new air resistance for the Body.
-                 */
-                setFrictionAir(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new static friction for this Game Object's Matter Body. A value of 0 means the Body will never "stick" when it is nearly stationary. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary.
-                 * @param value The new static friction for the Body.
-                 */
-                setFrictionStatic(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * A togglable function for ignoring world gravity in real-time on the current body.
-                 * @param value Set to true to ignore the effect of world gravity, or false to not ignore it.
-                 */
-                setIgnoreGravity(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the mass of the Game Object's Matter Body.
-                 * @param value The new mass of the body.
-                 */
-                setMass(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets density of the body.
-                 * @param value The new density of the body.
-                 */
-                setDensity(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * The body's center of mass.
-                 */
-                readonly centerOfMass: any;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSensor(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isSensor(): boolean;
-
-                /**
-                 * Set the body on a Game Object to a rectangle.
-                 * @param width Width of the rectangle.
-                 * @param height Height of the rectangle.
-                 * @param options [description]
-                 */
-                setRectangle(width: number, height: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param radius [description]
-                 * @param options [description]
-                 */
-                setCircle(radius: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Set the body on the Game Object to a polygon shape.
-                 * @param radius The radius of the polygon.
-                 * @param sides The amount of sides creating the polygon.
-                 * @param options A matterjs config object.
-                 */
-                setPolygon(radius: number, sides: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Creates a new matterjs trapezoid body.
-                 * @param width The width of the trapezoid.
-                 * @param height The height of the trapezoid.
-                 * @param slope The angle of slope for the trapezoid.
-                 * @param options A matterjs config object for the body.
-                 */
-                setTrapezoid(width: number, height: number, slope: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param body [description]
-                 * @param addToWorld [description] Default true.
-                 */
-                setExistingBody(body: MatterJS.Body, addToWorld?: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param config [description]
-                 * @param options [description]
-                 */
-                setBody(config: object, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description] Default 60.
-                 */
-                setSleepThreshold(value?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param start [description]
-                 * @param end [description]
-                 */
-                setSleepEvents(start: boolean, end: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepStartEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepEndEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setStatic(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isStatic(): boolean;
-
-                /**
-                 * [description]
-                 */
-                setFixedRotation(): this;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setAngularVelocity(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the horizontal velocity of the physics body.
-                 * @param x The horizontal velocity value.
-                 */
-                setVelocityX(x: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets vertical velocity of the physics body.
-                 * @param y The vertical velocity value.
-                 */
-                setVelocityY(y: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets both the horizontal and vertical velocity of the physics body.
-                 * @param x The horizontal velocity value.
-                 * @param y The vertical velocity value, it can be either positive or negative. If not given, it will be the same as the `x` value. Default x.
-                 */
-                setVelocity(x: number, y?: number): Phaser.GameObjects.GameObject;
-
-            }
-
-            /**
-             * [description]
-             */
-            class MatterPhysics {
-                /**
-                 *
-                 * @param scene [description]
-                 */
-                constructor(scene: Phaser.Scene);
-
-                /**
-                 * [description]
-                 */
-                scene: Phaser.Scene;
-
-                /**
-                 * [description]
-                 */
-                systems: Phaser.Scenes.Systems;
-
-                /**
-                 * [description]
-                 */
-                config: object;
-
-                /**
-                 * [description]
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 */
-                add: Phaser.Physics.Matter.Factory;
-
-                /**
-                 * A reference to the `Matter.Vertices` module which contains methods for creating and manipulating sets of vertices.
-                 * A set of vertices is an array of `Matter.Vector` with additional indexing properties inserted by `Vertices.create`.
-                 * A `Matter.Body` maintains a set of vertices to represent the shape of the object (its convex hull).
-                 */
-                verts: MatterJS.Vertices;
-
-                /**
-                 * [description]
-                 */
-                getConfig(): object;
-
-                /**
-                 * [description]
-                 */
-                enableAttractorPlugin(): Phaser.Physics.Matter.MatterPhysics;
-
-                /**
-                 * [description]
-                 */
-                enableWrapPlugin(): Phaser.Physics.Matter.MatterPhysics;
-
-                /**
-                 * [description]
-                 */
-                pause(): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 */
-                resume(): Phaser.Physics.Matter.World;
-
-                /**
-                 * Sets the Matter Engine to run at fixed timestep of 60Hz and enables `autoUpdate`.
-                 * If you have set a custom `getDelta` function then this will override it.
-                 */
-                set60Hz(): Phaser.Physics.Matter.MatterPhysics;
-
-                /**
-                 * Sets the Matter Engine to run at fixed timestep of 30Hz and enables `autoUpdate`.
-                 * If you have set a custom `getDelta` function then this will override it.
-                 */
-                set30Hz(): Phaser.Physics.Matter.MatterPhysics;
-
-                /**
-                 * Manually advances the physics simulation by one iteration.
-                 *
-                 * You can optionally pass in the `delta` and `correction` values to be used by Engine.update.
-                 * If undefined they use the Matter defaults of 60Hz and no correction.
-                 *
-                 * Calling `step` directly bypasses any checks of `enabled` or `autoUpdate`.
-                 *
-                 * It also ignores any custom `getDelta` functions, as you should be passing the delta
-                 * value in to this call.
-                 *
-                 * You can adjust the number of iterations that Engine.update performs internally.
-                 * Use the Scene Matter Physics config object to set the following properties:
-                 *
-                 * positionIterations (defaults to 6)
-                 * velocityIterations (defaults to 4)
-                 * constraintIterations (defaults to 2)
-                 *
-                 * Adjusting these values can help performance in certain situations, depending on the physics requirements
-                 * of your game.
-                 * @param delta [description] Default 16.666.
-                 * @param correction [description] Default 1.
-                 */
-                step(delta?: number, correction?: number): void;
-
-            }
-
-            /**
-             * A Matter Physics Sprite Game Object.
-             *
-             * A Sprite Game Object is used for the display of both static and animated images in your game.
-             * Sprites can have input events and physics bodies. They can also be tweened, tinted, scrolled
-             * and animated.
-             *
-             * The main difference between a Sprite and an Image Game Object is that you cannot animate Images.
-             * As such, Sprites take a fraction longer to process and have a larger API footprint due to the Animation
-             * Component. If you do not require animation then you can safely use Images to replace Sprites in all cases.
-             */
-            class Sprite extends Phaser.GameObjects.Sprite implements Phaser.Physics.Matter.Components.Bounce, Phaser.Physics.Matter.Components.Collision, Phaser.Physics.Matter.Components.Force, Phaser.Physics.Matter.Components.Friction, Phaser.Physics.Matter.Components.Gravity, Phaser.Physics.Matter.Components.Mass, Phaser.Physics.Matter.Components.Sensor, Phaser.Physics.Matter.Components.SetBody, Phaser.Physics.Matter.Components.Sleep, Phaser.Physics.Matter.Components.Static, Phaser.Physics.Matter.Components.Transform, Phaser.Physics.Matter.Components.Velocity, Phaser.GameObjects.Components.Alpha, Phaser.GameObjects.Components.BlendMode, Phaser.GameObjects.Components.Depth, Phaser.GameObjects.Components.Flip, Phaser.GameObjects.Components.GetBounds, Phaser.GameObjects.Components.Origin, Phaser.GameObjects.Components.Pipeline, Phaser.GameObjects.Components.ScaleMode, Phaser.GameObjects.Components.ScrollFactor, Phaser.GameObjects.Components.Size, Phaser.GameObjects.Components.Texture, Phaser.GameObjects.Components.Tint, Phaser.GameObjects.Components.Transform, Phaser.GameObjects.Components.Visible {
-                /**
-                 *
-                 * @param world [description]
-                 * @param x The horizontal position of this Game Object in the world.
-                 * @param y The vertical position of this Game Object in the world.
-                 * @param texture The key of the Texture this Game Object will use to render with, as stored in the Texture Manager.
-                 * @param frame An optional frame from the Texture this Game Object is rendering with.
-                 * @param options Matter.js configuration object. Default {}.
-                 */
-                constructor(world: Phaser.Physics.Matter.World, x: number, y: number, texture: string, frame?: string | integer, options?: object);
-
-                /**
-                 * [description]
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * Clears all alpha values associated with this Game Object.
-                 *
-                 * Immediately sets the alpha levels back to 1 (fully opaque).
-                 */
-                clearAlpha(): this;
-
-                /**
-                 * Set the Alpha level of this Game Object. The alpha controls the opacity of the Game Object as it renders.
-                 * Alpha values are provided as a float between 0, fully transparent, and 1, fully opaque.
-                 *
-                 * If your game is running under WebGL you can optionally specify four different alpha values, each of which
-                 * correspond to the four corners of the Game Object. Under Canvas only the `topLeft` value given is used.
-                 * @param topLeft The alpha value used for the top-left of the Game Object. If this is the only value given it's applied across the whole Game Object. Default 1.
-                 * @param topRight The alpha value used for the top-right of the Game Object. WebGL only.
-                 * @param bottomLeft The alpha value used for the bottom-left of the Game Object. WebGL only.
-                 * @param bottomRight The alpha value used for the bottom-right of the Game Object. WebGL only.
-                 */
-                setAlpha(topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number): this;
-
-                /**
-                 * The alpha value of the Game Object.
-                 *
-                 * This is a global value, impacting the entire Game Object, not just a region of it.
-                 */
-                alpha: number;
-
-                /**
-                 * The alpha value starting from the top-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaTopLeft: number;
-
-                /**
-                 * The alpha value starting from the top-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaTopRight: number;
-
-                /**
-                 * The alpha value starting from the bottom-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaBottomLeft: number;
-
-                /**
-                 * The alpha value starting from the bottom-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                alphaBottomRight: number;
-
-                /**
-                 * Sets the Blend Mode being used by this Game Object.
-                 *
-                 * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
-                 *
-                 * Under WebGL only the following Blend Modes are available:
-                 *
-                 * * ADD
-                 * * MULTIPLY
-                 * * SCREEN
-                 * * ERASE
-                 *
-                 * Canvas has more available depending on browser support.
-                 *
-                 * You can also create your own custom Blend Modes in WebGL.
-                 *
-                 * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
-                 * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-                 * reasons try to be careful about the construction of your Scene and the frequency of which blend modes
-                 * are used.
-                 */
-                blendMode: Phaser.BlendModes | string;
-
-                /**
-                 * Sets the Blend Mode being used by this Game Object.
-                 *
-                 * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
-                 *
-                 * Under WebGL only the following Blend Modes are available:
-                 *
-                 * * ADD
-                 * * MULTIPLY
-                 * * SCREEN
-                 * * ERASE (only works when rendering to a framebuffer, like a Render Texture)
-                 *
-                 * Canvas has more available depending on browser support.
-                 *
-                 * You can also create your own custom Blend Modes in WebGL.
-                 *
-                 * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
-                 * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
-                 * reasons try to be careful about the construction of your Scene and the frequency in which blend modes
-                 * are used.
-                 * @param value The BlendMode value. Either a string or a CONST.
-                 */
-                setBlendMode(value: string | Phaser.BlendModes): this;
-
-                /**
-                 * The depth of this Game Object within the Scene.
-                 *
-                 * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
-                 * of Game Objects, without actually moving their position in the display list.
-                 *
-                 * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
-                 * value will always render in front of one with a lower value.
-                 *
-                 * Setting the depth will queue a depth sort event within the Scene.
-                 */
-                depth: number;
-
-                /**
-                 * The depth of this Game Object within the Scene.
-                 *
-                 * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
-                 * of Game Objects, without actually moving their position in the display list.
-                 *
-                 * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
-                 * value will always render in front of one with a lower value.
-                 *
-                 * Setting the depth will queue a depth sort event within the Scene.
-                 * @param value The depth of this Game Object.
-                 */
-                setDepth(value: integer): this;
-
-                /**
-                 * The horizontally flipped state of the Game Object.
-                 * A Game Object that is flipped horizontally will render inversed on the horizontal axis.
-                 * Flipping always takes place from the middle of the texture and does not impact the scale value.
-                 */
-                flipX: boolean;
-
-                /**
-                 * The vertically flipped state of the Game Object.
-                 * A Game Object that is flipped vertically will render inversed on the vertical axis (i.e. upside down)
-                 * Flipping always takes place from the middle of the texture and does not impact the scale value.
-                 */
-                flipY: boolean;
-
-                /**
-                 * Toggles the horizontal flipped state of this Game Object.
-                 */
-                toggleFlipX(): this;
-
-                /**
-                 * Toggles the vertical flipped state of this Game Object.
-                 */
-                toggleFlipY(): this;
-
-                /**
-                 * Sets the horizontal flipped state of this Game Object.
-                 * @param value The flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlipX(value: boolean): this;
-
-                /**
-                 * Sets the vertical flipped state of this Game Object.
-                 * @param value The flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlipY(value: boolean): this;
-
-                /**
-                 * Sets the horizontal and vertical flipped state of this Game Object.
-                 * @param x The horizontal flipped state. `false` for no flip, or `true` to be flipped.
-                 * @param y The horizontal flipped state. `false` for no flip, or `true` to be flipped.
-                 */
-                setFlip(x: boolean, y: boolean): this;
-
-                /**
-                 * Resets the horizontal and vertical flipped state of this Game Object back to their default un-flipped state.
-                 */
-                resetFlip(): this;
-
-                /**
-                 * Gets the center coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 */
-                getCenter<O extends Phaser.Math.Vector2>(output?: O): O;
-
-                /**
-                 * Gets the top-left corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getTopLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the top-right corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getTopRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bottom-left corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getBottomLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bottom-right corner coordinate of this Game Object, regardless of origin.
-                 * The returned point is calculated in local space and does not factor in any parent containers
-                 * @param output An object to store the values in. If not provided a new Vector2 will be created.
-                 * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
-                 */
-                getBottomRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
-
-                /**
-                 * Gets the bounds of this Game Object, regardless of origin.
-                 * The values are stored and returned in a Rectangle, or Rectangle-like, object.
-                 * @param output An object to store the values in. If not provided a new Rectangle will be created.
-                 */
-                getBounds<O extends Phaser.Geom.Rectangle>(output?: O): O;
-
-                /**
-                 * The Mask this Game Object is using during render.
-                 */
-                mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask;
-
-                /**
-                 * Sets the mask that this Game Object will use to render with.
-                 *
-                 * The mask must have been previously created and can be either a GeometryMask or a BitmapMask.
-                 * Note: Bitmap Masks only work on WebGL. Geometry Masks work on both WebGL and Canvas.
-                 *
-                 * If a mask is already set on this Game Object it will be immediately replaced.
-                 *
-                 * Masks are positioned in global space and are not relative to the Game Object to which they
-                 * are applied. The reason for this is that multiple Game Objects can all share the same mask.
-                 *
-                 * Masks have no impact on physics or input detection. They are purely a rendering component
-                 * that allows you to limit what is visible during the render pass.
-                 * @param mask The mask this Game Object will use when rendering.
-                 */
-                setMask(mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask): this;
-
-                /**
-                 * Clears the mask that this Game Object was using.
-                 * @param destroyMask Destroy the mask before clearing it? Default false.
-                 */
-                clearMask(destroyMask?: boolean): this;
-
-                /**
-                 * Creates and returns a Bitmap Mask. This mask can be used by any Game Object,
-                 * including this one.
-                 *
-                 * To create the mask you need to pass in a reference to a renderable Game Object.
-                 * A renderable Game Object is one that uses a texture to render with, such as an
-                 * Image, Sprite, Render Texture or BitmapText.
-                 *
-                 * If you do not provide a renderable object, and this Game Object has a texture,
-                 * it will use itself as the object. This means you can call this method to create
-                 * a Bitmap Mask from any renderable Game Object.
-                 * @param renderable A renderable Game Object that uses a texture, such as a Sprite.
-                 */
-                createBitmapMask(renderable?: Phaser.GameObjects.GameObject): Phaser.Display.Masks.BitmapMask;
-
-                /**
-                 * Creates and returns a Geometry Mask. This mask can be used by any Game Object,
-                 * including this one.
-                 *
-                 * To create the mask you need to pass in a reference to a Graphics Game Object.
-                 *
-                 * If you do not provide a graphics object, and this Game Object is an instance
-                 * of a Graphics object, then it will use itself to create the mask.
-                 *
-                 * This means you can call this method to create a Geometry Mask from any Graphics Game Object.
-                 * @param graphics A Graphics Game Object. The geometry within it will be used as the mask.
-                 */
-                createGeometryMask(graphics?: Phaser.GameObjects.Graphics): Phaser.Display.Masks.GeometryMask;
-
-                /**
-                 * The horizontal origin of this Game Object.
-                 * The origin maps the relationship between the size and position of the Game Object.
-                 * The default value is 0.5, meaning all Game Objects are positioned based on their center.
-                 * Setting the value to 0 means the position now relates to the left of the Game Object.
-                 */
-                originX: number;
-
-                /**
-                 * The vertical origin of this Game Object.
-                 * The origin maps the relationship between the size and position of the Game Object.
-                 * The default value is 0.5, meaning all Game Objects are positioned based on their center.
-                 * Setting the value to 0 means the position now relates to the top of the Game Object.
-                 */
-                originY: number;
-
-                /**
-                 * The horizontal display origin of this Game Object.
-                 * The origin is a normalized value between 0 and 1.
-                 * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
-                 */
-                displayOriginX: number;
-
-                /**
-                 * The vertical display origin of this Game Object.
-                 * The origin is a normalized value between 0 and 1.
-                 * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
-                 */
-                displayOriginY: number;
-
-                /**
-                 * Sets the origin of this Game Object.
-                 *
-                 * The values are given in the range 0 to 1.
-                 * @param x The horizontal origin value. Default 0.5.
-                 * @param y The vertical origin value. If not defined it will be set to the value of `x`. Default x.
-                 */
-                setOrigin(x?: number, y?: number): this;
-
-                /**
-                 * Sets the origin of this Game Object based on the Pivot values in its Frame.
-                 */
-                setOriginFromFrame(): this;
-
-                /**
-                 * Sets the display origin of this Game Object.
-                 * The difference between this and setting the origin is that you can use pixel values for setting the display origin.
-                 * @param x The horizontal display origin value. Default 0.
-                 * @param y The vertical display origin value. If not defined it will be set to the value of `x`. Default x.
-                 */
-                setDisplayOrigin(x?: number, y?: number): this;
-
-                /**
-                 * Updates the Display Origin cached values internally stored on this Game Object.
-                 * You don't usually call this directly, but it is exposed for edge-cases where you may.
-                 */
-                updateDisplayOrigin(): this;
-
-                /**
-                 * The initial WebGL pipeline of this Game Object.
-                 */
-                defaultPipeline: Phaser.Renderer.WebGL.WebGLPipeline;
-
-                /**
-                 * The current WebGL pipeline of this Game Object.
-                 */
-                pipeline: Phaser.Renderer.WebGL.WebGLPipeline;
-
-                /**
-                 * Sets the initial WebGL Pipeline of this Game Object.
-                 * This should only be called during the instantiation of the Game Object.
-                 * @param pipelineName The name of the pipeline to set on this Game Object. Defaults to the Texture Tint Pipeline. Default TextureTintPipeline.
-                 */
-                initPipeline(pipelineName?: string): boolean;
-
-                /**
-                 * Sets the active WebGL Pipeline of this Game Object.
-                 * @param pipelineName The name of the pipeline to set on this Game Object.
-                 */
-                setPipeline(pipelineName: string): this;
-
-                /**
-                 * Resets the WebGL Pipeline of this Game Object back to the default it was created with.
-                 */
-                resetPipeline(): boolean;
-
-                /**
-                 * Gets the name of the WebGL Pipeline this Game Object is currently using.
-                 */
-                getPipelineName(): string;
-
-                /**
-                 * The Scale Mode being used by this Game Object.
-                 * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
-                 */
-                scaleMode: Phaser.ScaleModes;
-
-                /**
-                 * Sets the Scale Mode being used by this Game Object.
-                 * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
-                 * @param value The Scale Mode to be used by this Game Object.
-                 */
-                setScaleMode(value: Phaser.ScaleModes): this;
-
-                /**
-                 * The horizontal scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 */
-                scrollFactorX: number;
-
-                /**
-                 * The vertical scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 */
-                scrollFactorY: number;
-
-                /**
-                 * Sets the scroll factor of this Game Object.
-                 *
-                 * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
-                 *
-                 * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
-                 * It does not change the Game Objects actual position values.
-                 *
-                 * A value of 1 means it will move exactly in sync with a camera.
-                 * A value of 0 means it will not move at all, even if the camera moves.
-                 * Other values control the degree to which the camera movement is mapped to this Game Object.
-                 *
-                 * Please be aware that scroll factor values other than 1 are not taken in to consideration when
-                 * calculating physics collisions. Bodies always collide based on their world position, but changing
-                 * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
-                 * them from physics bodies if not accounted for in your code.
-                 * @param x The horizontal scroll factor of this Game Object.
-                 * @param y The vertical scroll factor of this Game Object. If not set it will use the `x` value. Default x.
-                 */
-                setScrollFactor(x: number, y?: number): this;
-
-                /**
-                 * The native (un-scaled) width of this Game Object.
-                 *
-                 * Changing this value will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or use
-                 * the `displayWidth` property.
-                 */
-                width: number;
-
-                /**
-                 * The native (un-scaled) height of this Game Object.
-                 *
-                 * Changing this value will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or use
-                 * the `displayHeight` property.
-                 */
-                height: number;
-
-                /**
-                 * The displayed width of this Game Object.
-                 *
-                 * This value takes into account the scale factor.
-                 *
-                 * Setting this value will adjust the Game Object's scale property.
-                 */
-                displayWidth: number;
-
-                /**
-                 * The displayed height of this Game Object.
-                 *
-                 * This value takes into account the scale factor.
-                 *
-                 * Setting this value will adjust the Game Object's scale property.
-                 */
-                displayHeight: number;
-
-                /**
-                 * Sets the size of this Game Object to be that of the given Frame.
-                 *
-                 * This will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or call the
-                 * `setDisplaySize` method, which is the same thing as changing the scale but allows you
-                 * to do so by giving pixel values.
-                 *
-                 * If you have enabled this Game Object for input, changing the size will _not_ change the
-                 * size of the hit area. To do this you should adjust the `input.hitArea` object directly.
-                 * @param frame The frame to base the size of this Game Object on.
-                 */
-                setSizeToFrame(frame: Phaser.Textures.Frame): this;
-
-                /**
-                 * Sets the internal size of this Game Object, as used for frame or physics body creation.
-                 *
-                 * This will not change the size that the Game Object is rendered in-game.
-                 * For that you need to either set the scale of the Game Object (`setScale`) or call the
-                 * `setDisplaySize` method, which is the same thing as changing the scale but allows you
-                 * to do so by giving pixel values.
-                 *
-                 * If you have enabled this Game Object for input, changing the size will _not_ change the
-                 * size of the hit area. To do this you should adjust the `input.hitArea` object directly.
-                 * @param width The width of this Game Object.
-                 * @param height The height of this Game Object.
-                 */
-                setSize(width: number, height: number): this;
-
-                /**
-                 * Sets the display size of this Game Object.
-                 *
-                 * Calling this will adjust the scale.
-                 * @param width The width of this Game Object.
-                 * @param height The height of this Game Object.
-                 */
-                setDisplaySize(width: number, height: number): this;
-
-                /**
-                 * The Texture this Game Object is using to render with.
-                 */
-                texture: Phaser.Textures.Texture | Phaser.Textures.CanvasTexture;
-
-                /**
-                 * The Texture Frame this Game Object is using to render with.
-                 */
-                frame: Phaser.Textures.Frame;
-
-                /**
-                 * A boolean flag indicating if this Game Object is being cropped or not.
-                 * You can toggle this at any time after `setCrop` has been called, to turn cropping on or off.
-                 * Equally, calling `setCrop` with no arguments will reset the crop and disable it.
-                 */
-                isCropped: boolean;
-
-                /**
-                 * Applies a crop to a texture based Game Object, such as a Sprite or Image.
-                 *
-                 * The crop is a rectangle that limits the area of the texture frame that is visible during rendering.
-                 *
-                 * Cropping a Game Object does not change its size, dimensions, physics body or hit area, it just
-                 * changes what is shown when rendered.
-                 *
-                 * The crop coordinates are relative to the texture frame, not the Game Object, meaning 0 x 0 is the top-left.
-                 *
-                 * Therefore, if you had a Game Object that had an 800x600 sized texture, and you wanted to show only the left
-                 * half of it, you could call `setCrop(0, 0, 400, 600)`.
-                 *
-                 * It is also scaled to match the Game Object scale automatically. Therefore a crop rect of 100x50 would crop
-                 * an area of 200x100 when applied to a Game Object that had a scale factor of 2.
-                 *
-                 * You can either pass in numeric values directly, or you can provide a single Rectangle object as the first argument.
-                 *
-                 * Call this method with no arguments at all to reset the crop, or toggle the property `isCropped` to `false`.
-                 *
-                 * You should do this if the crop rectangle becomes the same size as the frame itself, as it will allow
-                 * the renderer to skip several internal calculations.
-                 * @param x The x coordinate to start the crop from. Or a Phaser.Geom.Rectangle object, in which case the rest of the arguments are ignored.
-                 * @param y The y coordinate to start the crop from.
-                 * @param width The width of the crop rectangle in pixels.
-                 * @param height The height of the crop rectangle in pixels.
-                 */
-                setCrop(x?: number | Phaser.Geom.Rectangle, y?: number, width?: number, height?: number): this;
-
-                /**
-                 * Sets the texture and frame this Game Object will use to render with.
-                 *
-                 * Textures are referenced by their string-based keys, as stored in the Texture Manager.
-                 * @param key The key of the texture to be used, as stored in the Texture Manager.
-                 * @param frame The name or index of the frame within the Texture.
-                 */
-                setTexture(key: string, frame?: string | integer): this;
-
-                /**
-                 * Sets the frame this Game Object will use to render with.
-                 *
-                 * The Frame has to belong to the current Texture being used.
-                 *
-                 * It can be either a string or an index.
-                 *
-                 * Calling `setFrame` will modify the `width` and `height` properties of your Game Object.
-                 * It will also change the `origin` if the Frame has a custom pivot point, as exported from packages like Texture Packer.
-                 * @param frame The name or index of the frame within the Texture.
-                 * @param updateSize Should this call adjust the size of the Game Object? Default true.
-                 * @param updateOrigin Should this call adjust the origin of the Game Object? Default true.
-                 */
-                setFrame(frame: string | integer, updateSize?: boolean, updateOrigin?: boolean): this;
-
-                /**
-                 * Fill or additive?
-                 */
-                tintFill: boolean;
-
-                /**
-                 * Clears all tint values associated with this Game Object.
-                 *
-                 * Immediately sets the color values back to 0xffffff and the tint type to 'additive',
-                 * which results in no visible change to the texture.
-                 */
-                clearTint(): this;
-
-                /**
-                 * Sets an additive tint on this Game Object.
-                 *
-                 * The tint works by taking the pixel color values from the Game Objects texture, and then
-                 * multiplying it by the color value of the tint. You can provide either one color value,
-                 * in which case the whole Game Object will be tinted in that color. Or you can provide a color
-                 * per corner. The colors are blended together across the extent of the Game Object.
-                 *
-                 * To modify the tint color once set, either call this method again with new values or use the
-                 * `tint` property to set all colors at once. Or, use the properties `tintTopLeft`, `tintTopRight,
-                 * `tintBottomLeft` and `tintBottomRight` to set the corner color values independently.
-                 *
-                 * To remove a tint call `clearTint`.
-                 *
-                 * To swap this from being an additive tint to a fill based tint set the property `tintFill` to `true`.
-                 * @param topLeft The tint being applied to the top-left of the Game Object. If no other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
-                 * @param topRight The tint being applied to the top-right of the Game Object.
-                 * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
-                 * @param bottomRight The tint being applied to the bottom-right of the Game Object.
-                 */
-                setTint(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
-
-                /**
-                 * Sets a fill-based tint on this Game Object.
-                 *
-                 * Unlike an additive tint, a fill-tint literally replaces the pixel colors from the texture
-                 * with those in the tint. You can use this for effects such as making a player flash 'white'
-                 * if hit by something. You can provide either one color value, in which case the whole
-                 * Game Object will be rendered in that color. Or you can provide a color per corner. The colors
-                 * are blended together across the extent of the Game Object.
-                 *
-                 * To modify the tint color once set, either call this method again with new values or use the
-                 * `tint` property to set all colors at once. Or, use the properties `tintTopLeft`, `tintTopRight,
-                 * `tintBottomLeft` and `tintBottomRight` to set the corner color values independently.
-                 *
-                 * To remove a tint call `clearTint`.
-                 *
-                 * To swap this from being a fill-tint to an additive tint set the property `tintFill` to `false`.
-                 * @param topLeft The tint being applied to the top-left of the Game Object. If not other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
-                 * @param topRight The tint being applied to the top-right of the Game Object.
-                 * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
-                 * @param bottomRight The tint being applied to the bottom-right of the Game Object.
-                 */
-                setTintFill(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
-
-                /**
-                 * The tint value being applied to the top-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintTopLeft: integer;
-
-                /**
-                 * The tint value being applied to the top-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintTopRight: integer;
-
-                /**
-                 * The tint value being applied to the bottom-left of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintBottomLeft: integer;
-
-                /**
-                 * The tint value being applied to the bottom-right of the Game Object.
-                 * This value is interpolated from the corner to the center of the Game Object.
-                 */
-                tintBottomRight: integer;
-
-                /**
-                 * The tint value being applied to the whole of the Game Object.
-                 */
-                tint: integer;
-
-                /**
-                 * Does this Game Object have a tint applied to it or not?
-                 */
-                readonly isTinted: boolean;
-
-                /**
-                 * The x position of this Game Object.
-                 */
-                x: number;
-
-                /**
-                 * The y position of this Game Object.
-                 */
-                y: number;
-
-                /**
-                 * The z position of this Game Object.
-                 * Note: Do not use this value to set the z-index, instead see the `depth` property.
-                 */
-                z: number;
-
-                /**
-                 * The w position of this Game Object.
-                 */
-                w: number;
-
-                /**
-                 * The horizontal scale of this Game Object.
-                 */
-                scaleX: number;
-
-                /**
-                 * The vertical scale of this Game Object.
-                 */
-                scaleY: number;
-
-                /**
-                 * The angle of this Game Object as expressed in degrees.
-                 *
-                 * Where 0 is to the right, 90 is down, 180 is left.
-                 *
-                 * If you prefer to work in radians, see the `rotation` property instead.
-                 */
-                angle: integer;
-
-                /**
-                 * The angle of this Game Object in radians.
-                 *
-                 * If you prefer to work in degrees, see the `angle` property instead.
-                 */
-                rotation: number;
-
-                /**
-                 * Sets the position of this Game Object.
-                 * @param x The x position of this Game Object. Default 0.
-                 * @param y The y position of this Game Object. If not set it will use the `x` value. Default x.
-                 * @param z The z position of this Game Object. Default 0.
-                 * @param w The w position of this Game Object. Default 0.
-                 */
-                setPosition(x?: number, y?: number, z?: number, w?: number): this;
-
-                /**
-                 * Sets the position of this Game Object to be a random position within the confines of
-                 * the given area.
-                 *
-                 * If no area is specified a random position between 0 x 0 and the game width x height is used instead.
-                 *
-                 * The position does not factor in the size of this Game Object, meaning that only the origin is
-                 * guaranteed to be within the area.
-                 * @param x The x position of the top-left of the random area. Default 0.
-                 * @param y The y position of the top-left of the random area. Default 0.
-                 * @param width The width of the random area.
-                 * @param height The height of the random area.
-                 */
-                setRandomPosition(x?: number, y?: number, width?: number, height?: number): this;
-
-                /**
-                 * Sets the rotation of this Game Object.
-                 * @param radians The rotation of this Game Object, in radians. Default 0.
-                 */
-                setRotation(radians?: number): this;
-
-                /**
-                 * Sets the angle of this Game Object.
-                 * @param degrees The rotation of this Game Object, in degrees. Default 0.
-                 */
-                setAngle(degrees?: number): this;
-
-                /**
-                 * Sets the scale of this Game Object.
-                 * @param x The horizontal scale of this Game Object.
-                 * @param y The vertical scale of this Game Object. If not set it will use the `x` value. Default x.
-                 */
-                setScale(x: number, y?: number): this;
-
-                /**
-                 * Sets the x position of this Game Object.
-                 * @param value The x position of this Game Object. Default 0.
-                 */
-                setX(value?: number): this;
-
-                /**
-                 * Sets the y position of this Game Object.
-                 * @param value The y position of this Game Object. Default 0.
-                 */
-                setY(value?: number): this;
-
-                /**
-                 * Sets the z position of this Game Object.
-                 * @param value The z position of this Game Object. Default 0.
-                 */
-                setZ(value?: number): this;
-
-                /**
-                 * Sets the w position of this Game Object.
-                 * @param value The w position of this Game Object. Default 0.
-                 */
-                setW(value?: number): this;
-
-                /**
-                 * Gets the local transform matrix for this Game Object.
-                 * @param tempMatrix The matrix to populate with the values from this Game Object.
-                 */
-                getLocalTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
-
-                /**
-                 * Gets the world transform matrix for this Game Object, factoring in any parent Containers.
-                 * @param tempMatrix The matrix to populate with the values from this Game Object.
-                 * @param parentMatrix A temporary matrix to hold parent values during the calculations.
-                 */
-                getWorldTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix, parentMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
-
-                /**
-                 * The visible state of the Game Object.
-                 *
-                 * An invisible Game Object will skip rendering, but will still process update logic.
-                 */
-                visible: boolean;
-
-                /**
-                 * Sets the visibility of this Game Object.
-                 *
-                 * An invisible Game Object will skip rendering, but will still process update logic.
-                 * @param value The visible state of the Game Object.
-                 */
-                setVisible(value: boolean): this;
-
-                /**
-                 * Sets the restitution on the physics object.
-                 * @param value A Number that defines the restitution (elasticity) of the body. The value is always positive and is in the range (0, 1). A value of 0 means collisions may be perfectly inelastic and no bouncing may occur. A value of 0.8 means the body may bounce back with approximately 80% of its kinetic energy. Note that collision response is based on pairs of bodies, and that restitution values are combined with the following formula: `Math.max(bodyA.restitution, bodyB.restitution)`
-                 */
-                setBounce(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision category of this Game Object's Matter Body. This number must be a power of two between 2^0 (= 1) and 2^31. Two bodies with different collision groups (see {@link #setCollisionGroup}) will only collide if their collision categories are included in their collision masks (see {@link #setCollidesWith}).
-                 * @param value Unique category bitfield.
-                 */
-                setCollisionCategory(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision group of this Game Object's Matter Body. If this is zero or two Matter Bodies have different values, they will collide according to the usual rules (see {@link #setCollisionCategory} and {@link #setCollisionGroup}). If two Matter Bodies have the same positive value, they will always collide; if they have the same negative value, they will never collide.
-                 * @param value Unique group index.
-                 */
-                setCollisionGroup(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision mask for this Game Object's Matter Body. Two Matter Bodies with different collision groups will only collide if each one includes the other's category in its mask based on a bitwise AND, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0` are both true.
-                 * @param categories A unique category bitfield, or an array of them.
-                 */
-                setCollidesWith(categories: number | number[]): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Applies a force to a body.
-                 * @param force A Vector that specifies the force to apply.
-                 */
-                applyForce(force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Applies a force to a body from a given position.
-                 * @param position The position in which the force comes from.
-                 * @param force A Vector that specifies the force to apply.
-                 */
-                applyForceFrom(position: Phaser.Math.Vector2, force: Phaser.Math.Vector2): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the forward position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrust(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the left position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustLeft(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the right position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustRight(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Apply thrust to the back position of the body.
-                 * @param speed A speed value to be applied to a directional force.
-                 */
-                thrustBack(speed: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets new friction values for this Game Object's Matter Body.
-                 * @param value The new friction of the body, between 0 and 1, where 0 allows the Body to slide indefinitely, while 1 allows it to stop almost immediately after a force is applied.
-                 * @param air If provided, the new air resistance of the Body. The higher the value, the faster the Body will slow as it moves through space. 0 means the body has no air resistance.
-                 * @param fstatic If provided, the new static friction of the Body. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary. 0 means the body will never "stick" when it is nearly stationary.
-                 */
-                setFriction(value: number, air?: number, fstatic?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new air resistance for this Game Object's Matter Body. A value of 0 means the Body will never slow as it moves through space. The higher the value, the faster a Body slows when moving through space.
-                 * @param value The new air resistance for the Body.
-                 */
-                setFrictionAir(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new static friction for this Game Object's Matter Body. A value of 0 means the Body will never "stick" when it is nearly stationary. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary.
-                 * @param value The new static friction for the Body.
-                 */
-                setFrictionStatic(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * A togglable function for ignoring world gravity in real-time on the current body.
-                 * @param value Set to true to ignore the effect of world gravity, or false to not ignore it.
-                 */
-                setIgnoreGravity(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the mass of the Game Object's Matter Body.
-                 * @param value The new mass of the body.
-                 */
-                setMass(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets density of the body.
-                 * @param value The new density of the body.
-                 */
-                setDensity(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * The body's center of mass.
-                 */
-                readonly centerOfMass: any;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSensor(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isSensor(): boolean;
-
-                /**
-                 * Set the body on a Game Object to a rectangle.
-                 * @param width Width of the rectangle.
-                 * @param height Height of the rectangle.
-                 * @param options [description]
-                 */
-                setRectangle(width: number, height: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param radius [description]
-                 * @param options [description]
-                 */
-                setCircle(radius: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Set the body on the Game Object to a polygon shape.
-                 * @param radius The radius of the polygon.
-                 * @param sides The amount of sides creating the polygon.
-                 * @param options A matterjs config object.
-                 */
-                setPolygon(radius: number, sides: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Creates a new matterjs trapezoid body.
-                 * @param width The width of the trapezoid.
-                 * @param height The height of the trapezoid.
-                 * @param slope The angle of slope for the trapezoid.
-                 * @param options A matterjs config object for the body.
-                 */
-                setTrapezoid(width: number, height: number, slope: number, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param body [description]
-                 * @param addToWorld [description] Default true.
-                 */
-                setExistingBody(body: MatterJS.Body, addToWorld?: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param config [description]
-                 * @param options [description]
-                 */
-                setBody(config: object, options: object): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description] Default 60.
-                 */
-                setSleepThreshold(value?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param start [description]
-                 * @param end [description]
-                 */
-                setSleepEvents(start: boolean, end: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepStartEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepEndEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setStatic(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isStatic(): boolean;
-
-                /**
-                 * [description]
-                 */
-                setFixedRotation(): this;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setAngularVelocity(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the horizontal velocity of the physics body.
-                 * @param x The horizontal velocity value.
-                 */
-                setVelocityX(x: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets vertical velocity of the physics body.
-                 * @param y The vertical velocity value.
-                 */
-                setVelocityY(y: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets both the horizontal and vertical velocity of the physics body.
-                 * @param x The horizontal velocity value.
-                 * @param y The vertical velocity value, it can be either positive or negative. If not given, it will be the same as the `x` value. Default x.
-                 */
-                setVelocity(x: number, y?: number): Phaser.GameObjects.GameObject;
-
-            }
-
-            /**
-             * A wrapper around a Tile that provides access to a corresponding Matter body. A tile can only
-             * have one Matter body associated with it. You can either pass in an existing Matter body for
-             * the tile or allow the constructor to create the corresponding body for you. If the Tile has a
-             * collision group (defined in Tiled), those shapes will be used to create the body. If not, the
-             * tile's rectangle bounding box will be used.
-             *
-             * The corresponding body will be accessible on the Tile itself via Tile.physics.matterBody.
-             *
-             * Note: not all Tiled collision shapes are supported. See
-             * Phaser.Physics.Matter.TileBody#setFromTileCollision for more information.
-             */
-            class TileBody implements Phaser.Physics.Matter.Components.Bounce, Phaser.Physics.Matter.Components.Collision, Phaser.Physics.Matter.Components.Friction, Phaser.Physics.Matter.Components.Gravity, Phaser.Physics.Matter.Components.Mass, Phaser.Physics.Matter.Components.Sensor, Phaser.Physics.Matter.Components.Sleep, Phaser.Physics.Matter.Components.Static {
-                /**
-                 *
-                 * @param world [description]
-                 * @param tile The target tile that should have a Matter body.
-                 * @param options Options to be used when creating the Matter body.
-                 */
-                constructor(world: Phaser.Physics.Matter.World, tile: Phaser.Tilemaps.Tile, options?: MatterTileOptions);
-
-                /**
-                 * The tile object the body is associated with.
-                 */
-                tile: Phaser.Tilemaps.Tile;
-
-                /**
-                 * The Matter world the body exists within.
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * Sets the current body to a rectangle that matches the bounds of the tile.
-                 * @param options Options to be used when creating the Matter body. See MatterJS.Body for a list of what Matter accepts.
-                 */
-                setFromTileRectangle(options?: MatterBodyTileOptions): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * Sets the current body from the collision group associated with the Tile. This is typically
-                 * set up in Tiled's collision editor.
-                 *
-                 * Note: Matter doesn't support all shapes from Tiled. Rectangles and polygons are directly
-                 * supported. Ellipses are converted into circle bodies. Polylines are treated as if they are
-                 * closed polygons. If a tile has multiple shapes, a multi-part body will be created. Concave
-                 * shapes are supported if poly-decomp library is included. Decomposition is not guaranteed to
-                 * work for complex shapes (e.g. holes), so it's often best to manually decompose a concave
-                 * polygon into multiple convex polygons yourself.
-                 * @param options Options to be used when creating the Matter body. See MatterJS.Body for a list of what Matter accepts.
-                 */
-                setFromTileCollision(options?: MatterBodyTileOptions): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * Sets the current body to the given body. This will remove the previous body, if one already
-                 * exists.
-                 * @param body The new Matter body to use.
-                 * @param addToWorld Whether or not to add the body to the Matter world. Default true.
-                 */
-                setBody(body: MatterJS.Body, addToWorld?: boolean): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * Removes the current body from the TileBody and from the Matter world
-                 */
-                removeBody(): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * Removes the current body from the tile and the world.
-                 */
-                destroy(): Phaser.Physics.Matter.TileBody;
-
-                /**
-                 * Sets the restitution on the physics object.
-                 * @param value A Number that defines the restitution (elasticity) of the body. The value is always positive and is in the range (0, 1). A value of 0 means collisions may be perfectly inelastic and no bouncing may occur. A value of 0.8 means the body may bounce back with approximately 80% of its kinetic energy. Note that collision response is based on pairs of bodies, and that restitution values are combined with the following formula: `Math.max(bodyA.restitution, bodyB.restitution)`
-                 */
-                setBounce(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision category of this Game Object's Matter Body. This number must be a power of two between 2^0 (= 1) and 2^31. Two bodies with different collision groups (see {@link #setCollisionGroup}) will only collide if their collision categories are included in their collision masks (see {@link #setCollidesWith}).
-                 * @param value Unique category bitfield.
-                 */
-                setCollisionCategory(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision group of this Game Object's Matter Body. If this is zero or two Matter Bodies have different values, they will collide according to the usual rules (see {@link #setCollisionCategory} and {@link #setCollisionGroup}). If two Matter Bodies have the same positive value, they will always collide; if they have the same negative value, they will never collide.
-                 * @param value Unique group index.
-                 */
-                setCollisionGroup(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the collision mask for this Game Object's Matter Body. Two Matter Bodies with different collision groups will only collide if each one includes the other's category in its mask based on a bitwise AND, i.e. `(categoryA & maskB) !== 0` and `(categoryB & maskA) !== 0` are both true.
-                 * @param categories A unique category bitfield, or an array of them.
-                 */
-                setCollidesWith(categories: number | number[]): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets new friction values for this Game Object's Matter Body.
-                 * @param value The new friction of the body, between 0 and 1, where 0 allows the Body to slide indefinitely, while 1 allows it to stop almost immediately after a force is applied.
-                 * @param air If provided, the new air resistance of the Body. The higher the value, the faster the Body will slow as it moves through space. 0 means the body has no air resistance.
-                 * @param fstatic If provided, the new static friction of the Body. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary. 0 means the body will never "stick" when it is nearly stationary.
-                 */
-                setFriction(value: number, air?: number, fstatic?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new air resistance for this Game Object's Matter Body. A value of 0 means the Body will never slow as it moves through space. The higher the value, the faster a Body slows when moving through space.
-                 * @param value The new air resistance for the Body.
-                 */
-                setFrictionAir(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets a new static friction for this Game Object's Matter Body. A value of 0 means the Body will never "stick" when it is nearly stationary. The higher the value (e.g. 10), the more force it will take to initially get the Body moving when it is nearly stationary.
-                 * @param value The new static friction for the Body.
-                 */
-                setFrictionStatic(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * A togglable function for ignoring world gravity in real-time on the current body.
-                 * @param value Set to true to ignore the effect of world gravity, or false to not ignore it.
-                 */
-                setIgnoreGravity(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets the mass of the Game Object's Matter Body.
-                 * @param value The new mass of the body.
-                 */
-                setMass(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * Sets density of the body.
-                 * @param value The new density of the body.
-                 */
-                setDensity(value: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * The body's center of mass.
-                 */
-                readonly centerOfMass: any;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSensor(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isSensor(): boolean;
-
-                /**
-                 * [description]
-                 * @param value [description] Default 60.
-                 */
-                setSleepThreshold(value?: number): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param start [description]
-                 * @param end [description]
-                 */
-                setSleepEvents(start: boolean, end: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepStartEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setSleepEndEvent(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 * @param value [description]
-                 */
-                setStatic(value: boolean): Phaser.GameObjects.GameObject;
-
-                /**
-                 * [description]
-                 */
-                isStatic(): boolean;
-
-            }
-
-            /**
-             * Use PhysicsEditorParser.parseBody() to build a Matter body object, based on a physics data file
-             * created and exported with PhysicsEditor (https://www.codeandweb.com/physicseditor).
-             */
-            namespace PhysicsEditorParser {
-                /**
-                 * Parses a body element exported by PhysicsEditor.
-                 * @param x x position.
-                 * @param y y position.
-                 * @param w width.
-                 * @param h height.
-                 * @param config body configuration and fixture (child body) definitions.
-                 */
-                function parseBody(x: number, y: number, w: number, h: number, config: object): object;
-
-                /**
-                 * Parses an element of the "fixtures" list exported by PhysicsEditor
-                 * @param fixtureConfig the fixture object to parse
-                 */
-                function parseFixture(fixtureConfig: object): object[];
-
-                /**
-                 * Parses the "vertices" lists exported by PhysicsEditor.
-                 * @param vertexSets The vertex lists to parse.
-                 * @param options Matter body options.
-                 */
-                function parseVertices(vertexSets: object, options: object): object[];
-
-            }
-
-            /**
-             * A Pointer Constraint is a special type of constraint that allows you to click
-             * and drag bodies in a Matter World. It monitors the active Pointers in a Scene,
-             * and when one is pressed down it checks to see if that hit any part of any active
-             * body in the world. If it did, and the body has input enabled, it will begin to
-             * drag it until either released, or you stop it via the `stopDrag` method.
-             *
-             * You can adjust the stiffness, length and other properties of the constraint via
-             * the `options` object on creation.
-             */
-            class PointerConstraint {
-                /**
-                 *
-                 * @param scene A reference to the Scene to which this Pointer Constraint belongs.
-                 * @param world A reference to the Matter World instance to which this Constraint belongs.
-                 * @param options A Constraint configuration object.
-                 */
-                constructor(scene: Phaser.Scene, world: Phaser.Physics.Matter.World, options?: object);
-
-                /**
-                 * A reference to the Scene to which this Pointer Constraint belongs.
-                 * This is the same Scene as the Matter World instance.
-                 */
-                scene: Phaser.Scene;
-
-                /**
-                 * A reference to the Matter World instance to which this Constraint belongs.
-                 */
-                world: Phaser.Physics.Matter.World;
-
-                /**
-                 * The Camera the Pointer was interacting with when the input
-                 * down event was processed.
-                 */
-                camera: Phaser.Cameras.Scene2D.Camera;
-
-                /**
-                 * A reference to the Input Pointer that activated this Constraint.
-                 * This is set in the `onDown` handler.
-                 */
-                pointer: Phaser.Input.Pointer;
-
-                /**
-                 * Is this Constraint active or not?
-                 *
-                 * An active constraint will be processed each update. An inactive one will be skipped.
-                 * Use this to toggle a Pointer Constraint on and off.
-                 */
-                active: boolean;
-
-                /**
-                 * The internal transformed position.
-                 */
-                position: Phaser.Math.Vector2;
-
-                /**
-                 * The body that is currently being dragged, if any.
-                 */
-                body: MatterJS.Body;
-
-                /**
-                 * The part of the body that was clicked on to start the drag.
-                 */
-                part: MatterJS.Body;
-
-                /**
-                 * The native Matter Constraint that is used to attach to bodies.
-                 */
-                constraint: object;
-
-                /**
-                 * A Pointer has been pressed down onto the Scene.
-                 *
-                 * If this Constraint doesn't have an active Pointer then a hit test is
-                 * run against all active bodies in the world. If one is found it is bound
-                 * to this constraint and the drag begins.
-                 * @param pointer A reference to the Pointer that was pressed.
-                 */
-                onDown(pointer: Phaser.Input.Pointer): void;
-
-                /**
-                 * Scans all active bodies in the current Matter World to see if any of them
-                 * are hit by the Pointer. The _first one_ found to hit is set as the active contraint
-                 * body.
-                 */
-                getBody(): boolean;
-
-                /**
-                 * Scans the current body to determine if a part of it was clicked on.
-                 * If a part is found the body is set as the `constraint.bodyB` property,
-                 * as well as the `body` property of this class. The part is also set.
-                 * @param body The Matter Body to check.
-                 * @param position A translated hit test position.
-                 */
-                hitTestBody(body: MatterJS.Body, position: Phaser.Math.Vector2): boolean;
-
-                /**
-                 * Internal update handler. Called in the Matter BEFORE_UPDATE step.
-                 */
-                update(): void;
-
-                /**
-                 * Stops the Pointer Constraint from dragging the body any further.
-                 *
-                 * This is called automatically if the Pointer is released while actively
-                 * dragging a body. Or, you can call it manually to release a body from a
-                 * constraint without having to first release the pointer.
-                 */
-                stopDrag(): void;
-
-                /**
-                 * Destroys this Pointer Constraint instance and all of its references.
-                 */
-                destroy(): void;
-
-            }
-
-            /**
-             * [description]
-             */
-            class World extends Phaser.Events.EventEmitter {
-                /**
-                 *
-                 * @param scene The Scene to which this Matter World instance belongs.
-                 * @param config [description]
-                 */
-                constructor(scene: Phaser.Scene, config: object);
-
-                /**
-                 * The Scene to which this Matter World instance belongs.
-                 */
-                scene: Phaser.Scene;
-
-                /**
-                 * An instance of the MatterJS Engine.
-                 */
-                engine: MatterJS.Engine;
-
-                /**
-                 * A `World` composite object that will contain all simulated bodies and constraints.
-                 */
-                localWorld: MatterJS.World;
-
-                /**
-                 * An object containing the 4 wall bodies that bound the physics world.
-                 */
-                walls: object;
-
-                /**
-                 * A flag that toggles if the world is enabled or not.
-                 */
-                enabled: boolean;
-
-                /**
-                 * The correction argument is an optional Number that specifies the time correction factor to apply to the update.
-                 * This can help improve the accuracy of the simulation in cases where delta is changing between updates.
-                 * The value of correction is defined as delta / lastDelta, i.e. the percentage change of delta over the last step.
-                 * Therefore the value is always 1 (no correction) when delta constant (or when no correction is desired, which is the default).
-                 * See the paper on Time Corrected Verlet for more information.
-                 */
-                correction: number;
-
-                /**
-                 * This function is called every time the core game loop steps, which is bound to the
-                 * Request Animation Frame frequency unless otherwise modified.
-                 *
-                 * The function is passed two values: `time` and `delta`, both of which come from the game step values.
-                 *
-                 * It must return a number. This number is used as the delta value passed to Matter.Engine.update.
-                 *
-                 * You can override this function with your own to define your own timestep.
-                 *
-                 * If you need to update the Engine multiple times in a single game step then call
-                 * `World.update` as many times as required. Each call will trigger the `getDelta` function.
-                 * If you wish to have full control over when the Engine updates then see the property `autoUpdate`.
-                 *
-                 * You can also adjust the number of iterations that Engine.update performs.
-                 * Use the Scene Matter Physics config object to set the following properties:
-                 *
-                 * positionIterations (defaults to 6)
-                 * velocityIterations (defaults to 4)
-                 * constraintIterations (defaults to 2)
-                 *
-                 * Adjusting these values can help performance in certain situations, depending on the physics requirements
-                 * of your game.
-                 */
-                getDelta: Function;
-
-                /**
-                 * Automatically call Engine.update every time the game steps.
-                 * If you disable this then you are responsible for calling `World.step` directly from your game.
-                 * If you call `set60Hz` or `set30Hz` then `autoUpdate` is reset to `true`.
-                 */
-                autoUpdate: boolean;
-
-                /**
-                 * A flag that controls if the debug graphics will be drawn to or not.
-                 */
-                drawDebug: boolean;
-
-                /**
-                 * An instance of the Graphics object the debug bodies are drawn to, if enabled.
-                 */
-                debugGraphic: Phaser.GameObjects.Graphics;
-
-                /**
-                 * The default configuration values.
-                 */
-                defaults: object;
-
-                /**
-                 * [description]
-                 */
-                setEventsProxy(): void;
-
-                /**
-                 * Sets the bounds of the Physics world to match the given world pixel dimensions.
-                 * You can optionally set which 'walls' to create: left, right, top or bottom.
-                 * If none of the walls are given it will default to use the walls settings it had previously.
-                 * I.e. if you previously told it to not have the left or right walls, and you then adjust the world size
-                 * the newly created bounds will also not have the left and right walls.
-                 * Explicitly state them in the parameters to override this.
-                 * @param x The x coordinate of the top-left corner of the bounds. Default 0.
-                 * @param y The y coordinate of the top-left corner of the bounds. Default 0.
-                 * @param width The width of the bounds.
-                 * @param height The height of the bounds.
-                 * @param thickness The thickness of each wall, in pixels. Default 128.
-                 * @param left If true will create the left bounds wall. Default true.
-                 * @param right If true will create the right bounds wall. Default true.
-                 * @param top If true will create the top bounds wall. Default true.
-                 * @param bottom If true will create the bottom bounds wall. Default true.
-                 */
-                setBounds(x?: number, y?: number, width?: number, height?: number, thickness?: number, left?: boolean, right?: boolean, top?: boolean, bottom?: boolean): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 * @param add [description]
-                 * @param position [description]
-                 * @param x [description]
-                 * @param y [description]
-                 * @param width [description]
-                 * @param height [description]
-                 */
-                updateWall(add: boolean, position: string, x: number, y: number, width: number, height: number): void;
-
-                /**
-                 * [description]
-                 */
-                createDebugGraphic(): Phaser.GameObjects.Graphics;
-
-                /**
-                 * Sets the world's gravity and gravity scale to 0.
-                 */
-                disableGravity(): Phaser.Physics.Matter.World;
-
-                /**
-                 * Sets the world's gravity
-                 * @param x The world gravity x component. Default 0.
-                 * @param y The world gravity y component. Default 1.
-                 * @param scale [description]
-                 */
-                setGravity(x?: number, y?: number, scale?: number): Phaser.Physics.Matter.World;
-
-                /**
-                 * Creates a rectangle Matter body and adds it to the world.
-                 * @param x The horizontal position of the body in the world.
-                 * @param y The vertical position of the body in the world.
-                 * @param width The width of the body.
-                 * @param height The height of the body.
-                 * @param options Optional Matter configuration object.
-                 */
-                create(x: number, y: number, width: number, height: number, options: object): MatterJS.Body;
-
-                /**
-                 * Adds an object to the world.
-                 * @param object Can be single or an array, and can be a body, composite or constraint
-                 */
-                add(object: object | object[]): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 * @param object The object to be removed from the world.
-                 * @param deep [description]
-                 */
-                remove(object: object, deep: boolean): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 * @param constraint [description]
-                 * @param deep [description]
-                 */
-                removeConstraint(constraint: MatterJS.Constraint, deep: boolean): Phaser.Physics.Matter.World;
-
-                /**
-                 * Adds MatterTileBody instances for all the colliding tiles within the given tilemap layer. Set
-                 * the appropriate tiles in your layer to collide before calling this method!
-                 * @param tilemapLayer An array of tiles.
-                 * @param options Options to be passed to the MatterTileBody constructor. {@ee Phaser.Physics.Matter.TileBody}
-                 */
-                convertTilemapLayer(tilemapLayer: Phaser.Tilemaps.DynamicTilemapLayer | Phaser.Tilemaps.StaticTilemapLayer, options?: object): Phaser.Physics.Matter.World;
-
-                /**
-                 * Adds MatterTileBody instances for the given tiles. This adds bodies regardless of whether the
-                 * tiles are set to collide or not.
-                 * @param tiles An array of tiles.
-                 * @param options Options to be passed to the MatterTileBody constructor. {@see Phaser.Physics.Matter.TileBody}
-                 */
-                convertTiles(tiles: Phaser.Tilemaps.Tile[], options?: object): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 * @param isNonColliding [description]
-                 */
-                nextGroup(isNonColliding: boolean): number;
-
-                /**
-                 * [description]
-                 */
-                nextCategory(): number;
-
-                /**
-                 * [description]
-                 */
-                pause(): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 */
-                resume(): Phaser.Physics.Matter.World;
-
-                /**
-                 * [description]
-                 * @param time The current time. Either a High Resolution Timer value if it comes from Request Animation Frame, or Date.now if using SetTimeout.
-                 * @param delta The delta time in ms since the last frame. This is a smoothed and capped value based on the FPS rate.
-                 */
-                update(time: number, delta: number): void;
-
-                /**
-                 * Manually advances the physics simulation by one iteration.
-                 *
-                 * You can optionally pass in the `delta` and `correction` values to be used by Engine.update.
-                 * If undefined they use the Matter defaults of 60Hz and no correction.
-                 *
-                 * Calling `step` directly bypasses any checks of `enabled` or `autoUpdate`.
-                 *
-                 * It also ignores any custom `getDelta` functions, as you should be passing the delta
-                 * value in to this call.
-                 *
-                 * You can adjust the number of iterations that Engine.update performs internally.
-                 * Use the Scene Matter Physics config object to set the following properties:
-                 *
-                 * positionIterations (defaults to 6)
-                 * velocityIterations (defaults to 4)
-                 * constraintIterations (defaults to 2)
-                 *
-                 * Adjusting these values can help performance in certain situations, depending on the physics requirements
-                 * of your game.
-                 * @param delta [description] Default 16.666.
-                 * @param correction [description] Default 1.
-                 */
-                step(delta?: number, correction?: number): void;
-
-                /**
-                 * Runs the Matter Engine.update at a fixed timestep of 60Hz.
-                 */
-                update60Hz(): number;
-
-                /**
-                 * Runs the Matter Engine.update at a fixed timestep of 30Hz.
-                 */
-                update30Hz(): number;
-
-                /**
-                 * [description]
-                 * @param path [description]
-                 * @param points [description]
-                 */
-                fromPath(path: string, points: any[]): any[];
-
-                /**
-                 * Will remove all Matter physics event listeners and clear the matter physics world,
-                 * engine and any debug graphics, if any.
-                 */
-                shutdown(): void;
-
-                /**
-                 * Will remove all Matter physics event listeners and clear the matter physics world,
-                 * engine and any debug graphics, if any.
-                 *
-                 * After destroying the world it cannot be re-used again.
-                 */
-                destroy(): void;
-
-            }
-
         }
 
     }
