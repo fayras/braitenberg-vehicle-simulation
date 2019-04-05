@@ -16,7 +16,7 @@ interface System {
 }
 
 interface PhysicsObjectDictionary {
-  [entityId: number]: Matter.Body;
+  [entityId: number]: boolean;
 }
 
 interface RenderObjectDictionary {

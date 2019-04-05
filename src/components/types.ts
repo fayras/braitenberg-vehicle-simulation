@@ -1,5 +1,5 @@
 enum ComponentType {
-  PHYSICS = 'PHYSICS',
+  BODY = 'BODY',
   SENSOR = 'SENSOR',
   RENDER = 'RENDER',
 }

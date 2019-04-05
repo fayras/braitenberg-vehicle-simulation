@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
 import ComponentType from '../components/types';
-import PhysicsComponent from '../components/PhysicsComponent';
+import BodyComponent from '../components/BodyComponent';
 
 export default class PhysicsSystem implements System {
-  public expectedComponents: ComponentType[] = [ComponentType.PHYSICS];
+  public expectedComponents: ComponentType[] = [ComponentType.BODY];
 
   private scene: Phaser.Scene;
 
@@ -20,29 +20,16 @@ export default class PhysicsSystem implements System {
         this.addEntity(entity);
       }
 
-      const component = entity.getComponent(ComponentType.PHYSICS) as PhysicsComponent;
-      const physicsObject = this.physicsObjects[entity.id];
-
-      Phaser.Physics.Matter.Matter.Body.setPosition(physicsObject, component.position);
-      Phaser.Physics.Matter.Matter.Body.setVelocity(physicsObject, component.velocity);
+      const component = entity.getComponent(ComponentType.BODY) as BodyComponent;
+      const x = Phaser.Math.FloatBetween(-1, 1);
+      const y = Phaser.Math.FloatBetween(-1, 1);
+      Phaser.Physics.Matter.Matter.Body.setVelocity(component.body, {x, y});
     });
   }
 
   private addEntity(entity: Entity): void {
-    const component = entity.getComponent(ComponentType.PHYSICS) as PhysicsComponent;
-    this.physicsObjects[entity.id] = this.scene.matter.add.circle(
-      component.position.x,
-      component.position.y,
-      20,
-      {},
-      10,
-    ) as Matter.Body;
-
-    this.scene.matter.world.on('afterupdate', () => {
-      component.position.x = this.physicsObjects[entity.id].position.x;
-      component.position.y = this.physicsObjects[entity.id].position.y;
-      component.velocity.x = this.physicsObjects[entity.id].velocity.x;
-      component.velocity.y = this.physicsObjects[entity.id].velocity.y;
-    });
+    const component = entity.getComponent(ComponentType.BODY) as BodyComponent;
+    this.scene.matter.world.add(component.body);
+    this.physicsObjects[entity.id] = true;
   }
 }
