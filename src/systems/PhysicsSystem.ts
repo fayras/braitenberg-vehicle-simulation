@@ -22,8 +22,8 @@ export default class PhysicsSystem implements System {
       const component = entity.getComponent(ComponentType.PHYSICS) as PhysicsComponent;
       const physicsObject = this.physicsObjects[entity.id];
 
-      physicsObject.position.x = component.position.x;
-      physicsObject.position.y = component.position.y;
+      Phaser.Physics.Matter.Matter.Body.setPosition(physicsObject, component.position);
+      Phaser.Physics.Matter.Matter.Body.setVelocity(physicsObject, component.velocity);
     });
   }
 
