@@ -8,6 +8,10 @@ const config: GameConfig = {
   height: 600,
   backgroundColor: '#CCCCCC',
   scene: MainScene,
+  physics: {
+    default: 'matter',
+    matter: { gravity: { y: 0 } },
+  },
 };
 
 // eslint-disable-next-line
