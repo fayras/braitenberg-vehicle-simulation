@@ -5,8 +5,11 @@ export default class Entity {
 
   private components: Component[] = [];
 
+  public static numOfEntities = 0;
+
   public constructor() {
-    this.id = new Date().valueOf();
+    this.id = Entity.numOfEntities;
+    Entity.numOfEntities += 1;
   }
 
   public addComponent(component: Component): void {
