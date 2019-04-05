@@ -10,9 +10,12 @@ export default class PhysicsComponent implements Component {
 
   public speed: number;
 
-  public constructor() {
+  public asset: AssetKey;
+
+  public constructor(asset: AssetKey) {
     this.position = new Phaser.Math.Vector2();
     this.velocity = new Phaser.Math.Vector2();
     this.speed = 0;
+    this.asset = asset;
   }
 }

@@ -2,10 +2,11 @@ import Phaser from 'phaser';
 import logoImg from '../../assets/logo.png';
 import Entity from '../Entity';
 import PhysicsComponent from '../components/PhysicsComponent';
+import PhysicsSystem from '../systems/PhysicsSystem';
 import MoveSystem from '../systems/MoveSystem';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new MoveSystem()];
+  private systems: System[] = [new PhysicsSystem(this), new MoveSystem()];
 
   private entities: Entity[] = [];
 
@@ -19,7 +20,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     const entity = new Entity();
-    entity.addComponent(new PhysicsComponent());
+    entity.addComponent(new PhysicsComponent('logo'));
     this.entities.push(entity);
   }
 
