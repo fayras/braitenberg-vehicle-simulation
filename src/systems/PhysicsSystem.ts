@@ -37,5 +37,12 @@ export default class PhysicsSystem implements System {
       {},
       10,
     ) as Matter.Body;
+
+    this.scene.matter.world.on('afterupdate', () => {
+      component.position.x = this.physicsObjects[entity.id].position.x;
+      component.position.y = this.physicsObjects[entity.id].position.y;
+      component.velocity.x = this.physicsObjects[entity.id].velocity.x;
+      component.velocity.y = this.physicsObjects[entity.id].velocity.y;
+    });
   }
 }
