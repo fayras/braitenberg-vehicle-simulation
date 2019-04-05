@@ -22,17 +22,19 @@ export default class PhysicsSystem implements System {
       const component = entity.getComponent(ComponentType.PHYSICS) as PhysicsComponent;
       const physicsObject = this.physicsObjects[entity.id];
 
-      physicsObject.setPosition(component.position.x, component.position.y);
-      physicsObject.setVelocity(component.velocity.x, component.velocity.y);
+      physicsObject.position.x = component.position.x;
+      physicsObject.position.y = component.position.y;
     });
   }
 
   private addEntity(entity: Entity): void {
     const component = entity.getComponent(ComponentType.PHYSICS) as PhysicsComponent;
-    this.physicsObjects[entity.id] = this.scene.physics.add.image(
+    this.physicsObjects[entity.id] = this.scene.matter.add.circle(
       component.position.x,
       component.position.y,
-      component.asset,
-    );
+      20,
+      {},
+      10,
+    ) as Matter.Body;
   }
 }

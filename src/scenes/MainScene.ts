@@ -4,9 +4,11 @@ import Entity from '../Entity';
 import PhysicsComponent from '../components/PhysicsComponent';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import MoveSystem from '../systems/MoveSystem';
+import RenderComponent from '../components/RenderComponent';
+import RenderSystem from '../systems/RenderSystem';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new PhysicsSystem(this), new MoveSystem()];
+  private systems: System[] = [new PhysicsSystem(this), new MoveSystem(), new RenderSystem(this)];
 
   private entities: Entity[] = [];
 
@@ -20,7 +22,8 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     const entity = new Entity();
-    entity.addComponent(new PhysicsComponent('logo'));
+    entity.addComponent(new PhysicsComponent());
+    entity.addComponent(new RenderComponent('logo'));
     this.entities.push(entity);
   }
 

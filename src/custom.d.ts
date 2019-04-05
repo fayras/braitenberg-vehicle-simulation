@@ -16,5 +16,9 @@ interface System {
 }
 
 interface PhysicsObjectDictionary {
-  [entityId: number]: Phaser.Physics.Arcade.Image;
+  [entityId: number]: Matter.Body;
+}
+
+interface RenderObjectDictionary {
+  [entityId: number]: Phaser.GameObjects.Image;
 }
