@@ -3,12 +3,12 @@ import ComponentType from './types';
 export default class SensorComponent implements Component {
   public name: ComponentType = ComponentType.SENSOR;
 
-  private amount: number;
+  private range: number;
 
   private angle: number;
 
-  public constructor(amount: number, angle: number) {
-    this.amount = amount;
+  public constructor(range: number, angle: number) {
+    this.range = range;
     this.angle = angle;
   }
 }
