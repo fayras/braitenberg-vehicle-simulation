@@ -21,10 +21,12 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public create(): void {
-    const entity = new Entity();
-    entity.addComponent(new BodyComponent(new Phaser.Math.Vector2(100, 50)));
-    entity.addComponent(new RenderComponent('logo'));
-    this.entities.push(entity);
+    for (let i = 0; i < 10; i += 1) {
+      const entity = new Entity();
+      entity.addComponent(new BodyComponent(new Phaser.Math.Vector2(400, 200)));
+      entity.addComponent(new RenderComponent('logo'));
+      this.entities.push(entity);
+    }
 
     const entity2 = new Entity();
     entity2.addComponent(new BodyComponent(new Phaser.Math.Vector2(300, 50)));

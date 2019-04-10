@@ -21,9 +21,9 @@ export default class PhysicsSystem implements System {
       }
 
       const component = entity.getComponent(ComponentType.BODY) as BodyComponent;
-      const x = Phaser.Math.FloatBetween(-1, 1);
-      const y = Phaser.Math.FloatBetween(-1, 1);
-      Phaser.Physics.Matter.Matter.Body.setVelocity(component.body, {x, y});
+      const x = Phaser.Math.FloatBetween(-2, 2);
+      const y = Phaser.Math.FloatBetween(-2, 2);
+      Phaser.Physics.Matter.Matter.Body.setVelocity(component.body, { x, y });
     });
   }
 
