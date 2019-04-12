@@ -9,7 +9,7 @@ export default class MoveSystem implements System {
 
   private amount: number = 1;
 
-  public update(entities: Entity[], delta: number): void {
+  public update(entities: Entity[]): void {
     const all = entities.filter(e => e.hasComponents(ComponentType.BODY));
     this.amount = 1;
     all.forEach(entity => {

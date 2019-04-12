@@ -14,7 +14,7 @@ export default class PhysicsSystem implements System {
     this.scene = scene;
   }
 
-  public update(entities: Entity[], delta: number): void {
+  public update(entities: Entity[]): void {
     entities.forEach(entity => {
       if (!this.physicsObjects[entity.id]) {
         this.addEntity(entity);
