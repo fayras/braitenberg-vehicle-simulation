@@ -6,9 +6,10 @@ import PhysicsSystem from '../systems/PhysicsSystem';
 import MoveSystem from '../systems/MoveSystem';
 import RenderComponent from '../components/RenderComponent';
 import RenderSystem from '../systems/RenderSystem';
+import MotorComponent from '../components/MotorComponent';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new PhysicsSystem(this)];
+  private systems: System[] = [new PhysicsSystem(this), new MoveSystem()];
 
   private entities: Entity[] = [];
 
@@ -21,7 +22,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public create(): void {
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
       entity.addComponent(new BodyComponent(new Phaser.Math.Vector2(400, 200)));
       entity.addComponent(new RenderComponent('logo'));
@@ -31,6 +32,7 @@ export default class MainScene extends Phaser.Scene {
     const entity2 = new Entity();
     entity2.addComponent(new BodyComponent(new Phaser.Math.Vector2(300, 50)));
     entity2.addComponent(new RenderComponent('logo'));
+    entity2.addComponent(new MotorComponent());
     this.entities.push(entity2);
   }
 
