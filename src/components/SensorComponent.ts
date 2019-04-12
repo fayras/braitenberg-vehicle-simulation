@@ -7,7 +7,10 @@ export default class SensorComponent implements Component {
 
   private angle: number;
 
-  public constructor(range: number, angle: number) {
+  public position: Phaser.Physics.Matter.Matter.Vector;
+
+  public constructor(offsetPos: Phaser.Physics.Matter.Matter.Vector, range: number, angle: number) {
+    this.position = offsetPos;
     this.range = range;
     this.angle = angle;
   }

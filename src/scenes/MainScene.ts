@@ -7,6 +7,7 @@ import MoveSystem from '../systems/MoveSystem';
 import RenderComponent from '../components/RenderComponent';
 import RenderSystem from '../systems/RenderSystem';
 import MotorComponent from '../components/MotorComponent';
+import SensorComponent from '../components/SensorComponent';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [new PhysicsSystem(this), new MoveSystem(), new RenderSystem(this)];
@@ -33,6 +34,7 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new BodyComponent(new Phaser.Math.Vector2(300, 50)));
     entity2.addComponent(new RenderComponent('logo'));
     entity2.addComponent(new MotorComponent());
+    entity2.addComponent(new SensorComponent({ x: 0, y: 50 }, 30, 0.5));
     this.entities.push(entity2);
   }
 
