@@ -20,20 +20,19 @@ export default class RenderSystem implements System {
         this.addEntity(entity);
       }
 
-      const physics = entity.getComponent(ComponentType.BODY) as BodyComponent;
+      const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
       const renderObject = this.renderObjects[entity.id];
 
-      renderObject.setPosition(physics.body.position.x, physics.body.position.y);
+      renderObject.setPosition(body.body.position.x, body.body.position.y);
+      renderObject.setRotation(body.body.angle);
     });
   }
 
   private addEntity(entity: Entity): void {
-    const componentPhysics = entity.getComponent(ComponentType.BODY) as BodyComponent;
-    const componentRender = entity.getComponent(ComponentType.RENDER) as RenderComponent;
-    this.renderObjects[entity.id] = this.scene.add.image(
-      componentPhysics.body.position.x,
-      componentPhysics.body.position.y,
-      componentRender.asset,
-    );
+    const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
+    const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+
+    this.renderObjects[entity.id] = this.scene.add.image(body.body.position.x, body.body.position.y, render.asset);
+    this.renderObjects[entity.id].setDisplaySize(body.size + 30, body.size + 30);
   }
 }

@@ -9,7 +9,7 @@ import RenderSystem from '../systems/RenderSystem';
 import MotorComponent from '../components/MotorComponent';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new PhysicsSystem(this), new MoveSystem()];
+  private systems: System[] = [new PhysicsSystem(this), new MoveSystem(), new RenderSystem(this)];
 
   private entities: Entity[] = [];
 
