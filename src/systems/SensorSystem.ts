@@ -9,7 +9,7 @@ export default class SensorSystem implements System {
 
   private sensors: { [id: number]: { [id: string]: Phaser.Physics.Matter.Matter.Body } } = {};
 
-  private componentDictionary: { [bodyId: number]: SensorComponent } = {};
+  private componentDictionary: { [bodyId: number]: { component: SensorComponent; entity: Entity } } = {};
 
   private scene: Phaser.Scene;
 
@@ -51,7 +51,10 @@ export default class SensorSystem implements System {
       this.sensors[entity.id][sensorID] = SensorSystem.createSensor(component);
       // const angle = Phaser.Math.Angle.BetweenPoints({ x: 0, y: 0 }, component.position);
       // this.sensors[entity.id][sensorID].angle = angle + Math.PI;
-      this.componentDictionary[this.sensors[entity.id][sensorID].id] = component;
+      this.componentDictionary[this.sensors[entity.id][sensorID].id] = {
+        component,
+        entity,
+      };
       this.scene.matter.world.add(this.sensors[entity.id][sensorID]);
     }
 
@@ -88,7 +91,7 @@ export default class SensorSystem implements System {
       if (pair.isSensor && !(bodyA.isSensor && bodyB.isSensor)) {
         console.log('start', bodyA, bodyB);
         const sensor = bodyA.isSensor ? bodyA : bodyB;
-        this.componentDictionary[sensor.id].activation = 1.0;
+        this.componentDictionary[sensor.id].component.activation = 1.0;
       }
     });
   }
@@ -99,7 +102,7 @@ export default class SensorSystem implements System {
       if (pair.isSensor) {
         console.log('end', bodyA, bodyB);
         const sensor = bodyA.isSensor ? bodyA : bodyB;
-        this.componentDictionary[sensor.id].activation = 0.0;
+        this.componentDictionary[sensor.id].component.activation = 0.0;
         console.log(this.componentDictionary[sensor.id]);
       }
     });
