@@ -23,13 +23,16 @@ export default class MoveSystem implements System {
       const offsetLeft = Phaser.Physics.Matter.Matter.Vector.rotate({ x: -distance, y: 0 }, body.body.angle);
       // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
       // haben kann.
-      const forceX = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: 0.0007 }, body.body.angle);
-      const forceY = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: 0.0007 }, body.body.angle);
+      const forceX = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: 0.00007 }, body.body.angle);
+      const forceY = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: 0.00007 }, body.body.angle);
 
-      const sensor = entity.getComponent(ComponentType.SENSOR) as SensorComponent;
-      if (sensor !== undefined && sensor.activation > 0) {
-        forceX.x *= 10;
-        forceX.y *= 10;
+      const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+      const sensorActivation = sensors.reduce((p, c) => p + c.activation, 0);
+      if (sensorActivation > 0) {
+        forceX.x *= 1.5;
+        forceX.y *= 1.5;
+        forceY.x *= -1;
+        forceY.y *= -1;
       }
 
       MoveSystem.applyForce(body.body, offsetRight, forceX);

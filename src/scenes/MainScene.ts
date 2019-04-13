@@ -39,11 +39,17 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new RenderComponent('logo'));
     entity2.addComponent(new MotorComponent());
     entity2.addComponent(new SensorComponent({ x: 0, y: 57 }, 15, 0.5));
+    entity2.addComponent(new SensorComponent({ x: 35, y: 50 }, 15, 0.5));
     this.entities.push(entity2);
   }
 
   private createScenes(): void {
-    this.systems = [new PhysicsSystem(this), new MoveSystem(), new SensorSystem(this), new RenderSystem(this)];
+    this.systems = [
+      new PhysicsSystem(this),
+      new MoveSystem(),
+      new SensorSystem(this),
+      // new RenderSystem(this)
+    ];
   }
 
   public update(time: number, delta: number): void {

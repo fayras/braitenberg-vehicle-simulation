@@ -29,6 +29,10 @@ export default class Entity {
     return this.components.find(c => c.name === name);
   }
 
+  public getMultipleComponents(name: ComponentType): Component[] {
+    return this.components.filter(c => c.name === name);
+  }
+
   public hasComponents(...components: ComponentType[]): boolean {
     const available = this.components.map(c => c.name);
     return components.every(name => available.includes(name));
