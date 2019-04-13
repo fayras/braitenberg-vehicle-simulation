@@ -11,9 +11,8 @@ export default class MoveSystem implements System {
   private amount: number = 1;
 
   public update(entities: Entity[]): void {
-    const all = entities.filter(e => e.hasComponents(ComponentType.BODY));
     this.amount = 1;
-    all.forEach(entity => {
+    entities.forEach(entity => {
       const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
       const motor = entity.getComponent(ComponentType.MOTOR) as MotorComponent;
 
