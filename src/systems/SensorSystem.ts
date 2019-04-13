@@ -32,6 +32,8 @@ export default class SensorSystem implements System {
           x: body.body.position.x + direction.x,
           y: body.body.position.y + direction.y,
         });
+
+        Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.body.angle);
       });
     });
   }
@@ -46,14 +48,38 @@ export default class SensorSystem implements System {
     }`;
 
     if (!this.sensors[entity.id][sensorID]) {
-      this.sensors[entity.id][sensorID] = Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.range, {
-        isSensor: true,
-      });
+      this.sensors[entity.id][sensorID] = SensorSystem.createSensor(component);
+      // const angle = Phaser.Math.Angle.BetweenPoints({ x: 0, y: 0 }, component.position);
+      // this.sensors[entity.id][sensorID].angle = angle + Math.PI;
       this.componentDictionary[this.sensors[entity.id][sensorID].id] = component;
       this.scene.matter.world.add(this.sensors[entity.id][sensorID]);
     }
 
     return this.sensors[entity.id][sensorID];
+  }
+
+  private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
+    const direction = Phaser.Physics.Matter.Matter.Vector.normalise(component.position);
+    const fullVector = Phaser.Physics.Matter.Matter.Vector.mult(direction, component.range);
+    const vertices = [
+      { x: 0, y: 0 },
+      Phaser.Physics.Matter.Matter.Vector.rotate(fullVector, component.angle / 2),
+      Phaser.Physics.Matter.Matter.Vector.rotate(fullVector, -component.angle / 2),
+    ];
+    const body = Phaser.Physics.Matter.Matter.Bodies.fromVertices(0, 0, [vertices], {
+      isSensor: true,
+    });
+
+    const offset = Phaser.Physics.Matter.Matter.Vertices.centre(vertices);
+
+    // Hier muss die Position gesetzt werden, was ein Workaround
+    // dafür ist Origin-Punkt des Dreiecks zu setzen.
+    body.positionPrev.x -= offset.x;
+    body.positionPrev.y -= offset.y;
+    body.position.x -= offset.x;
+    body.position.y -= offset.y;
+
+    return body;
   }
 
   public onCollision(event): void {

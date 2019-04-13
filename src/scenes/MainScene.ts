@@ -40,9 +40,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new BodyComponent(new Phaser.Math.Vector2(300, 50)));
     entity2.addComponent(new RenderComponent('logo'));
     entity2.addComponent(new MotorComponent());
-    entity2.addComponent(new SensorComponent({ x: 0, y: 57 }, 15, 0.5));
-    entity2.addComponent(new SensorComponent({ x: 35, y: 50 }, 10, 0.5));
-    entity2.addComponent(new SensorComponent({ x: 55, y: 30 }, 5, 0.5));
+    entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
+    entity2.addComponent(new SensorComponent({ x: 35, y: 50 }, 15, 1.5));
+    entity2.addComponent(new SensorComponent({ x: 55, y: 30 }, 15, 1.5));
     this.entities.push(entity2);
   }
 
