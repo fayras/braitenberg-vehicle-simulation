@@ -10,7 +10,7 @@ import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 
 export default class MainScene extends Phaser.Scene {
-  private systems: System[] = [new PhysicsSystem(this), new MoveSystem(), new RenderSystem(this)];
+  private systems: System[] = [];
 
   private entities: Entity[] = [];
 
@@ -23,6 +23,8 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.createScenes();
+
     for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
       entity.addComponent(new BodyComponent(new Phaser.Math.Vector2(400, 200)));
@@ -36,6 +38,10 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new MotorComponent());
     entity2.addComponent(new SensorComponent({ x: 0, y: 50 }, 30, 0.5));
     this.entities.push(entity2);
+  }
+
+  private createScenes(): void {
+    this.systems = [new PhysicsSystem(this), new MoveSystem(), new SensorSystem(this), new RenderSystem(this)];
   }
 
   public update(time: number, delta: number): void {
