@@ -88,9 +88,15 @@ export default class SensorSystem implements System {
   public onCollision(event): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
-      if (pair.isSensor && !(bodyA.isSensor && bodyB.isSensor)) {
-        console.log('start', bodyA, bodyB);
-        const sensor = bodyA.isSensor ? bodyA : bodyB;
+      if (!pair.isSensor || (bodyA.isSensor && bodyB.isSensor)) return;
+
+      console.log('start', bodyA, bodyB);
+      const sensor = bodyA.isSensor ? bodyA : bodyB;
+      const other = bodyA.isSensor ? bodyB : bodyA;
+      const { entity } = this.componentDictionary[sensor.id];
+      const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
+
+      if (other !== body.body) {
         this.componentDictionary[sensor.id].component.activation = 1.0;
       }
     });
