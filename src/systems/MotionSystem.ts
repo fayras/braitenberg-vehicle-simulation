@@ -4,7 +4,7 @@ import ComponentType from '../components/types';
 import SensorComponent from '../components/SensorComponent';
 import BodyComponent from '../components/BodyComponent';
 
-export default class SensorSystem implements System {
+export default class MotionSystem implements System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.BODY];
 
   private sensors: { [id: number]: { [id: string]: Phaser.Physics.Matter.Matter.Body } } = {};
@@ -48,7 +48,7 @@ export default class SensorSystem implements System {
     }`;
 
     if (!this.sensors[entity.id][sensorID]) {
-      this.sensors[entity.id][sensorID] = SensorSystem.createSensor(component);
+      this.sensors[entity.id][sensorID] = MotionSystem.createSensor(component);
       // const angle = Phaser.Math.Angle.BetweenPoints({ x: 0, y: 0 }, component.position);
       // this.sensors[entity.id][sensorID].angle = angle + Math.PI;
       this.componentDictionary[this.sensors[entity.id][sensorID].id] = {
