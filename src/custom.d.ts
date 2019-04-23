@@ -14,7 +14,3 @@ interface System {
 
   update(entities: import('./Entity').default[], delta: number): void;
 }
-
-interface RenderObjectDictionary {
-  [entityId: number]: Phaser.GameObjects.Image;
-}

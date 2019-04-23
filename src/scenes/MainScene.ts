@@ -1,13 +1,16 @@
 import Phaser from 'phaser';
 import logoImg from '../../assets/logo.png';
 import Entity from '../Entity';
+
 import SolidBodyComponent from '../components/SolidBodyComponent';
-import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderComponent from '../components/RenderComponent';
 import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
+
+import PhysicsSystem from '../systems/PhysicsSystem';
+import RenderSystem from '../systems/RenderSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -30,16 +33,16 @@ export default class MainScene extends Phaser.Scene {
     for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
       entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
-      entity.addComponent(new SolidBodyComponent());
-      entity.addComponent(new RenderComponent('logo'));
+      entity.addComponent(new SolidBodyComponent(100));
+      entity.addComponent(new RenderComponent('logo', 100));
       entity.addComponent(new SourceComponent(100));
       this.entities.push(entity);
     }
 
     const entity2 = new Entity();
     entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
-    entity2.addComponent(new SolidBodyComponent());
-    entity2.addComponent(new RenderComponent('logo'));
+    entity2.addComponent(new SolidBodyComponent(100));
+    entity2.addComponent(new RenderComponent('logo', 120));
     entity2.addComponent(new MotorComponent());
     entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
     entity2.addComponent(new SensorComponent({ x: 10, y: 25 }, 47, 0.7));
@@ -52,7 +55,7 @@ export default class MainScene extends Phaser.Scene {
       new PhysicsSystem(this),
       // new MoveSystem(),
       // new MotionSystem(this),
-      // new RenderSystem(this),
+      new RenderSystem(this),
     ];
   }
 

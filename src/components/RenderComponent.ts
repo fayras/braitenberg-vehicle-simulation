@@ -5,7 +5,13 @@ export default class RenderComponent implements Component {
 
   public asset: AssetKey;
 
-  public constructor(asset: AssetKey) {
+  public width: number;
+
+  public height: number | null;
+
+  public constructor(asset: AssetKey, width: number, height: number | null = null) {
     this.asset = asset;
+    this.width = width;
+    this.height = height;
   }
 }
