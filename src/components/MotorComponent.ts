@@ -5,7 +5,10 @@ export default class MotorComponent implements Component {
 
   public wheelbase: number;
 
-  public constructor(wheelbase: number = 20) {
+  public maxSpeed: number;
+
+  public constructor(wheelbase: number = 20, speed: number = 50) {
     this.wheelbase = wheelbase;
+    this.maxSpeed = speed;
   }
 }
