@@ -1,4 +1,9 @@
-enum ComponentType {
+export enum BodyShape {
+  RECTANGLE = 'R',
+  CIRCLE = 'C',
+}
+
+export enum ComponentType {
   SOLID_BODY = 'BODY',
   SENSOR = 'SENSOR',
   RENDER = 'RENDER',
@@ -7,4 +12,6 @@ enum ComponentType {
   TRANSFORMABLE = 'TRANSFORMABLE',
 }
 
-export default ComponentType;
+export enum SubstanceType {
+  LIGHT = 'LIGHT',
+}

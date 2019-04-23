@@ -1,9 +1,4 @@
-import ComponentType from './types';
-
-enum BodyShape {
-  RECTANGLE = 'R',
-  CIRCLE = 'C',
-}
+import { ComponentType, BodyShape } from '../enums';
 
 export default class SolidBodyComponent implements Component {
   public name: ComponentType = ComponentType.SOLID_BODY;
@@ -12,7 +7,7 @@ export default class SolidBodyComponent implements Component {
 
   public shape: BodyShape;
 
-  public constructor(size: number = 50, shape: BodyShape) {
+  public constructor(size: number = 50, shape: BodyShape = BodyShape.RECTANGLE) {
     this.size = size;
     this.shape = shape;
   }

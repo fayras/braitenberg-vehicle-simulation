@@ -1,4 +1,4 @@
-import ComponentType from './types';
+import { ComponentType } from '../enums';
 
 export default class SensorComponent implements Component {
   public name: ComponentType = ComponentType.SENSOR;
