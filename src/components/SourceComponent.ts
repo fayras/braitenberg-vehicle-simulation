@@ -1,8 +1,4 @@
-import ComponentType from './types';
-
-enum SubstanceType {
-  LIGHT = 'LIGHT',
-}
+import { ComponentType, SubstanceType } from '../enums';
 
 export default class SourceComponent implements Component {
   public name: ComponentType = ComponentType.SOURCE;
