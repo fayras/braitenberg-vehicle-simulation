@@ -1,10 +1,14 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
-import ComponentType from '../components/types';
-import BodyComponent from '../components/BodyComponent';
+import { ComponentType, BodyShape } from '../enums';
+import SolidBodyComponent from '../components/SolidBodyComponent';
+
+interface PhysicsObjectDictionary {
+  [entityId: number]: Phaser.Physics.Matter.Matter.Body;
+}
 
 export default class PhysicsSystem implements System {
-  public expectedComponents: ComponentType[] = [ComponentType.BODY];
+  public expectedComponents: ComponentType[] = [ComponentType.SOLID_BODY];
 
   private scene: Phaser.Scene;
 
@@ -19,17 +23,31 @@ export default class PhysicsSystem implements System {
       if (!this.physicsObjects[entity.id]) {
         this.addEntity(entity);
       }
-
-      const component = entity.getComponent(ComponentType.BODY) as BodyComponent;
-      const x = Phaser.Math.FloatBetween(-2, 2);
-      const y = Phaser.Math.FloatBetween(-2, 2);
-      // Phaser.Physics.Matter.Matter.Body.setVelocity(component.body, { x, y });
     });
   }
 
   private addEntity(entity: Entity): void {
-    const component = entity.getComponent(ComponentType.BODY) as BodyComponent;
-    this.scene.matter.world.add(component.body);
-    this.physicsObjects[entity.id] = true;
+    const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
+
+    const body = PhysicsSystem.getBody(component);
+
+    this.scene.matter.world.add(body);
+    this.physicsObjects[entity.id] = body;
+  }
+
+  private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
+    switch (component.shape) {
+      case BodyShape.CIRCLE:
+        return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, {
+          friction: 0.005,
+          frictionAir: 0.1,
+        });
+      case BodyShape.RECTANGLE:
+      default:
+        return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, component.size, component.size, {
+          friction: 0.005,
+          frictionAir: 0.1,
+        });
+    }
   }
 }
