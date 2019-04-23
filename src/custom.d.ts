@@ -1,16 +1,16 @@
 declare module '*.png' {
-  const value: any;
+  const value: unknown;
   export default value;
 }
 
 type AssetKey = string;
 
 interface Component {
-  name: import('./components/types').default;
+  name: import('./enums').ComponentType;
 }
 
 interface System {
-  expectedComponents: import('./components/types').default[];
+  expectedComponents: import('./enums').ComponentType[];
 
   update(entities: import('./Entity').default[], delta: number): void;
 }
