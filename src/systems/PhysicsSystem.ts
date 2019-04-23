@@ -2,13 +2,14 @@ import Phaser from 'phaser';
 import Entity from '../Entity';
 import { ComponentType, BodyShape } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
+import TransformableComponent from '../components/TransformableComponent';
 
 interface PhysicsObjectDictionary {
   [entityId: number]: Phaser.Physics.Matter.Matter.Body;
 }
 
 export default class PhysicsSystem implements System {
-  public expectedComponents: ComponentType[] = [ComponentType.SOLID_BODY];
+  public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.SOLID_BODY];
 
   private scene: Phaser.Scene;
 
@@ -31,6 +32,8 @@ export default class PhysicsSystem implements System {
 
     const body = PhysicsSystem.getBody(component);
 
+    this.attachSynchronization(body, entity);
+
     this.scene.matter.world.add(body);
     this.physicsObjects[entity.id] = body;
   }
@@ -49,5 +52,18 @@ export default class PhysicsSystem implements System {
           frictionAir: 0.1,
         });
     }
+  }
+
+  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): void {
+    const component = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+
+    this.scene.matter.world.on('beforeupdate', () => {
+      Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
+    });
+
+    this.scene.matter.world.on('afterupdate', () => {
+      component.position.x = body.position.x;
+      component.position.y = body.position.y;
+    });
   }
 }
