@@ -3,12 +3,12 @@ import { ComponentType } from '../enums';
 export default class MotorComponent implements Component {
   public name: ComponentType = ComponentType.MOTOR;
 
-  public wheelbase: number;
+  public defaultSpeed: number;
 
   public maxSpeed: number;
 
-  public constructor(wheelbase: number = 20, speed: number = 50) {
-    this.wheelbase = wheelbase;
+  public constructor(speed: number = 50, defaultSpeed: number = 0) {
     this.maxSpeed = speed;
+    this.defaultSpeed = defaultSpeed;
   }
 }
