@@ -1,4 +1,4 @@
-import ComponentType from './components/types';
+import { ComponentType } from './enums';
 
 export default class Entity {
   public id: number;
