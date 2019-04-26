@@ -1,4 +1,4 @@
-import { ComponentType } from '../enums';
+import { ComponentType, SensorActivation } from '../enums';
 
 export default class SensorComponent implements Component {
   public name: ComponentType = ComponentType.SENSOR;
@@ -10,6 +10,8 @@ export default class SensorComponent implements Component {
   public position: Phaser.Physics.Matter.Matter.Vector;
 
   public activation: number = 0.0;
+
+  public type: SensorActivation = SensorActivation.LINEAR;
 
   public constructor(offsetPos: Phaser.Physics.Matter.Matter.Vector, range: number, angle: number) {
     this.position = offsetPos;

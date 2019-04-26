@@ -15,3 +15,8 @@ export enum ComponentType {
 export enum SubstanceType {
   LIGHT = 'LIGHT',
 }
+
+export enum SensorActivation {
+  LINEAR = 'LINEAR',
+  QUADRATIC = 'QUADRATIC',
+}
