@@ -20,11 +20,13 @@ export default class PhysicsSystem implements System {
   }
 
   public update(entities: Entity[]): void {
-    entities.forEach(entity => {
-      if (!this.physicsObjects[entity.id]) {
-        this.addEntity(entity);
-      }
-    });
+    entities.forEach(
+      (entity): void => {
+        if (!this.physicsObjects[entity.id]) {
+          this.addEntity(entity);
+        }
+      },
+    );
   }
 
   private addEntity(entity: Entity): void {
@@ -57,13 +59,19 @@ export default class PhysicsSystem implements System {
   private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): void {
     const component = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    this.scene.matter.world.on('beforeupdate', () => {
-      Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
-    });
+    this.scene.matter.world.on(
+      'beforeupdate',
+      (): void => {
+        Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
+      },
+    );
 
-    this.scene.matter.world.on('afterupdate', () => {
-      component.position.x = body.position.x;
-      component.position.y = body.position.y;
-    });
+    this.scene.matter.world.on(
+      'afterupdate',
+      (): void => {
+        component.position.x = body.position.x;
+        component.position.y = body.position.y;
+      },
+    );
   }
 }
