@@ -63,6 +63,7 @@ export default class PhysicsSystem implements System {
       'beforeupdate',
       (): void => {
         Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
+        Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle);
       },
     );
 
@@ -71,6 +72,7 @@ export default class PhysicsSystem implements System {
       (): void => {
         component.position.x = body.position.x;
         component.position.y = body.position.y;
+        component.angle = body.angle;
       },
     );
   }
