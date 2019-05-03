@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    entity2.addComponent(new MotorComponent());
+    entity2.addComponent(new MotorComponent({ x: 0, y: 0 }));
     entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
     entity2.addComponent(new SensorComponent({ x: 10, y: 25 }, 47, 0.7));
     entity2.addComponent(new SensorComponent({ x: 23, y: 25 }, 40, 0.7));
@@ -60,10 +60,12 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public update(time: number, delta: number): void {
-    this.systems.forEach(s => {
-      const entities = this.entities.filter(e => e.hasComponents(...s.expectedComponents));
+    this.systems.forEach(
+      (s): void => {
+        const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
 
-      s.update(entities, delta);
-    });
+        s.update(entities, delta);
+      },
+    );
   }
 }
