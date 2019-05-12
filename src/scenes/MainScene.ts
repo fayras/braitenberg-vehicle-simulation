@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Matter from 'matter-js';
 import logoImg from '../../assets/logo.png';
 import Entity from '../Entity';
 
@@ -33,6 +34,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
+    this.drawDebugCanvas();
 
     this.matter.world.setBounds();
 
@@ -70,5 +72,26 @@ export default class MainScene extends Phaser.Scene {
 
       s.update(entities, delta);
     });
+  }
+
+  private drawDebugCanvas(): void {
+    const renderer = Matter.Render.create({
+      element: document.body,
+      engine: this.matter.world.engine,
+      options: {
+        showDebug: true,
+        showBroadphase: true,
+        showBounds: true,
+        showVelocity: true,
+        showCollisions: true,
+        showSeparations: true,
+        showAxes: true,
+        showPositions: true,
+        showAngleIndicator: true,
+        showIds: true,
+        showVertexNumbers: true,
+      },
+    });
+    Matter.Render.run(renderer);
   }
 }
