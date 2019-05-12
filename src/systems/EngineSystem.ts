@@ -6,11 +6,7 @@ import TransformableComponent from '../components/TransformableComponent';
 import MotorComponent from '../components/MotorComponent';
 
 export default class EngineSystem extends System {
-  public expectedComponents: ComponentType[] = [
-    ComponentType.TRANSFORMABLE,
-    ComponentType.MOTOR,
-    ComponentType.SOLID_BODY,
-  ];
+  public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.MOTOR];
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
