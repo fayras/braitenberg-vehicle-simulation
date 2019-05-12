@@ -20,3 +20,7 @@ export enum SensorActivation {
   LINEAR = 'LINEAR',
   QUADRATIC = 'QUADRATIC',
 }
+
+export enum EventType {
+  APPLY_FORCE = 'APPLY_FORCE',
+}
