@@ -19,12 +19,14 @@ export default class EngineSystem extends System {
 
         const slope = motor.maxSpeed - motor.defaultSpeed;
 
+        // Throttle wird später durch Sensoren bestimmt. Einfachheithalber
+        // wird hier erstmal ein hartkodierter Wert verwendent.
         const throttle = 0.7;
         const thrust = throttle * slope;
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.
-        const force = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: thrust * 0.0005 }, transform.angle);
+        const force = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: thrust * 0.005 }, transform.angle);
 
         this.eventBus.publish(EventType.APPLY_FORCE, {
           id: entity.id,
