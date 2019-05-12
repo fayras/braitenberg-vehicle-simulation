@@ -9,16 +9,21 @@ import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 
+import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
+import EventBus from '../EventBus';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
   private entities: Entity[] = [];
 
+  private eventBus: EventBus;
+
   public constructor() {
     super({ key: 'MainScene' });
+    this.eventBus = new EventBus();
   }
 
   public preload(): void {
@@ -52,10 +57,10 @@ export default class MainScene extends Phaser.Scene {
 
   private createSystems(): void {
     this.systems = [
-      new PhysicsSystem(this),
+      new PhysicsSystem(this, this.eventBus),
       // new MoveSystem(),
       // new MotionSystem(this),
-      new RenderSystem(this),
+      new RenderSystem(this, this.eventBus),
     ];
   }
 
