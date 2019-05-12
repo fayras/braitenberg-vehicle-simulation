@@ -75,13 +75,9 @@ export default class PhysicsSystem extends System {
     );
   }
 
-  private applyForce(payload: any): void {
+  private applyForce(payload: EventMessages.ApplyForce): void {
     const body = this.physicsObjects[payload.id];
-
-    const {
-      offset,
-      force,
-    }: { offset: Phaser.Physics.Matter.Matter.Vector; force: Phaser.Physics.Matter.Matter.Vector } = payload;
+    const { offset, force } = payload;
 
     Phaser.Physics.Matter.Matter.Body.applyForce(
       body,

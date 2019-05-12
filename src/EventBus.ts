@@ -1,7 +1,5 @@
 import { EventType } from './enums';
 
-type EventHandler = (event: unknown) => void;
-
 interface EventHandlerDictionary {
   [index: string]: EventHandler[];
 }
@@ -9,7 +7,7 @@ interface EventHandlerDictionary {
 export default class EventBus {
   private handlers: EventHandlerDictionary = {};
 
-  public publish(event: EventType, payload: unknown): void {
+  public publish(event: EventType, payload: EventMessage): void {
     if (!this.handlers[event]) return;
 
     this.handlers[event].forEach(handler => {
