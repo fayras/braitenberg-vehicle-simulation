@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import System from './System';
 import Entity from '../Entity';
-import { ComponentType, BodyShape } from '../enums';
+import { ComponentType, BodyShape, EventType } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import TransformableComponent from '../components/TransformableComponent';
+import EventBus from '../EventBus';
 
 interface PhysicsObjectDictionary {
   [entityId: number]: Phaser.Physics.Matter.Matter.Body;
@@ -13,6 +14,12 @@ export default class PhysicsSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.SOLID_BODY];
 
   private physicsObjects: PhysicsObjectDictionary = {};
+
+  public constructor(scene: Phaser.Scene, bus: EventBus) {
+    super(scene, bus);
+
+    this.eventBus.subscribe(EventType.APPLY_FORCE, this.applyForce.bind(this));
+  }
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
@@ -35,14 +42,14 @@ export default class PhysicsSystem extends System {
     switch (component.shape) {
       case BodyShape.CIRCLE:
         return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, {
-          friction: 0.5,
-          frictionAir: 0.1,
+          friction: 0.1,
+          frictionAir: 0.3,
         });
       case BodyShape.RECTANGLE:
       default:
         return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, component.size, component.size, {
-          friction: 0.5,
-          frictionAir: 0.1,
+          friction: 0.7,
+          frictionAir: 0.6,
         });
     }
   }
@@ -65,6 +72,21 @@ export default class PhysicsSystem extends System {
         component.position.y = body.position.y;
         component.angle = body.angle;
       },
+    );
+  }
+
+  private applyForce(payload: any): void {
+    const body = this.physicsObjects[payload.id];
+
+    const {
+      offset,
+      force,
+    }: { offset: Phaser.Physics.Matter.Matter.Vector; force: Phaser.Physics.Matter.Matter.Vector } = payload;
+
+    Phaser.Physics.Matter.Matter.Body.applyForce(
+      body,
+      { x: body.position.x + offset.x, y: body.position.y + offset.y },
+      force,
     );
   }
 }

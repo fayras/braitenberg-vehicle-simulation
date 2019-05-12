@@ -9,10 +9,11 @@ import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 
+import EventBus from '../EventBus';
 import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
-import EventBus from '../EventBus';
+import EngineSystem from '../systems/EngineSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -48,17 +49,16 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    entity2.addComponent(new MotorComponent({ x: 0, y: 0 }));
+    entity2.addComponent(new MotorComponent({ x: 50, y: 0 }));
     entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
-    entity2.addComponent(new SensorComponent({ x: 10, y: 25 }, 47, 0.7));
-    entity2.addComponent(new SensorComponent({ x: 23, y: 25 }, 40, 0.7));
+    // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
   }
 
   private createSystems(): void {
     this.systems = [
       new PhysicsSystem(this, this.eventBus),
-      // new MoveSystem(),
+      new EngineSystem(this, this.eventBus),
       // new MotionSystem(this),
       new RenderSystem(this, this.eventBus),
     ];
