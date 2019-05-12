@@ -6,5 +6,5 @@ declare module '*.png' {
 type AssetKey = string;
 
 interface Component {
-  name: import('./enums').ComponentType;
+  name: import('../src/enums').ComponentType;
 }
