@@ -1,3 +1,4 @@
+import System from './System';
 import Entity from '../Entity';
 import { ComponentType } from '../enums';
 import RenderComponent from '../components/RenderComponent';
@@ -7,16 +8,10 @@ interface RenderObjectDictionary {
   [entityId: number]: Phaser.GameObjects.Image;
 }
 
-export default class RenderSystem implements System {
+export default class RenderSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.RENDER];
 
-  private scene: Phaser.Scene;
-
   private renderObjects: RenderObjectDictionary = {};
-
-  public constructor(scene: Phaser.Scene) {
-    this.scene = scene;
-  }
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {

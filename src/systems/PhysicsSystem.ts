@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import System from './System';
 import Entity from '../Entity';
 import { ComponentType, BodyShape } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
@@ -8,16 +9,10 @@ interface PhysicsObjectDictionary {
   [entityId: number]: Phaser.Physics.Matter.Matter.Body;
 }
 
-export default class PhysicsSystem implements System {
+export default class PhysicsSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.SOLID_BODY];
 
-  private scene: Phaser.Scene;
-
   private physicsObjects: PhysicsObjectDictionary = {};
-
-  public constructor(scene: Phaser.Scene) {
-    this.scene = scene;
-  }
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {

@@ -1,25 +1,16 @@
 import Phaser from 'phaser';
+import System from './System';
 import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import TransformableComponent from '../components/TransformableComponent';
 import MotorComponent from '../components/MotorComponent';
-import EventBus from '../EventBus';
 
-export default class EngineSystem implements System {
+export default class EngineSystem extends System {
   public expectedComponents: ComponentType[] = [
     ComponentType.TRANSFORMABLE,
     ComponentType.MOTOR,
     ComponentType.SOLID_BODY,
   ];
-
-  private scene: Phaser.Scene;
-
-  private eventBus: EventBus;
-
-  public constructor(scene: Phaser.Scene, bus: EventBus) {
-    this.scene = scene;
-    this.eventBus = bus;
-  }
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
