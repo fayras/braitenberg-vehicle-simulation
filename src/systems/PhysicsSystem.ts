@@ -20,13 +20,9 @@ export default class PhysicsSystem implements System {
   }
 
   public update(entities: Entity[]): void {
-    entities.forEach(
-      (entity): void => {
-        if (!this.physicsObjects[entity.id]) {
-          this.addEntity(entity);
-        }
-      },
-    );
+    entities.forEach(entity => {
+      if (!this.physicsObjects[entity.id]) this.addEntity(entity);
+    });
   }
 
   private addEntity(entity: Entity): void {
@@ -44,13 +40,13 @@ export default class PhysicsSystem implements System {
     switch (component.shape) {
       case BodyShape.CIRCLE:
         return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, {
-          friction: 0.005,
+          friction: 0.5,
           frictionAir: 0.1,
         });
       case BodyShape.RECTANGLE:
       default:
         return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, component.size, component.size, {
-          friction: 0.005,
+          friction: 0.5,
           frictionAir: 0.1,
         });
     }
