@@ -65,12 +65,10 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public update(time: number, delta: number): void {
-    this.systems.forEach(
-      (s): void => {
-        const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
+    this.systems.forEach(s => {
+      const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
 
-        s.update(entities, delta);
-      },
-    );
+      s.update(entities, delta);
+    });
   }
 }

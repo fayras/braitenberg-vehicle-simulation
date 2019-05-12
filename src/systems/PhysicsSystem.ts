@@ -57,22 +57,16 @@ export default class PhysicsSystem extends System {
   private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): void {
     const component = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    this.scene.matter.world.on(
-      'beforeupdate',
-      (): void => {
-        Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
-        Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle);
-      },
-    );
+    this.scene.matter.world.on('beforeupdate', () => {
+      Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
+      Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle);
+    });
 
-    this.scene.matter.world.on(
-      'afterupdate',
-      (): void => {
-        component.position.x = body.position.x;
-        component.position.y = body.position.y;
-        component.angle = body.angle;
-      },
-    );
+    this.scene.matter.world.on('afterupdate', () => {
+      component.position.x = body.position.x;
+      component.position.y = body.position.y;
+      component.angle = body.angle;
+    });
   }
 
   private applyForce(payload: EventMessages.ApplyForce): void {
