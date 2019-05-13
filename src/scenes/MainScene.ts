@@ -11,6 +11,7 @@ import TransformableComponent from '../components/TransformableComponent';
 
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
+import Button from '../gui/Button';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -23,6 +24,7 @@ export default class MainScene extends Phaser.Scene {
 
   public preload(): void {
     this.load.image('logo', logoImg);
+    // this.load.spritesheet('button', 'l', { frameWidth: 300, frameHeight: 50});
   }
 
   public create(): void {
@@ -48,6 +50,16 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new SensorComponent({ x: 10, y: 25 }, 47, 0.7));
     entity2.addComponent(new SensorComponent({ x: 23, y: 25 }, 40, 0.7));
     this.entities.push(entity2);
+
+    const startButton = new Button(
+      this,
+      20,
+      20,
+      'Druecken',
+      (): void => {
+        console.log('gedrueckt');
+      },
+    );
   }
 
   private createSystems(): void {
