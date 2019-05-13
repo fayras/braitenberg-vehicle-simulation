@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import MainScene from './scenes/MainScene';
 
-const config: GameConfig = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
   width: 800,

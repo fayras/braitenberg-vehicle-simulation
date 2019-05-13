@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Matter from 'matter-js';
 import logoImg from '../../assets/logo.png';
 import Entity from '../Entity';
 
@@ -9,17 +10,23 @@ import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 
+import EventBus from '../EventBus';
+import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
 import Button from '../gui/Button';
+import EngineSystem from '../systems/EngineSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
   private entities: Entity[] = [];
 
+  private eventBus: EventBus;
+
   public constructor() {
     super({ key: 'MainScene' });
+    this.eventBus = new EventBus();
   }
 
   public preload(): void {
@@ -29,6 +36,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
+    this.drawDebugCanvas();
 
     this.matter.world.setBounds();
 
@@ -45,10 +53,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    entity2.addComponent(new MotorComponent({ x: 0, y: 0 }));
+    entity2.addComponent(new MotorComponent({ x: 50, y: 0 }));
     entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
-    entity2.addComponent(new SensorComponent({ x: 10, y: 25 }, 47, 0.7));
-    entity2.addComponent(new SensorComponent({ x: 23, y: 25 }, 40, 0.7));
+    // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
 
     const startButton = new Button(
@@ -64,20 +71,39 @@ export default class MainScene extends Phaser.Scene {
 
   private createSystems(): void {
     this.systems = [
-      new PhysicsSystem(this),
-      // new MoveSystem(),
+      new PhysicsSystem(this, this.eventBus),
+      new EngineSystem(this, this.eventBus),
       // new MotionSystem(this),
-      new RenderSystem(this),
+      new RenderSystem(this, this.eventBus),
     ];
   }
 
   public update(time: number, delta: number): void {
-    this.systems.forEach(
-      (s): void => {
-        const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
+    this.systems.forEach(s => {
+      const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
 
-        s.update(entities, delta);
+      s.update(entities, delta);
+    });
+  }
+
+  private drawDebugCanvas(): void {
+    const renderer = Matter.Render.create({
+      element: document.body,
+      engine: this.matter.world.engine,
+      options: {
+        showDebug: true,
+        showBroadphase: true,
+        showBounds: true,
+        showVelocity: true,
+        showCollisions: true,
+        showSeparations: true,
+        showAxes: true,
+        showPositions: true,
+        showAngleIndicator: true,
+        showIds: true,
+        showVertexNumbers: true,
       },
-    );
+    });
+    Matter.Render.run(renderer);
   }
 }
