@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Matter from 'matter-js';
 import logoImg from '../../assets/logo.png';
+// import buttonImg from '../../assets/flixel-button.png';
 import Entity from '../Entity';
 
 import SolidBodyComponent from '../components/SolidBodyComponent';
@@ -31,7 +32,8 @@ export default class MainScene extends Phaser.Scene {
 
   public preload(): void {
     this.load.image('logo', logoImg);
-    // this.load.spritesheet('button', 'l', { frameWidth: 300, frameHeight: 50});
+    // this.load.image('button', buttonImg);
+    this.load.spritesheet('button', 'assets/flixel-button.png', { frameWidth: 80, frameHeight: 20 });
   }
 
   public create(): void {
@@ -64,6 +66,7 @@ export default class MainScene extends Phaser.Scene {
       20,
       'Druecken',
       (): void => {
+        //this.button = scene.add.sprite(60, 30, 'button', 1);
         console.log('gedrueckt');
       },
     );
