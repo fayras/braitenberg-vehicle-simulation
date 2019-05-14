@@ -26,7 +26,7 @@ export default class EngineSystem extends System {
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.
-        const force = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: thrust * 0.005 }, transform.angle);
+        const force = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: thrust * 0.001 }, transform.angle);
 
         this.eventBus.publish(EventType.APPLY_FORCE, {
           id: entity.id,
