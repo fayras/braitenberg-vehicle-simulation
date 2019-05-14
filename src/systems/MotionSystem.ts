@@ -1,20 +1,20 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
-import ComponentType from '../components/types';
+import { ComponentType } from '../enums';
 import SensorComponent from '../components/SensorComponent';
-import BodyComponent from '../components/BodyComponent';
+import TransformableComponent from '../components/TransformableComponent';
+import System from './System';
+import EventBus from '../EventBus';
 
-export default class MotionSystem implements System {
-  public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.BODY];
+export default class MotionSystem extends System {
+  public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
   private sensors: { [id: number]: { [id: string]: Phaser.Physics.Matter.Matter.Body } } = {};
 
   private componentDictionary: { [bodyId: number]: { component: SensorComponent; entity: Entity } } = {};
 
-  private scene: Phaser.Scene;
-
-  public constructor(scene: Phaser.Scene) {
-    this.scene = scene;
+  public constructor(scene: Phaser.Scene, bus: EventBus) {
+    super(scene, bus);
     this.scene.matter.world.on('collisionstart', event => this.onCollision(event));
     this.scene.matter.world.on('collisionend', event => this.onCollisionEnd(event));
   }
@@ -22,18 +22,18 @@ export default class MotionSystem implements System {
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-      const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
+      const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
       sensors.forEach(sensorComponent => {
         const sensorObject = this.getSensor(entity, sensorComponent);
-        const direction = Phaser.Physics.Matter.Matter.Vector.rotate(sensorComponent.position, body.body.angle);
+        const direction = Phaser.Physics.Matter.Matter.Vector.rotate(sensorComponent.position, body.angle);
 
         Phaser.Physics.Matter.Matter.Body.setPosition(sensorObject, {
-          x: body.body.position.x + direction.x,
-          y: body.body.position.y + direction.y,
+          x: body.position.x + direction.x,
+          y: body.position.y + direction.y,
         });
 
-        Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.body.angle);
+        Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.angle);
       });
     });
   }
@@ -94,9 +94,9 @@ export default class MotionSystem implements System {
       const sensor = bodyA.isSensor ? bodyA : bodyB;
       const other = bodyA.isSensor ? bodyB : bodyA;
       const { entity } = this.componentDictionary[sensor.id];
-      const body = entity.getComponent(ComponentType.BODY) as BodyComponent;
+      const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-      if (other !== body.body) {
+      if (other !== body) {
         this.componentDictionary[sensor.id].component.activation = 1.0;
       }
     });
