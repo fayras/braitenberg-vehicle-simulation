@@ -17,6 +17,7 @@ import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
 import Button from '../gui/Button';
 import EngineSystem from '../systems/EngineSystem';
+import MotionSystem from '../systems/MotionSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -41,6 +42,7 @@ export default class MainScene extends Phaser.Scene {
     this.drawDebugCanvas();
 
     this.matter.world.setBounds();
+    this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
 
     for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
@@ -55,8 +57,8 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    entity2.addComponent(new MotorComponent({ x: 50, y: 0 }));
-    entity2.addComponent(new SensorComponent({ x: 0, y: 25 }, 50, 0.7));
+    entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
+    entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 50, 0.7));
     // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
 
@@ -76,7 +78,7 @@ export default class MainScene extends Phaser.Scene {
     this.systems = [
       new PhysicsSystem(this, this.eventBus),
       new EngineSystem(this, this.eventBus),
-      // new MotionSystem(this),
+      new MotionSystem(this, this.eventBus),
       new RenderSystem(this, this.eventBus),
     ];
   }
