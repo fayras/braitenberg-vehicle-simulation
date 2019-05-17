@@ -5,10 +5,10 @@ export default abstract class Component {
 
   public id: number;
 
-  private static numOfEntities = 0;
+  private static count = 0;
 
   public constructor() {
-    this.id = Component.numOfEntities;
-    Component.numOfEntities += 1;
+    this.id = Component.count;
+    Component.count += 1;
   }
 }
