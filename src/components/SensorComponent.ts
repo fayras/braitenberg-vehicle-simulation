@@ -1,6 +1,7 @@
 import { ComponentType, SensorActivation, SubstanceType } from '../enums';
+import Component from './Component';
 
-export default class SensorComponent implements Component {
+export default class SensorComponent extends Component {
   public name: ComponentType = ComponentType.SENSOR;
 
   public range: number;
@@ -16,6 +17,7 @@ export default class SensorComponent implements Component {
   public reactsTo: SubstanceType = SubstanceType.LIGHT;
 
   public constructor(offsetPos: Phaser.Physics.Matter.Matter.Vector, range: number, angle: number) {
+    super();
     this.position = offsetPos;
     this.range = range;
     this.angle = angle;

@@ -14,7 +14,3 @@ declare namespace EventMessages {
 type AssetKey = string;
 type EventMessage = EventMessages.ApplyForce;
 type EventHandler = (event: EventMessage) => void;
-
-interface Component {
-  name: import('../src/enums').ComponentType;
-}
