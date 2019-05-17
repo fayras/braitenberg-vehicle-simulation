@@ -39,7 +39,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
-    this.drawDebugCanvas();
+    // this.drawDebugCanvas();
 
     this.matter.world.setBounds();
     this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
