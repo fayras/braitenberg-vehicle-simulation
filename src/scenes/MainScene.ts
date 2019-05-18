@@ -62,12 +62,22 @@ export default class MainScene extends Phaser.Scene {
     // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
 
-    const startButton = new Button(this, 20, 20, 'Druecken', button => {
-      // eslint-disable-next-line
-      button.button = this.add.sprite(60, 30, 'button', 2);
-      // eslint-disable-next-line
-      button.text = this.add.text(20, 20, 'gedrueckt');
-      console.log('gedrueckt');
+    const startButton = new Button(this, 20, 20, 'Druecken', 0, button => {
+      if (button.status === 0) {
+        // eslint-disable-next-line
+        button.button = this.add.sprite(60, 30, 'button', 2);
+        // eslint-disable-next-line
+        button.status = 1;
+        console.log('einmal gedrueckt');
+      } else if (button.status === 1) {
+        // eslint-disable-next-line
+        button.button = this.add.sprite(60, 30, 'button', 0);
+        // eslint-disable-next-line
+        button.status = 0;
+        console.log('zweimal gedrueckt');
+      } else {
+        console.log('Fehler');
+      }
     });
   }
 
