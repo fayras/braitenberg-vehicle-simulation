@@ -1,8 +1,6 @@
 {
-  "parser":  "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "airbnb-typescript/base",
     "plugin:@typescript-eslint/recommended",
@@ -16,13 +14,18 @@
   },
   "rules": {
     "no-prototype-builtins": "off",
-    "@typescript-eslint/explicit-function-return-type": ["error", {
-      "allowExpressions": true,
-      "allowTypedFunctionExpressions": true
-    }]
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true
+      }
+    ]
   },
-  "overrides": [{
-    "files": ["src/**/*"],
-    "excludedFiles": "*.d.ts"
-  }]
+  "overrides": [
+    {
+      "files": ["src/**/*"],
+      "excludedFiles": "*.d.ts"
+    }
+  ]
 }
