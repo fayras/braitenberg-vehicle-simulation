@@ -15,9 +15,11 @@ import EventBus from '../EventBus';
 import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
-import Button from '../gui/Button';
 import EngineSystem from '../systems/EngineSystem';
 import MotionSystem from '../systems/MotionSystem';
+
+import Button from '../gui/Button';
+import ToggleButton from '../gui/ToggleButton';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -62,23 +64,8 @@ export default class MainScene extends Phaser.Scene {
     // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
 
-    const startButton = new Button(this, 20, 20, 'Druecken', 0, button => {
-      if (button.status === 0) {
-        // eslint-disable-next-line
-        button.button = this.add.sprite(60, 30, 'button', 2);
-        // eslint-disable-next-line
-        button.status = 1;
-        console.log('einmal gedrueckt');
-      } else if (button.status === 1) {
-        // eslint-disable-next-line
-        button.button = this.add.sprite(60, 30, 'button', 0);
-        // eslint-disable-next-line
-        button.status = 0;
-        console.log('zweimal gedrueckt');
-      } else {
-        console.log('Fehler');
-      }
-    });
+    const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {}, button => {});
+    const resetButton = new Button(this, 200, 20, 'Reset', button => {}, button => {});
   }
 
   private createSystems(): void {

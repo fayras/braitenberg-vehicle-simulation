@@ -5,21 +5,36 @@ export default class Button {
 
   public text: Phaser.GameObjects.Text;
 
-  public status: number;
-
   public constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
     text: string,
-    status: number,
-    action: (btn: Button) => void,
+    klickaction: (btn: Button) => void,
+    hoveraction: (btn: Button) => void,
   ) {
-    // Text zentrieren ?
-    // Status 0 = stop, Status 1= lüft, Status >1 Fehler
-    this.status = status;
-    this.button = scene.add.sprite(60, 30, 'button', 0).setInteractive();
-    this.button.on('pointerdown', () => action(this));
+    this.button = scene.add.sprite(x, y, 'button', 0).setInteractive();
+
+    this.button.on('pointerover', () => {
+      this.handleClick(hoveraction);
+    });
+    this.button.on('pointerdown', () => {
+      this.handleClick(klickaction);
+    });
+
     this.text = scene.add.text(x, y, text);
+    this.text.x = this.text.x - this.text.displayWidth / 2;
+    this.text.y = this.text.y - this.text.displayHeight / 2;
+  }
+
+  protected handleClick(klickaction: (btn: Button) => void): void {
+    klickaction(this);
+    console.log('geklickt');
+  }
+
+  protected handleHover(hoveraction: (btn: Button) => void): void {
+    hoveraction(this);
+    this.add.text(0, 0, 'Testtest', { font: '18px Courier', fill: '#00ff00' }).setScrollFactor(0);
+    console.log('gehovert');
   }
 }
