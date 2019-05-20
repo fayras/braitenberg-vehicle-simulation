@@ -16,8 +16,12 @@ export default class Button {
     this.button = scene.add.sprite(x, y, 'button', 0).setInteractive();
 
     this.button.on('pointerover', () => {
-      this.handleClick(hoveraction);
+      this.text.setFill('red');
     });
+    this.button.on('pointerout', () => {
+      this.text.setFill('white');
+    });
+
     this.button.on('pointerdown', () => {
       this.handleClick(klickaction);
     });
@@ -30,11 +34,5 @@ export default class Button {
   protected handleClick(klickaction: (btn: Button) => void): void {
     klickaction(this);
     console.log('geklickt');
-  }
-
-  protected handleHover(hoveraction: (btn: Button) => void): void {
-    hoveraction(this);
-    this.add.text(0, 0, 'Testtest', { font: '18px Courier', fill: '#00ff00' }).setScrollFactor(0);
-    console.log('gehovert');
   }
 }
