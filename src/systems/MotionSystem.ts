@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
-import { ComponentType } from '../enums';
+import { ComponentType, EventType } from '../enums';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
@@ -9,9 +9,9 @@ import EventBus from '../EventBus';
 export default class MotionSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
-  private sensors: { [id: number]: { [id: string]: Phaser.Physics.Matter.Matter.Body } } = {};
+  private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
 
-  private componentDictionary: { [bodyId: number]: { component: SensorComponent; entity: Entity } } = {};
+  private physicsToComponentDictionary: { [bodyId: number]: number } = {};
 
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
@@ -22,43 +22,66 @@ export default class MotionSystem extends System {
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-      const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-      sensors.forEach(sensorComponent => {
-        const sensorObject = this.getSensor(entity, sensorComponent);
-        const direction = Phaser.Physics.Matter.Matter.Vector.rotate(sensorComponent.position, body.angle);
-
-        Phaser.Physics.Matter.Matter.Body.setPosition(sensorObject, {
-          x: body.position.x + direction.x,
-          y: body.position.y + direction.y,
-        });
-
-        Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.angle);
+      sensors.forEach(sensor => {
+        if (!this.physicsObjects[sensor.id]) this.addSensorObject(entity, sensor);
       });
     });
+
+    // entities.forEach(entity => {
+    //   const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+    //   const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+
+    //   sensors.forEach(sensorComponent => {
+    //     const sensorObject = this.getSensor(entity, sensorComponent);
+    //     const direction = Phaser.Physics.Matter.Matter.Vector.rotate(sensorComponent.position, body.angle);
+
+    //     Phaser.Physics.Matter.Matter.Body.setPosition(sensorObject, {
+    //       x: body.position.x + direction.x,
+    //       y: body.position.y + direction.y,
+    //     });
+
+    //     Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.angle);
+    //   });
+    // });
   }
 
-  private getSensor(entity: Entity, component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
-    if (!this.sensors[entity.id]) {
-      this.sensors[entity.id] = {};
-    }
+  private addSensorObject(entity: Entity, sensor: SensorComponent): Phaser.Physics.Matter.Matter.Body {
+    const body = MotionSystem.createSensor(sensor);
 
-    const sensorID = `${entity.id}_${component.position.x}_${component.position.y}_${component.range}_${
-      component.angle
-    }`;
+    this.attachSynchronization(body, entity, sensor);
 
-    if (!this.sensors[entity.id][sensorID]) {
-      this.sensors[entity.id][sensorID] = MotionSystem.createSensor(component);
-      // const angle = Phaser.Math.Angle.BetweenPoints({ x: 0, y: 0 }, component.position);
-      // this.sensors[entity.id][sensorID].angle = angle + Math.PI;
-      this.componentDictionary[this.sensors[entity.id][sensorID].id] = {
-        component,
-        entity,
-      };
-      this.scene.matter.world.add(this.sensors[entity.id][sensorID]);
-    }
+    this.scene.matter.world.add(body);
+    this.physicsObjects[sensor.id] = body;
+    this.physicsToComponentDictionary[body.id] = sensor.id;
 
-    return this.sensors[entity.id][sensorID];
+    return body;
+  }
+
+  private attachSynchronization(
+    body: Phaser.Physics.Matter.Matter.Body,
+    entity: Entity,
+    component: SensorComponent,
+  ): void {
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+
+    this.scene.matter.world.on('beforeupdate', () => {
+      const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
+      console.log(component.position, transform.angle, direction);
+      Phaser.Physics.Matter.Matter.Body.setPosition(body, {
+        x: transform.position.x + direction.x,
+        y: transform.position.y + direction.y,
+      });
+      console.log(transform.position.x, direction.x, transform.position.y, direction.y);
+      Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle);
+    });
+
+    this.scene.matter.world.on('afterupdate', () => {
+      const sensor = component;
+      sensor.position.x = body.position.x;
+      sensor.position.y = body.position.y;
+      sensor.angle = body.angle;
+    });
   }
 
   private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
@@ -92,13 +115,15 @@ export default class MotionSystem extends System {
 
       console.log('start', bodyA, bodyB);
       const sensor = bodyA.isSensor ? bodyA : bodyB;
-      const other = bodyA.isSensor ? bodyB : bodyA;
-      const { entity } = this.componentDictionary[sensor.id];
-      const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+      // const other = bodyA.isSensor ? bodyB : bodyA;
+      const componentId = this.physicsToComponentDictionary[sensor.id];
 
-      if (other !== body) {
-        this.componentDictionary[sensor.id].component.activation = 1.0;
-      }
+      // if (other !== body) {
+      this.eventBus.publish(EventType.SENSOR_ACTIVE, {
+        id: componentId,
+        activation: 1.0,
+      });
+      // }
     });
   }
 
@@ -108,8 +133,12 @@ export default class MotionSystem extends System {
       if (pair.isSensor) {
         console.log('end', bodyA, bodyB);
         const sensor = bodyA.isSensor ? bodyA : bodyB;
-        this.componentDictionary[sensor.id].component.activation = 0.0;
-        console.log(this.componentDictionary[sensor.id]);
+        const componentId = this.physicsToComponentDictionary[sensor.id];
+
+        this.eventBus.publish(EventType.SENSOR_ACTIVE, {
+          id: componentId,
+          activation: 1.0,
+        });
       }
     });
   }
