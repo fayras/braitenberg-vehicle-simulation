@@ -67,12 +67,10 @@ export default class MotionSystem extends System {
 
     this.scene.matter.world.on('beforeupdate', () => {
       const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
-      console.log(component.position, transform.angle, direction);
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
         x: transform.position.x + direction.x,
         y: transform.position.y + direction.y,
       });
-      console.log(transform.position.x, direction.x, transform.position.y, direction.y);
       Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle);
     });
 
@@ -113,7 +111,6 @@ export default class MotionSystem extends System {
       const { bodyA, bodyB } = pair;
       if (!pair.isSensor || (bodyA.isSensor && bodyB.isSensor)) return;
 
-      console.log('start', bodyA, bodyB);
       const sensor = bodyA.isSensor ? bodyA : bodyB;
       // const other = bodyA.isSensor ? bodyB : bodyA;
       const componentId = this.physicsToComponentDictionary[sensor.id];
@@ -131,7 +128,6 @@ export default class MotionSystem extends System {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
       if (pair.isSensor) {
-        console.log('end', bodyA, bodyB);
         const sensor = bodyA.isSensor ? bodyA : bodyB;
         const componentId = this.physicsToComponentDictionary[sensor.id];
 
