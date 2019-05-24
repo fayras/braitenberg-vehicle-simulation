@@ -5,14 +5,7 @@ export default class Button {
 
   public text: Phaser.GameObjects.Text;
 
-  public constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    text: string,
-    klickaction: (btn: Button) => void,
-    hoveraction: (btn: Button) => void,
-  ) {
+  public constructor(scene: Phaser.Scene, x: number, y: number, text: string, klickaction: (btn: Button) => void) {
     this.button = scene.add.sprite(x, y, 'button', 0).setInteractive();
 
     this.button.on('pointerover', () => {

@@ -64,8 +64,8 @@ export default class MainScene extends Phaser.Scene {
     // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
     this.entities.push(entity2);
 
-    const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {}, button => {});
-    const resetButton = new Button(this, 200, 20, 'Reset', button => {}, button => {});
+    const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {});
+    const resetButton = new Button(this, 200, 20, 'Reset', button => {});
   }
 
   private createSystems(): void {
