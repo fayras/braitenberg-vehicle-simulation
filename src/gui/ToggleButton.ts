@@ -1,18 +1,20 @@
 import Button from './Button';
 
 export default class ToggleButton extends Button {
-  public status: number = 0;
+  private pressed: boolean = false;
 
   protected handleClick(action: (btn: Button) => void): void {
     action(this);
-    if (this.status === 0) {
+    if (this.pressed === false) {
       this.button.setFrame(2);
-      this.status = 1;
-    } else if (this.status === 1) {
-      this.button.setFrame(0);
-      this.status = 0;
+      this.pressed = true;
     } else {
-      console.log('Fehler');
+      this.button.setFrame(0);
+      this.pressed = false;
     }
+  }
+
+  public isPressed(): boolean {
+    return this.pressed;
   }
 }
