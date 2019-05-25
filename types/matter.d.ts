@@ -942,6 +942,7 @@ declare namespace Phaser {
            * @type vector
            * @default { x: 0, y:      */
           position: Vector;
+          positionPrev: Vector;
           /**
            * An `Object` that defines the rendering properties to be consumed by the module `Matter.Render`.
            *

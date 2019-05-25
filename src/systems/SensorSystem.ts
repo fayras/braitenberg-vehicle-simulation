@@ -11,12 +11,10 @@ export default class SensorSystem extends System {
 
   private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
 
-  private physicsToComponentDictionary: { [bodyId: number]: number } = {};
-
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
-    this.scene.matter.world.on('collisionstart', event => this.onCollision(event));
-    this.scene.matter.world.on('collisionend', event => this.onCollisionEnd(event));
+    this.scene.matter.world.on('collisionstart', this.onCollision.bind(this));
+    this.scene.matter.world.on('collisionend', this.onCollisionEnd.bind(this));
   }
 
   public update(entities: Entity[]): void {
@@ -34,9 +32,15 @@ export default class SensorSystem extends System {
 
     this.attachSynchronization(body, entity, sensor);
 
+    body.label = ComponentType.SENSOR;
+    body.userData = {
+      belongsTo: {
+        entity: entity.id,
+        component: sensor.id,
+      },
+    };
     this.scene.matter.world.add(body);
     this.physicsObjects[sensor.id] = body;
-    this.physicsToComponentDictionary[body.id] = sensor.id;
 
     return body;
   }
@@ -82,30 +86,29 @@ export default class SensorSystem extends System {
     return body;
   }
 
-  public onCollision(event): void {
+  public onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
       if (!pair.isSensor || (bodyA.isSensor && bodyB.isSensor)) return;
 
+      // Hier wird noch auf `isSensor` gesprüft. Besser sollte es sein, wenn auf
+      // `label` == ComponentType.SENSOR geprüft wird.
       const sensor = bodyA.isSensor ? bodyA : bodyB;
-      // const other = bodyA.isSensor ? bodyB : bodyA;
-      const componentId = this.physicsToComponentDictionary[sensor.id];
+      const componentId = sensor.userData.belongsTo.component;
 
-      // if (other !== body) {
       this.eventBus.publish(EventType.SENSOR_ACTIVE, {
         id: componentId,
         activation: 1.0,
       });
-      // }
     });
   }
 
-  public onCollisionEnd(event): void {
+  public onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
       if (pair.isSensor) {
         const sensor = bodyA.isSensor ? bodyA : bodyB;
-        const componentId = this.physicsToComponentDictionary[sensor.id];
+        const componentId = sensor.userData.belongsTo.component;
 
         this.eventBus.publish(EventType.SENSOR_ACTIVE, {
           id: componentId,
