@@ -22,6 +22,7 @@ import SensorSystem from '../systems/SensorSystem';
 import Button from '../gui/Button';
 import ToggleButton from '../gui/ToggleButton';
 import ConnectionComponent from '../components/ConnectionComponent';
+import ConnectionSystem from '../systems/ConnectionSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -65,8 +66,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
     const motorId = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
-    const sensorId = entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 50, 0.7));
-    entity2.addComponent(new ConnectionComponent([motorId], [sensorId], [[1]]));
+    const sensor1 = entity2.addComponent(new SensorComponent({ x: -10, y: 55 }, 50, 0.6));
+    const sensor2 = entity2.addComponent(new SensorComponent({ x: 10, y: 55 }, 50, 0.6));
+    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motorId], [[1], [0.3]]));
     this.entities.push(entity2);
 
     const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {
@@ -90,6 +92,7 @@ export default class MainScene extends Phaser.Scene {
       new PhysicsSystem(this, this.eventBus),
       new EngineSystem(this, this.eventBus),
       new SensorSystem(this, this.eventBus),
+      new ConnectionSystem(this, this.eventBus),
       new RenderSystem(this, this.eventBus),
     ];
   }

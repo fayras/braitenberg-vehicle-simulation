@@ -4,7 +4,6 @@ import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import TransformableComponent from '../components/TransformableComponent';
 import MotorComponent from '../components/MotorComponent';
-import SensorComponent from '../components/SensorComponent';
 
 export default class EngineSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.MOTOR];
@@ -13,18 +12,12 @@ export default class EngineSystem extends System {
     entities.forEach(entity => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
-      const sensor = entity.getComponent(ComponentType.SENSOR) as SensorComponent;
 
       motors.forEach(motor => {
         // Wir müssen die neue "Position des Motors" am Vehikel berechnen
         const offset = Phaser.Physics.Matter.Matter.Vector.rotate(motor.position, transform.angle);
-
         const slope = motor.maxSpeed - motor.defaultSpeed;
-
-        // Throttle wird später durch Sensoren bestimmt. Einfachheithalber
-        // wird hier erstmal ein hartkodierter Wert verwendent.
-        const throttle = sensor.activation;
-        const thrust = motor.defaultSpeed + throttle * slope;
+        const thrust = motor.defaultSpeed + motor.throttle * slope;
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.
