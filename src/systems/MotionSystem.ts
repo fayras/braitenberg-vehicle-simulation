@@ -27,23 +27,6 @@ export default class MotionSystem extends System {
         if (!this.physicsObjects[sensor.id]) this.addSensorObject(entity, sensor);
       });
     });
-
-    // entities.forEach(entity => {
-    //   const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-    //   const body = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-
-    //   sensors.forEach(sensorComponent => {
-    //     const sensorObject = this.getSensor(entity, sensorComponent);
-    //     const direction = Phaser.Physics.Matter.Matter.Vector.rotate(sensorComponent.position, body.angle);
-
-    //     Phaser.Physics.Matter.Matter.Body.setPosition(sensorObject, {
-    //       x: body.position.x + direction.x,
-    //       y: body.position.y + direction.y,
-    //     });
-
-    //     Phaser.Physics.Matter.Matter.Body.setAngle(sensorObject, body.angle);
-    //   });
-    // });
   }
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): Phaser.Physics.Matter.Matter.Body {
