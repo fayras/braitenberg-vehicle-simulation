@@ -109,7 +109,7 @@ export default class MotionSystem extends System {
 
         this.eventBus.publish(EventType.SENSOR_ACTIVE, {
           id: componentId,
-          activation: 1.0,
+          activation: 0.0,
         });
       }
     });
