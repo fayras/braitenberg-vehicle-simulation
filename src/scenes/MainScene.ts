@@ -21,6 +21,7 @@ import MotionSystem from '../systems/MotionSystem';
 
 import Button from '../gui/Button';
 import ToggleButton from '../gui/ToggleButton';
+import ConnectionComponent from '../components/ConnectionComponent';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -63,9 +64,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 200 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
-    entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 50, 0.7));
-    // entity2.addComponent(new ConnectionComponent([motorId], [sensorId], (layers = 0)));
+    const motorId = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
+    const sensorId = entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 50, 0.7));
+    entity2.addComponent(new ConnectionComponent([motorId], [sensorId], [[1]]));
     this.entities.push(entity2);
 
     const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {

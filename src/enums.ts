@@ -10,6 +10,7 @@ export enum ComponentType {
   MOTOR = 'MOTOR',
   SOURCE = 'SOURCE',
   TRANSFORMABLE = 'TRANSFORMABLE',
+  CONNECTION = 'CONNECTION',
 }
 
 export enum SubstanceType {

@@ -13,8 +13,10 @@ export default class Entity {
     Entity.numOfEntities += 1;
   }
 
-  public addComponent(component: Component): void {
+  public addComponent(component: Component): number {
     this.components.push(component);
+
+    return component.id;
   }
 
   public removeComponent(component: Component): Component | undefined {
