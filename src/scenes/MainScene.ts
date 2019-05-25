@@ -17,7 +17,7 @@ import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
 import RenderSystem from '../systems/RenderSystem';
 import EngineSystem from '../systems/EngineSystem';
-import MotionSystem from '../systems/MotionSystem';
+import SensorSystem from '../systems/SensorSystem';
 
 import Button from '../gui/Button';
 import ToggleButton from '../gui/ToggleButton';
@@ -89,7 +89,7 @@ export default class MainScene extends Phaser.Scene {
     this.systems = [
       new PhysicsSystem(this, this.eventBus),
       new EngineSystem(this, this.eventBus),
-      new MotionSystem(this, this.eventBus),
+      new SensorSystem(this, this.eventBus),
       new RenderSystem(this, this.eventBus),
     ];
   }

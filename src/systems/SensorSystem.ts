@@ -6,7 +6,7 @@ import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
 
-export default class MotionSystem extends System {
+export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
   private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
@@ -30,7 +30,7 @@ export default class MotionSystem extends System {
   }
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): Phaser.Physics.Matter.Matter.Body {
-    const body = MotionSystem.createSensor(sensor);
+    const body = SensorSystem.createSensor(sensor);
 
     this.attachSynchronization(body, entity, sensor);
 
