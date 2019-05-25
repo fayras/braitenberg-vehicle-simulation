@@ -73,13 +73,6 @@ export default class MotionSystem extends System {
       });
       Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle);
     });
-
-    this.scene.matter.world.on('afterupdate', () => {
-      const sensor = component;
-      sensor.position.x = body.position.x;
-      sensor.position.y = body.position.y;
-      sensor.angle = body.angle;
-    });
   }
 
   private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
