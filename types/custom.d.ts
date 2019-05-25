@@ -19,5 +19,4 @@ declare namespace EventMessages {
 }
 
 type AssetKey = string;
-type EventMessage = EventMessages.ApplyForce | EventMessages.SensorActive;
-type EventHandler = (event: EventMessage) => void;
+type EventHandler = ((event: EventMessages.ApplyForce) => void) | ((event: EventMessages.SensorActive) => void);
