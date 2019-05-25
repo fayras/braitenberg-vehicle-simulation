@@ -65,10 +65,11 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new TransformableComponent({ x: 300, y: 200 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
-    const motorId = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
+    const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
+    const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
     const sensor1 = entity2.addComponent(new SensorComponent({ x: -10, y: 55 }, 50, 0.6));
     const sensor2 = entity2.addComponent(new SensorComponent({ x: 10, y: 55 }, 50, 0.6));
-    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motorId], [[1], [0.3]]));
+    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[1, 0], [0, 1]]));
     this.entities.push(entity2);
 
     const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {

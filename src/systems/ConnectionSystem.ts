@@ -1,4 +1,3 @@
-import Phaser from 'phaser';
 import { multiply } from 'mathjs';
 import System from './System';
 import Entity from '../Entity';
@@ -19,12 +18,17 @@ export default class ConnectionSystem extends System {
 
       const inputs = connection.inputIds.map(id => {
         const sensor = sensors.find(s => s.id === id);
-        return sensor ? 1 : 0;
+        return sensor ? sensor.activation : 0;
       });
 
       const outputs = multiply(inputs, connection.weights);
 
-      console.log(outputs);
+      connection.outputIds.forEach((id, index) => {
+        const motor = motors.find(m => m.id === id);
+        if (motor) {
+          motor.throttle = outputs[index];
+        }
+      });
     });
   }
 }

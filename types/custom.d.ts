@@ -3,6 +3,8 @@ declare module '*.png' {
   export default value;
 }
 
+declare module 'mathjs';
+
 declare namespace EventMessages {
   interface ApplyForce {
     id: number;

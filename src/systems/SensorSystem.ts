@@ -13,8 +13,8 @@ export default class SensorSystem extends System {
 
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
-    this.scene.matter.world.on('collisionstart', this.onCollision.bind(this));
-    this.scene.matter.world.on('collisionend', this.onCollisionEnd.bind(this));
+    this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
+    this.scene.matter.world.on('collisionend', SensorSystem.onCollisionEnd);
   }
 
   public update(entities: Entity[]): void {
@@ -36,7 +36,10 @@ export default class SensorSystem extends System {
     body.userData = {
       belongsTo: {
         entity: entity.id,
-        component: sensor.id,
+        // TODO: Hier wird jetzt die Referenz auf die gesamte Komponente gespeichert.
+        // Wäre es besser hier nur die ID zu speichern und dann später mittels sowas
+        // wie `EntityManager` die Komponente über die ID zu holen?
+        component: sensor,
       },
     };
     this.scene.matter.world.add(body);
@@ -89,7 +92,7 @@ export default class SensorSystem extends System {
     return body;
   }
 
-  public onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
+  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
       if (!pair.isSensor || (bodyA.isSensor && bodyB.isSensor)) return;
@@ -97,26 +100,26 @@ export default class SensorSystem extends System {
       // Hier wird noch auf `isSensor` gesprüft. Besser sollte es sein, wenn auf
       // `label` == ComponentType.SENSOR geprüft wird.
       const sensor = bodyA.isSensor ? bodyA : bodyB;
-      const componentId = sensor.userData.belongsTo.component;
+      sensor.userData.belongsTo.component.activation = 1.0;
 
-      this.eventBus.publish(EventType.SENSOR_ACTIVE, {
-        id: componentId,
-        activation: 1.0,
-      });
+      // this.eventBus.publish(EventType.SENSOR_ACTIVE, {
+      //   id: componentId,
+      //   activation: 1.0,
+      // });
     });
   }
 
-  public onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
+  public static onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
       if (pair.isSensor) {
         const sensor = bodyA.isSensor ? bodyA : bodyB;
-        const componentId = sensor.userData.belongsTo.component;
+        sensor.userData.belongsTo.component.activation = 0.0;
 
-        this.eventBus.publish(EventType.SENSOR_ACTIVE, {
-          id: componentId,
-          activation: 0.0,
-        });
+        // this.eventBus.publish(EventType.SENSOR_ACTIVE, {
+        //   id: componentId,
+        //   activation: 0.0,
+        // });
       }
     });
   }
