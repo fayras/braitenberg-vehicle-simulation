@@ -1,6 +1,7 @@
 import { ComponentType, BodyShape } from '../enums';
+import Component from './Component';
 
-export default class SolidBodyComponent extends Comment {
+export default class SolidBodyComponent extends Component {
   public name: ComponentType = ComponentType.SOLID_BODY;
 
   public size: number;

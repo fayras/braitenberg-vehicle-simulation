@@ -1,6 +1,7 @@
 import { ComponentType } from '../enums';
+import Component from './Component';
 
-export default class TransformableComponent extends Comment {
+export default class TransformableComponent extends Component {
   public name: ComponentType = ComponentType.TRANSFORMABLE;
 
   public position: Phaser.Physics.Matter.Matter.Vector;

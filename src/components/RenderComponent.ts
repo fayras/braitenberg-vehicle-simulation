@@ -1,6 +1,7 @@
 import { ComponentType } from '../enums';
+import Component from './Component';
 
-export default class RenderComponent extends Comment {
+export default class RenderComponent extends Component {
   public name: ComponentType = ComponentType.RENDER;
 
   public asset: AssetKey;

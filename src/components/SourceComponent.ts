@@ -1,6 +1,7 @@
 import { ComponentType, SubstanceType } from '../enums';
+import Component from './Component';
 
-export default class SourceComponent extends Comment {
+export default class SourceComponent extends Component {
   public name: ComponentType = ComponentType.SOURCE;
 
   public range: number;
