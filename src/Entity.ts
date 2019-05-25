@@ -1,4 +1,5 @@
 import { ComponentType } from './enums';
+import Component from './components/Component';
 
 export default class Entity {
   public id: number;
