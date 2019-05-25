@@ -52,6 +52,9 @@ export default class SensorSystem extends System {
   ): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
+    // Hier brauchen wir nur `beforeupdate` (Kein `afterupdate`), da die Position und Winkel
+    // des Sensors immer relativ zum Objekt selbst sind und somit nicht durch die Physik-
+    // Engine beeinflusst werden.
     this.scene.matter.world.on('beforeupdate', () => {
       const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
