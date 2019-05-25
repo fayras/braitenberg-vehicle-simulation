@@ -61,7 +61,7 @@ export default class MainScene extends Phaser.Scene {
     }
 
     const entity2 = new Entity();
-    entity2.addComponent(new TransformableComponent({ x: 300, y: 100 }));
+    entity2.addComponent(new TransformableComponent({ x: 300, y: 200 }));
     entity2.addComponent(new SolidBodyComponent(100));
     entity2.addComponent(new RenderComponent('logo', 120));
     entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 5));
@@ -71,7 +71,7 @@ export default class MainScene extends Phaser.Scene {
 
     const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {
       this.running = !this.running;
-      //Pause einfügen https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scenemanager/
+      // Pause einfügen https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scenemanager/
     });
     const resetButton = new Button(this, 200, 20, 'Reset', button => {});
     const EditorButton = new ToggleButton(this, 700, 20, 'Editor', button => {
