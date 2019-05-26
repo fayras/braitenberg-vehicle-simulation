@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Matter from 'matter-js';
+import tankImg from '../../assets/tank.png';
 import logoImg from '../../assets/logo.png';
 import sourceImg from '../../assets/source.png';
 import buttonSpriteSheet from '../../assets/flixel-button.png';
@@ -42,6 +43,7 @@ export default class MainScene extends Phaser.Scene {
   public preload(): void {
     this.load.image('logo', logoImg);
     this.load.image('source', sourceImg);
+    this.load.image('tank', tankImg);
     this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 80, frameHeight: 20 });
   }
 
@@ -66,7 +68,7 @@ export default class MainScene extends Phaser.Scene {
     const entity2 = new Entity();
     entity2.addComponent(new TransformableComponent({ x: 300, y: 200 }));
     entity2.addComponent(new SolidBodyComponent(100));
-    entity2.addComponent(new RenderComponent('logo', 120));
+    entity2.addComponent(new RenderComponent('tank', 100));
     const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
     const sensor1 = entity2.addComponent(new SensorComponent({ x: -10, y: 55 }, 50, 0.6));
