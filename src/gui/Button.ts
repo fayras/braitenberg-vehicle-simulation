@@ -5,8 +5,17 @@ export default class Button {
 
   public text: Phaser.GameObjects.Text;
 
-  public constructor(scene: Phaser.Scene, x: number, y: number, text: string, klickaction: (btn: Button) => void) {
-    this.button = scene.add.sprite(x, y, 'button', 0).setInteractive();
+  public constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    text: string,
+    icon: number,
+    klickaction: (btn: Button) => void,
+  ) {
+    this.button = scene.add.sprite(x, y, 'button', icon).setInteractive();
+    this.button.setScale(0.4);
+    //this.button.setDisplaySize(40, 40);
 
     this.button.on('pointerover', () => {
       this.text.setFill('red');

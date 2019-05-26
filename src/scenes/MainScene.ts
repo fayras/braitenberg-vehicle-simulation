@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import tankImg from '../../assets/tank.png';
 import logoImg from '../../assets/logo.png';
 import sourceImg from '../../assets/source.png';
-import buttonSpriteSheet from '../../assets/flixel-button.png';
+import buttonSpriteSheet from '../../assets/gui_icons.png';
 import Entity from '../Entity';
 
 import SolidBodyComponent from '../components/SolidBodyComponent';
@@ -44,7 +44,7 @@ export default class MainScene extends Phaser.Scene {
     this.load.image('logo', logoImg);
     this.load.image('source', sourceImg);
     this.load.image('tank', tankImg);
-    this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 80, frameHeight: 20 });
+    this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 158, frameHeight: 159.2 });
   }
 
   public create(): void {
@@ -54,7 +54,7 @@ export default class MainScene extends Phaser.Scene {
     this.matter.world.setBounds();
     this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
 
-    this.scene.add('editor', EditorScene, false, { x: 600, y: 0 });
+    this.scene.add('editor', EditorScene, false);
 
     for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
@@ -82,18 +82,17 @@ export default class MainScene extends Phaser.Scene {
     light.addComponent(new SourceComponent(300));
     this.entities.push(light);
 
-    const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {
+    const startButton = new ToggleButton(this, 70, 35, '', 4, button => {
       this.running = !this.running;
-      // Pause einfügen https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scenemanager/
     });
-    const resetButton = new Button(this, 200, 20, 'Reset', button => {});
-    const EditorButton = new ToggleButton(this, 700, 20, 'Editor', button => {
+    const resetButton = new Button(this, 200, 35, '', 29, button => {});
+    const EditorButton = new ToggleButton(this, 700, 20, '', 2, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('EditorScene');
-        button.setPosition(700, 20);
+        button.setPosition(700, 35);
       } else {
-        this.scene.launch('EditorScene', { x: 600, y: 0 });
-        button.setPosition(550, 20);
+        this.scene.launch('EditorScene', { x: 500, y: 0 });
+        button.setPosition(530, 35);
       }
     });
   }
