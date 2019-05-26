@@ -6,14 +6,14 @@ export default class RenderComponent extends Component {
 
   public asset: AssetKey;
 
-  public width: number;
+  public size: number;
 
-  public height: number | null;
+  public blendMode: Phaser.BlendModes | null;
 
-  public constructor(asset: AssetKey, width: number, height: number | null = null) {
+  public constructor(asset: AssetKey, width: number, blendMode: Phaser.BlendModes | null = null) {
     super();
     this.asset = asset;
-    this.width = width;
-    this.height = height;
+    this.size = width;
+    this.blendMode = blendMode;
   }
 }
