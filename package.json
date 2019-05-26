@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "mathjs": "^5.10.3",
-    "matter-js": "^0.14.2",
     "phaser": "^3.17.0"
   }
 }

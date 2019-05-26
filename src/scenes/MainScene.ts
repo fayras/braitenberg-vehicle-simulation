@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import Matter from 'matter-js';
 import tankImg from '../../assets/tank.png';
 import logoImg from '../../assets/logo.png';
 import sourceImg from '../../assets/source.png';
@@ -118,26 +117,5 @@ export default class MainScene extends Phaser.Scene {
 
       s.update(entities, delta);
     });
-  }
-
-  private drawDebugCanvas(): void {
-    const renderer = Matter.Render.create({
-      element: document.body,
-      engine: this.matter.world.engine,
-      options: {
-        showDebug: true,
-        showBroadphase: true,
-        showBounds: true,
-        showVelocity: true,
-        showCollisions: true,
-        showSeparations: true,
-        showAxes: true,
-        showPositions: true,
-        showAngleIndicator: true,
-        showIds: true,
-        showVertexNumbers: true,
-      },
-    });
-    Matter.Render.run(renderer);
   }
 }
