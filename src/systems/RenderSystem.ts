@@ -31,11 +31,13 @@ export default class RenderSystem extends System {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
 
-    this.renderObjects[entity.id] = this.scene.add.image(transform.position.x, transform.position.y, render.asset);
-    const scale = render.size / this.renderObjects[entity.id].width;
-    this.renderObjects[entity.id].setScale(scale);
+    const image = this.scene.add.image(transform.position.x, transform.position.y, render.asset);
+    const scale = render.size / image.width;
+    image.setScale(scale);
     if (render.blendMode) {
-      this.renderObjects[entity.id].setBlendMode(render.blendMode);
+      image.setBlendMode(render.blendMode);
     }
+
+    this.renderObjects[entity.id] = image;
   }
 }

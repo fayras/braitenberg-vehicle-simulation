@@ -95,31 +95,21 @@ export default class SensorSystem extends System {
   public static onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
-      if (!pair.isSensor || (bodyA.isSensor && bodyB.isSensor)) return;
-
-      // Hier wird noch auf `isSensor` gesprüft. Besser sollte es sein, wenn auf
-      // `label` == ComponentType.SENSOR geprüft wird.
-      const sensor = bodyA.isSensor ? bodyA : bodyB;
-      sensor.userData.belongsTo.component.activation = 1.0;
-
-      // this.eventBus.publish(EventType.SENSOR_ACTIVE, {
-      //   id: componentId,
-      //   activation: 1.0,
-      // });
+      if (bodyA.label === ComponentType.SENSOR) {
+        bodyA.userData.belongsTo.component.activation = 1.0;
+      } else if (bodyB.label === ComponentType.SENSOR) {
+        bodyB.userData.belongsTo.component.activation = 1.0;
+      }
     });
   }
 
   public static onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
       const { bodyA, bodyB } = pair;
-      if (pair.isSensor) {
-        const sensor = bodyA.isSensor ? bodyA : bodyB;
-        sensor.userData.belongsTo.component.activation = 0.0;
-
-        // this.eventBus.publish(EventType.SENSOR_ACTIVE, {
-        //   id: componentId,
-        //   activation: 0.0,
-        // });
+      if (bodyA.label === ComponentType.SENSOR) {
+        bodyA.userData.belongsTo.component.activation = 0.0;
+      } else if (bodyB.label === ComponentType.SENSOR) {
+        bodyB.userData.belongsTo.component.activation = 0.0;
       }
     });
   }

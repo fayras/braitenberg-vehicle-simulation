@@ -24,6 +24,7 @@ import Button from '../gui/Button';
 import ToggleButton from '../gui/ToggleButton';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
+import SourceSystem from '../systems/SourceSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -60,7 +61,7 @@ export default class MainScene extends Phaser.Scene {
       entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
       entity.addComponent(new SolidBodyComponent(100));
       entity.addComponent(new RenderComponent('logo', 110));
-      entity.addComponent(new SourceComponent(100));
+      entity.addComponent(new SourceComponent(150));
       this.entities.push(entity);
     }
 
@@ -70,9 +71,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new RenderComponent('tank', 100));
     const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity2.addComponent(new SensorComponent({ x: -10, y: 55 }, 50, 0.6));
-    const sensor2 = entity2.addComponent(new SensorComponent({ x: 10, y: 55 }, 50, 0.6));
-    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[1, 0], [0, 1]]));
+    const sensor1 = entity2.addComponent(new SensorComponent({ x: -40, y: 55 }, 80, 1.3));
+    const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
+    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[0, 1], [1, 0]]));
     this.entities.push(entity2);
 
     const light = new Entity();
@@ -100,6 +101,7 @@ export default class MainScene extends Phaser.Scene {
   private createSystems(): void {
     this.systems = [
       new PhysicsSystem(this, this.eventBus),
+      new SourceSystem(this, this.eventBus),
       new EngineSystem(this, this.eventBus),
       new SensorSystem(this, this.eventBus),
       new ConnectionSystem(this, this.eventBus),
