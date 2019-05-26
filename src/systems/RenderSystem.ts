@@ -32,6 +32,10 @@ export default class RenderSystem extends System {
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
 
     this.renderObjects[entity.id] = this.scene.add.image(transform.position.x, transform.position.y, render.asset);
-    this.renderObjects[entity.id].setDisplaySize(render.width, render.height || render.width);
+    const scale = render.size / this.renderObjects[entity.id].width;
+    this.renderObjects[entity.id].setScale(scale);
+    if (render.blendMode) {
+      this.renderObjects[entity.id].setBlendMode(render.blendMode);
+    }
   }
 }
