@@ -32,7 +32,7 @@ export default class MainScene extends Phaser.Scene {
 
   private eventBus: EventBus;
 
-  private running: boolean = false;
+  private running: boolean = true;
 
   public constructor() {
     super({ key: 'MainScene' });
