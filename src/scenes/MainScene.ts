@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Matter from 'matter-js';
 import logoImg from '../../assets/logo.png';
+import sourceImg from '../../assets/source.png';
 import buttonSpriteSheet from '../../assets/flixel-button.png';
 import Entity from '../Entity';
 
@@ -40,6 +41,7 @@ export default class MainScene extends Phaser.Scene {
 
   public preload(): void {
     this.load.image('logo', logoImg);
+    this.load.image('source', sourceImg);
     this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 80, frameHeight: 20 });
   }
 
@@ -56,7 +58,7 @@ export default class MainScene extends Phaser.Scene {
       const entity = new Entity();
       entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
       entity.addComponent(new SolidBodyComponent(100));
-      entity.addComponent(new RenderComponent('logo', 100));
+      entity.addComponent(new RenderComponent('logo', 110));
       entity.addComponent(new SourceComponent(100));
       this.entities.push(entity);
     }
@@ -71,6 +73,12 @@ export default class MainScene extends Phaser.Scene {
     const sensor2 = entity2.addComponent(new SensorComponent({ x: 10, y: 55 }, 50, 0.6));
     entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[1, 0], [0, 1]]));
     this.entities.push(entity2);
+
+    const light = new Entity();
+    light.addComponent(new TransformableComponent({ x: 500, y: 300 }));
+    light.addComponent(new RenderComponent('source', 300, Phaser.BlendModes.ADD));
+    light.addComponent(new SourceComponent(300));
+    this.entities.push(light);
 
     const startButton = new ToggleButton(this, 70, 20, 'Starten', button => {
       this.running = !this.running;
