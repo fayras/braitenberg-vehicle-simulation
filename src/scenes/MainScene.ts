@@ -1,9 +1,6 @@
 import Phaser from 'phaser';
-import tankImg from '../../assets/tank.png';
-import logoImg from '../../assets/logo.png';
-import sourceImg from '../../assets/source.png';
-import buttonSpriteSheet from '../../assets/gui_icons.png';
-import Entity from '../Entity';
+import EditorScene from './EditorScene';
+import SettingScene from './SettingScene';
 
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
@@ -11,7 +8,12 @@ import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
-import EditorScene from './EditorScene';
+
+import Entity from '../Entity';
+import tankImg from '../../assets/tank.png';
+import logoImg from '../../assets/logo.png';
+import sourceImg from '../../assets/source.png';
+import buttonSpriteSheet from '../../assets/gui_icons.png';
 
 import EventBus from '../EventBus';
 import System from '../systems/System';
@@ -55,6 +57,7 @@ export default class MainScene extends Phaser.Scene {
     this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
 
     this.scene.add('editor', EditorScene, false);
+    this.scene.add('settings', SettingScene, false);
 
     for (let i = 0; i < 1; i += 1) {
       const entity = new Entity();
@@ -82,17 +85,24 @@ export default class MainScene extends Phaser.Scene {
     light.addComponent(new SourceComponent(300));
     this.entities.push(light);
 
-    const startButton = new ToggleButton(this, 70, 35, '', 4, button => {
+    const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
       this.running = !this.running;
     });
     const resetButton = new Button(this, 200, 35, '', 29, button => {});
-    const EditorButton = new ToggleButton(this, 700, 20, '', 2, button => {
+    const EditorButton = new ToggleButton(this, 700, 35, '', 2, 2, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('EditorScene');
         button.setPosition(700, 35);
       } else {
         this.scene.launch('EditorScene', { x: 500, y: 0 });
-        button.setPosition(530, 35);
+        button.setPosition(535, 35);
+      }
+    });
+    const testButton = new ToggleButton(this, 350, 35, '', 14, 14, button => {
+      if ((button as ToggleButton).isPressed()) {
+        this.scene.sleep('SettingScene');
+      } else {
+        this.scene.launch('SettingScene');
       }
     });
   }
