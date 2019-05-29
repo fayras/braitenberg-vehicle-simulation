@@ -64,7 +64,7 @@ export default class MainScene extends Phaser.Scene {
       entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
       entity.addComponent(new SolidBodyComponent(100));
       entity.addComponent(new RenderComponent('logo', 110));
-      entity.addComponent(new SourceComponent(150));
+      // entity.addComponent(new SourceComponent(150));
       this.entities.push(entity);
     }
 

@@ -6,6 +6,11 @@ import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
 
+interface CollisionBodies {
+  sensor: Phaser.Physics.Matter.Matter.Body;
+  other: Phaser.Physics.Matter.Matter.Body;
+}
+
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
@@ -13,7 +18,8 @@ export default class SensorSystem extends System {
 
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
-    this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
+    // this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
+    this.scene.matter.world.on('collisionactive', SensorSystem.onCollision);
     this.scene.matter.world.on('collisionend', SensorSystem.onCollisionEnd);
   }
 
@@ -92,24 +98,42 @@ export default class SensorSystem extends System {
     return body;
   }
 
-  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
+  private static getCollisionBodies(pair: any): CollisionBodies | null {
+    if (pair.bodyA.label === ComponentType.SENSOR) {
+      return {
+        sensor: pair.bodyA,
+        other: pair.bodyB,
+      };
+    }
+
+    if (pair.bodyB.label === ComponentType.SENSOR) {
+      return {
+        sensor: pair.bodyB,
+        other: pair.bodyA,
+      };
+    }
+
+    return null;
+  }
+
+  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
     event.pairs.forEach(pair => {
-      const { bodyA, bodyB } = pair;
-      if (bodyA.label === ComponentType.SENSOR) {
-        bodyA.userData.belongsTo.component.activation = 1.0;
-      } else if (bodyB.label === ComponentType.SENSOR) {
-        bodyB.userData.belongsTo.component.activation = 1.0;
+      if (!pair.isSensor) return;
+
+      const bodies = SensorSystem.getCollisionBodies(pair);
+      if (bodies) {
+        bodies.sensor.userData.belongsTo.component.activation = 1.0;
       }
     });
   }
 
   public static onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
-      const { bodyA, bodyB } = pair;
-      if (bodyA.label === ComponentType.SENSOR) {
-        bodyA.userData.belongsTo.component.activation = 0.0;
-      } else if (bodyB.label === ComponentType.SENSOR) {
-        bodyB.userData.belongsTo.component.activation = 0.0;
+      if (!pair.isSensor) return;
+
+      const bodies = SensorSystem.getCollisionBodies(pair);
+      if (bodies) {
+        bodies.sensor.userData.belongsTo.component.activation = 0.0;
       }
     });
   }
