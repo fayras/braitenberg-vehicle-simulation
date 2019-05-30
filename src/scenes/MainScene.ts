@@ -95,6 +95,7 @@ export default class MainScene extends Phaser.Scene {
 
     const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
       this.running = !this.running;
+      this.createSnapshot();
     });
     const resetButton = new Button(this, 200, 35, '', 29, button => {});
     const EditorButton = new ToggleButton(this, 700, 35, '', 2, 2, button => {
@@ -138,4 +139,18 @@ export default class MainScene extends Phaser.Scene {
       s.update(entities, delta);
     });
   }
+
+  // Speicherung des aktuellen Status von allen Entitäten
+  private createSnapshot(): void {
+    const snapshot = this.entities.map(entity => ({
+      id: entity.id,
+      components: entity.serialize(),
+    }));
+
+    const json = JSON.stringify(snapshot);
+    console.log(json, JSON.parse(json));
+    localStorage.setItem('snapshot', JSON.stringify(snapshot));
+  }
+
+  //private loadSnapshot(): void {}
 }
