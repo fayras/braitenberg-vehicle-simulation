@@ -5,6 +5,7 @@ import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
+import gaussian from '../utils/gaussian';
 
 interface CollisionBodies {
   sensor: Phaser.Physics.Matter.Matter.Body;
@@ -40,6 +41,7 @@ export default class SensorSystem extends System {
 
     body.label = ComponentType.SENSOR;
     body.userData = {
+      kernel: gaussian({ x: 0, y: 0 }, { x: sensor.angle * 20, y: sensor.range }),
       belongsTo: {
         entity: entity.id,
         // TODO: Hier wird jetzt die Referenz auf die gesamte Komponente gespeichert.
@@ -122,7 +124,14 @@ export default class SensorSystem extends System {
 
       const bodies = SensorSystem.getCollisionBodies(pair);
       if (bodies) {
-        bodies.sensor.userData.belongsTo.component.activation = 1.0;
+        const s = bodies.sensor;
+        const o = bodies.other;
+        const dX = o.position.x - s.position.x;
+        const dY = o.position.y - s.position.y;
+
+        const result = s.userData.kernel(dX, dY);
+        console.log(result);
+        bodies.sensor.userData.belongsTo.component.activation = result;
       }
     });
   }

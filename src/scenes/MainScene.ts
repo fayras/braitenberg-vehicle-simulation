@@ -74,9 +74,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new RenderComponent('tank', 100));
     const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity2.addComponent(new SensorComponent({ x: -40, y: 55 }, 80, 1.3));
-    const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
-    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[0, 1], [1, 0]]));
+    const sensor1 = entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+    // const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
+    entity2.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
     this.entities.push(entity2);
 
     const light = new Entity();
