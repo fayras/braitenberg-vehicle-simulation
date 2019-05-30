@@ -18,5 +18,36 @@ declare namespace EventMessages {
   }
 }
 
+type ComponentPhysicsBody = Phaser.Physics.Matter.Matter.Body & {
+  userData: {
+    belongsTo: {
+      entity: import('../src/Entity').default;
+      component: import('../src/components/Component').default;
+    };
+  };
+};
+
+type SensorPhysicsObject = ComponentPhysicsBody & {
+  userData: {
+    kernel: (x: number, y: number) => number;
+    belongsTo: {
+      component: import('../src/components/SensorComponent').default;
+    };
+  };
+};
+
+type SourcePhysicsObject = ComponentPhysicsBody & {
+  userData: {
+    kernel: (x: number, y: number) => number;
+    belongsTo: {
+      component: import('../src/components/SourceComponent').default;
+    };
+  };
+};
+
+// interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
+
+// };
+
 type AssetKey = string;
 type EventHandler = ((event: EventMessages.ApplyForce) => void) | ((event: EventMessages.SensorActive) => void);
