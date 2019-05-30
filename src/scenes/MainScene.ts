@@ -27,6 +27,7 @@ import ToggleButton from '../gui/ToggleButton';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
+import { SubstanceType } from '../enums';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -84,6 +85,12 @@ export default class MainScene extends Phaser.Scene {
     light.addComponent(new RenderComponent('source', 300, Phaser.BlendModes.ADD));
     light.addComponent(new SourceComponent(300));
     this.entities.push(light);
+
+    const light2 = new Entity();
+    light2.addComponent(new TransformableComponent({ x: 200, y: 400 }));
+    light2.addComponent(new RenderComponent('source', 150, Phaser.BlendModes.ADD));
+    light2.addComponent(new SourceComponent(150, SubstanceType.BARRIER));
+    this.entities.push(light2);
 
     const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
       this.running = !this.running;

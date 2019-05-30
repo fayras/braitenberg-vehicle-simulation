@@ -15,6 +15,7 @@ export enum ComponentType {
 
 export enum SubstanceType {
   LIGHT = 'LIGHT',
+  BARRIER = 'BARRIER',
 }
 
 export enum SensorActivation {
