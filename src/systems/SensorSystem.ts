@@ -101,6 +101,11 @@ export default class SensorSystem extends System {
   }
 
   private static getCollisionBodies(pair: any): CollisionBodies | null {
+    // Sensoren können nicht mit anderen Sensoren reagieren.
+    if (pair.bodyA.label === ComponentType.SENSOR && pair.bodyB.label === ComponentType.SENSOR) {
+      return null;
+    }
+
     if (pair.bodyA.label === ComponentType.SENSOR) {
       return {
         sensor: pair.bodyA,
