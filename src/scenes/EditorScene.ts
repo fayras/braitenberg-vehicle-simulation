@@ -15,7 +15,6 @@ export default class EditorScene extends Phaser.Scene {
   }
 
   public create(data): void {
-    // this.editor = this.add.image(data.x, data.y, 'gui-window').setOrigin(0);
     const rect = new Phaser.Geom.Rectangle(570, 10, 220, 580);
 
     const graphics = this.add.graphics({ fillStyle: { color: 0xcaff70 } });

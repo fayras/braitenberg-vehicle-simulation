@@ -38,7 +38,7 @@ export default class Button {
   public setPosition(x: number, y: number): void {
     this.button.setPosition(x, y);
     this.text.setPosition(x, y);
-    this.setText(this.text.text);
+    this.setText(this.text.text); //Müsste da nicht this.text.settext stehen ?
   }
 
   public setText(text: string): void {
