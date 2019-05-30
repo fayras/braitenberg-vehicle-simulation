@@ -18,7 +18,14 @@ export default class ReactionSystem extends System {
 
   private static handleReaction(payload: EventMessages.Reaction): void {
     if (payload.other.label === ComponentType.SOURCE) {
-      const other = payload.other as SourcePhysicsObject;
+      const source = payload.other as SourcePhysicsObject;
+      if (!ReactionSystem.reactTogether(payload.sensor, source)) return;
+
+      console.log(payload.sensor, source);
     }
+  }
+
+  private static reactTogether(sensor: SensorPhysicsObject, source: SourcePhysicsObject): boolean {
+    return sensor.userData.belongsTo.component.reactsTo === source.userData.belongsTo.component.substance;
   }
 }
