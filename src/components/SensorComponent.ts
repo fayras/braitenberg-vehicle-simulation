@@ -14,12 +14,18 @@ export default class SensorComponent extends Component {
 
   public type: SensorActivation = SensorActivation.LINEAR;
 
-  public reactsTo: SubstanceType = SubstanceType.LIGHT;
+  public reactsTo: SubstanceType;
 
-  public constructor(offsetPos: Phaser.Physics.Matter.Matter.Vector, range: number, angle: number) {
+  public constructor(
+    offsetPos: Phaser.Physics.Matter.Matter.Vector,
+    range: number,
+    angle: number,
+    reactsTo: SubstanceType = SubstanceType.LIGHT,
+  ) {
     super();
     this.position = offsetPos;
     this.range = range;
     this.angle = angle;
+    this.reactsTo = reactsTo;
   }
 }
