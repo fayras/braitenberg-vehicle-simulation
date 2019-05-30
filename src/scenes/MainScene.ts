@@ -28,6 +28,7 @@ import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
 import { SubstanceType } from '../enums';
+import ReactionSystem from '../systems/ReactionSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -121,6 +122,7 @@ export default class MainScene extends Phaser.Scene {
       new EngineSystem(this, this.eventBus),
       new SensorSystem(this, this.eventBus),
       new ConnectionSystem(this, this.eventBus),
+      new ReactionSystem(this, this.eventBus),
       new RenderSystem(this, this.eventBus),
     ];
   }

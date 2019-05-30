@@ -1,7 +1,7 @@
-export function gaussian(
-  center: Phaser.Types.Math.Vector2Like,
-  sigma: Phaser.Types.Math.Vector2Like,
-): (x: number, y: number) => number {
+type KernelFunction = (x: number, y: number) => number;
+type VectorLike = Phaser.Types.Math.Vector2Like;
+
+export function gaussian(center: VectorLike, sigma: VectorLike): KernelFunction {
   const x0 = center.x || 0;
   const y0 = center.y || 0;
   const sigmaX = sigma.x || 0;
@@ -13,6 +13,6 @@ export function gaussian(
   };
 }
 
-export function flat(): (x: number, y: number) => number {
+export function flat(): KernelFunction {
   return () => 1.0;
 }

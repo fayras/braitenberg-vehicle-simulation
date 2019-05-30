@@ -1,16 +1,11 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
-import { ComponentType } from '../enums';
+import { ComponentType, EventType } from '../enums';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
 import { gaussian } from '../utils/reactions';
-
-interface CollisionBodies {
-  sensor: SensorPhysicsObject;
-  other: ComponentPhysicsBody;
-}
 
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
@@ -20,7 +15,7 @@ export default class SensorSystem extends System {
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
     // this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
-    this.scene.matter.world.on('collisionactive', SensorSystem.onCollision);
+    this.scene.matter.world.on('collisionactive', this.onCollision.bind(this));
     this.scene.matter.world.on('collisionend', SensorSystem.onCollisionEnd);
   }
 
@@ -100,7 +95,7 @@ export default class SensorSystem extends System {
     return body;
   }
 
-  private static getCollisionBodies(pair: any): CollisionBodies | null {
+  private static getCollisionBodies(pair: Phaser.Physics.Matter.Matter.IPair): CollisionBodies | null {
     // Sensoren können nicht mit anderen Sensoren reagieren.
     if (pair.bodyA.label === ComponentType.SENSOR && pair.bodyB.label === ComponentType.SENSOR) {
       return null;
@@ -108,35 +103,37 @@ export default class SensorSystem extends System {
 
     if (pair.bodyA.label === ComponentType.SENSOR) {
       return {
-        sensor: pair.bodyA,
-        other: pair.bodyB,
+        sensor: pair.bodyA as SensorPhysicsObject,
+        other: pair.bodyB as ComponentPhysicsBody,
       };
     }
 
     if (pair.bodyB.label === ComponentType.SENSOR) {
       return {
-        sensor: pair.bodyB,
-        other: pair.bodyA,
+        sensor: pair.bodyB as SensorPhysicsObject,
+        other: pair.bodyA as ComponentPhysicsBody,
       };
     }
 
     return null;
   }
 
-  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
+  public onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
     event.pairs.forEach(pair => {
       if (!pair.isSensor) return;
 
       const bodies = SensorSystem.getCollisionBodies(pair);
       if (bodies) {
-        const s = bodies.sensor;
-        const o = bodies.other;
-        const dX = o.position.x - s.position.x;
-        const dY = o.position.y - s.position.y;
+        // const s = bodies.sensor;
+        // const o = bodies.other;
+        // const dX = o.position.x - s.position.x;
+        // const dY = o.position.y - s.position.y;
 
-        const result = s.userData.kernel(dX, dY);
-        console.log(result);
-        bodies.sensor.userData.belongsTo.component.activation = result;
+        this.eventBus.publish(EventType.REACTION, bodies);
+
+        // const result = s.userData.kernel(dX, dY);
+        // console.log(result);
+        // bodies.sensor.userData.belongsTo.component.activation = result;
       }
     });
   }

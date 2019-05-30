@@ -16,6 +16,8 @@ declare namespace EventMessages {
     id: number;
     activation: number;
   }
+
+  type Reaction = CollisionBodies;
 }
 
 type ComponentPhysicsBody = Phaser.Physics.Matter.Matter.Body & {
@@ -45,9 +47,17 @@ type SourcePhysicsObject = ComponentPhysicsBody & {
   };
 };
 
+interface CollisionBodies {
+  sensor: SensorPhysicsObject;
+  other: ComponentPhysicsBody;
+}
+
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };
 
 type AssetKey = string;
-type EventHandler = ((event: EventMessages.ApplyForce) => void) | ((event: EventMessages.SensorActive) => void);
+type EventHandler =
+  | ((event: EventMessages.ApplyForce) => void)
+  | ((event: EventMessages.SensorActive) => void)
+  | ((event: EventMessages.Reaction) => void);
