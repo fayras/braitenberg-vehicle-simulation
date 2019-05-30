@@ -15,6 +15,7 @@ export enum ComponentType {
 
 export enum SubstanceType {
   LIGHT = 'LIGHT',
+  BARRIER = 'BARRIER',
 }
 
 export enum SensorActivation {
@@ -25,4 +26,5 @@ export enum SensorActivation {
 export enum EventType {
   APPLY_FORCE = 'APPLY_FORCE',
   SENSOR_ACTIVE = 'SENSOR_ACTIVE',
+  REACTION = 'REACTION',
 }

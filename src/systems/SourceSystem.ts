@@ -4,11 +4,12 @@ import { ComponentType } from '../enums';
 import System from './System';
 import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
+import { gaussian } from '../utils/reactions';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
+  private physicsObjects: { [componentId: number]: SourcePhysicsObject } = {};
 
   public update(entities: Entity[]): void {
     entities.forEach(entity => {
@@ -17,17 +18,19 @@ export default class SourceSystem extends System {
     });
   }
 
-  private addSensorObject(entity: Entity, source: SourceComponent): Phaser.Physics.Matter.Matter.Body {
+  private addSensorObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {
     const body = Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, source.range / 2, {
       isSensor: true,
-    });
+    }) as SourcePhysicsObject;
 
     this.attachSynchronization(body, entity);
 
     body.label = ComponentType.SOURCE;
     body.userData = {
+      kernel: gaussian({ x: 0, y: 0 }, { x: source.range, y: source.range }),
       belongsTo: {
-        entity: entity.id,
+        entity,
+        component: source,
       },
     };
     this.scene.matter.world.add(body);

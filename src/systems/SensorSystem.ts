@@ -1,19 +1,21 @@
 import Phaser from 'phaser';
 import Entity from '../Entity';
-import { ComponentType } from '../enums';
+import { ComponentType, EventType } from '../enums';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
+import { gaussian } from '../utils/reactions';
 
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
+  private physicsObjects: { [componentId: number]: SensorPhysicsObject } = {};
 
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
-    this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
+    // this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
+    this.scene.matter.world.on('collisionactive', this.onCollision.bind(this));
     this.scene.matter.world.on('collisionend', SensorSystem.onCollisionEnd);
   }
 
@@ -27,15 +29,16 @@ export default class SensorSystem extends System {
     });
   }
 
-  private addSensorObject(entity: Entity, sensor: SensorComponent): Phaser.Physics.Matter.Matter.Body {
-    const body = SensorSystem.createSensor(sensor);
+  private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
+    const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
 
     this.attachSynchronization(body, entity, sensor);
 
     body.label = ComponentType.SENSOR;
     body.userData = {
+      kernel: gaussian({ x: 0, y: 0 }, { x: sensor.angle * 20, y: sensor.range }),
       belongsTo: {
-        entity: entity.id,
+        entity,
         // TODO: Hier wird jetzt die Referenz auf die gesamte Komponente gespeichert.
         // Wäre es besser hier nur die ID zu speichern und dann später mittels sowas
         // wie `EntityManager` die Komponente über die ID zu holen?
@@ -92,24 +95,56 @@ export default class SensorSystem extends System {
     return body;
   }
 
-  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
+  private static getCollisionBodies(pair: Phaser.Physics.Matter.Matter.IPair): CollisionBodies | null {
+    // Sensoren können nicht mit anderen Sensoren reagieren.
+    if (pair.bodyA.label === ComponentType.SENSOR && pair.bodyB.label === ComponentType.SENSOR) {
+      return null;
+    }
+
+    if (pair.bodyA.label === ComponentType.SENSOR) {
+      return {
+        sensor: pair.bodyA as SensorPhysicsObject,
+        other: pair.bodyB as ComponentPhysicsBody,
+      };
+    }
+
+    if (pair.bodyB.label === ComponentType.SENSOR) {
+      return {
+        sensor: pair.bodyB as SensorPhysicsObject,
+        other: pair.bodyA as ComponentPhysicsBody,
+      };
+    }
+
+    return null;
+  }
+
+  public onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
     event.pairs.forEach(pair => {
-      const { bodyA, bodyB } = pair;
-      if (bodyA.label === ComponentType.SENSOR) {
-        bodyA.userData.belongsTo.component.activation = 1.0;
-      } else if (bodyB.label === ComponentType.SENSOR) {
-        bodyB.userData.belongsTo.component.activation = 1.0;
+      if (!pair.isSensor) return;
+
+      const bodies = SensorSystem.getCollisionBodies(pair);
+      if (bodies) {
+        // const s = bodies.sensor;
+        // const o = bodies.other;
+        // const dX = o.position.x - s.position.x;
+        // const dY = o.position.y - s.position.y;
+
+        this.eventBus.publish(EventType.REACTION, bodies);
+
+        // const result = s.userData.kernel(dX, dY);
+        // console.log(result);
+        // bodies.sensor.userData.belongsTo.component.activation = result;
       }
     });
   }
 
   public static onCollisionEnd(event: Phaser.Physics.Matter.Events.CollisionStartEvent): void {
     event.pairs.forEach(pair => {
-      const { bodyA, bodyB } = pair;
-      if (bodyA.label === ComponentType.SENSOR) {
-        bodyA.userData.belongsTo.component.activation = 0.0;
-      } else if (bodyB.label === ComponentType.SENSOR) {
-        bodyB.userData.belongsTo.component.activation = 0.0;
+      if (!pair.isSensor) return;
+
+      const bodies = SensorSystem.getCollisionBodies(pair);
+      if (bodies) {
+        bodies.sensor.userData.belongsTo.component.activation = 0.0;
       }
     });
   }

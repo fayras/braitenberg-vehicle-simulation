@@ -27,6 +27,8 @@ import ToggleButton from '../gui/ToggleButton';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
+import { SubstanceType } from '../enums';
+import ReactionSystem from '../systems/ReactionSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -64,7 +66,7 @@ export default class MainScene extends Phaser.Scene {
       entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
       entity.addComponent(new SolidBodyComponent(100));
       entity.addComponent(new RenderComponent('logo', 110));
-      entity.addComponent(new SourceComponent(150));
+      // entity.addComponent(new SourceComponent(150));
       this.entities.push(entity);
     }
 
@@ -74,9 +76,9 @@ export default class MainScene extends Phaser.Scene {
     entity2.addComponent(new RenderComponent('tank', 100));
     const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity2.addComponent(new SensorComponent({ x: -40, y: 55 }, 80, 1.3));
-    const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
-    entity2.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[0, 1], [1, 0]]));
+    const sensor1 = entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+    // const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
+    entity2.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
     this.entities.push(entity2);
 
     const light = new Entity();
@@ -84,6 +86,12 @@ export default class MainScene extends Phaser.Scene {
     light.addComponent(new RenderComponent('source', 300, Phaser.BlendModes.ADD));
     light.addComponent(new SourceComponent(300));
     this.entities.push(light);
+
+    const light2 = new Entity();
+    light2.addComponent(new TransformableComponent({ x: 200, y: 400 }));
+    light2.addComponent(new RenderComponent('source', 150, Phaser.BlendModes.ADD));
+    light2.addComponent(new SourceComponent(150, SubstanceType.BARRIER));
+    this.entities.push(light2);
 
     const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
       this.running = !this.running;
@@ -114,6 +122,7 @@ export default class MainScene extends Phaser.Scene {
       new EngineSystem(this, this.eventBus),
       new SensorSystem(this, this.eventBus),
       new ConnectionSystem(this, this.eventBus),
+      new ReactionSystem(this, this.eventBus),
       new RenderSystem(this, this.eventBus),
     ];
   }
