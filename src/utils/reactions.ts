@@ -1,4 +1,4 @@
-export default function gaussian(
+export function gaussian(
   center: Phaser.Types.Math.Vector2Like,
   sigma: Phaser.Types.Math.Vector2Like,
 ): (x: number, y: number) => number {
@@ -11,4 +11,8 @@ export default function gaussian(
     const exponent = -((x - x0) ** 2 / (2 * sigmaX ** 2) + (y - y0) ** 2 / (2 * sigmaY ** 2));
     return Math.exp(exponent);
   };
+}
+
+export function flat(): (x: number, y: number) => number {
+  return () => 1.0;
 }

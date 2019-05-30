@@ -15,5 +15,5 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true
   },
-  "include": ["src", "assets", "types"]
+  "include": ["src", "assets", "typings"]
 }

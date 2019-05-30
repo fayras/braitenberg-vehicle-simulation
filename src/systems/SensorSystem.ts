@@ -5,17 +5,17 @@ import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
-import gaussian from '../utils/gaussian';
+import { gaussian } from '../utils/reactions';
 
 interface CollisionBodies {
-  sensor: Phaser.Physics.Matter.Matter.Body;
-  other: Phaser.Physics.Matter.Matter.Body;
+  sensor: SensorPhysicsObject;
+  other: ComponentPhysicsBody;
 }
 
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: { [componentId: number]: Phaser.Physics.Matter.Matter.Body } = {};
+  private physicsObjects: { [componentId: number]: SensorPhysicsObject } = {};
 
   public constructor(scene: Phaser.Scene, bus: EventBus) {
     super(scene, bus);
@@ -34,8 +34,8 @@ export default class SensorSystem extends System {
     });
   }
 
-  private addSensorObject(entity: Entity, sensor: SensorComponent): Phaser.Physics.Matter.Matter.Body {
-    const body = SensorSystem.createSensor(sensor);
+  private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
+    const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
 
     this.attachSynchronization(body, entity, sensor);
 
@@ -43,7 +43,7 @@ export default class SensorSystem extends System {
     body.userData = {
       kernel: gaussian({ x: 0, y: 0 }, { x: sensor.angle * 20, y: sensor.range }),
       belongsTo: {
-        entity: entity.id,
+        entity,
         // TODO: Hier wird jetzt die Referenz auf die gesamte Komponente gespeichert.
         // Wäre es besser hier nur die ID zu speichern und dann später mittels sowas
         // wie `EntityManager` die Komponente über die ID zu holen?
@@ -101,6 +101,11 @@ export default class SensorSystem extends System {
   }
 
   private static getCollisionBodies(pair: any): CollisionBodies | null {
+    // Sensoren können nicht mit anderen Sensoren reagieren.
+    if (pair.bodyA.label === ComponentType.SENSOR && pair.bodyB.label === ComponentType.SENSOR) {
+      return null;
+    }
+
     if (pair.bodyA.label === ComponentType.SENSOR) {
       return {
         sensor: pair.bodyA,
