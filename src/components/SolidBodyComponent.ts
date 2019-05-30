@@ -13,4 +13,13 @@ export default class SolidBodyComponent extends Component {
     this.size = size;
     this.shape = shape;
   }
+
+  public serialize(): string {
+    const attributes = {
+      size: this.size,
+      shape: this.shape,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

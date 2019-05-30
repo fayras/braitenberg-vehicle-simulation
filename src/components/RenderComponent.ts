@@ -16,4 +16,14 @@ export default class RenderComponent extends Component {
     this.size = width;
     this.blendMode = blendMode;
   }
+
+  public serialize(): string {
+    const attributes = {
+      asset: this.asset,
+      size: this.size,
+      blendMode: this.blendMode,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

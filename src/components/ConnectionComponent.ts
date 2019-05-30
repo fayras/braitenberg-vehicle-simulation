@@ -16,4 +16,14 @@ export default class ConnectionComponent extends Component {
     this.outputIds = outputIds;
     this.weights = weights;
   }
+
+  public serialize(): string {
+    const attributes = {
+      inputIds: this.inputIds,
+      outputIds: this.outputIds,
+      weights: this.weights,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

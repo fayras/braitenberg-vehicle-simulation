@@ -13,4 +13,13 @@ export default class TransformableComponent extends Component {
     this.position = pos;
     this.angle = 0;
   }
+
+  public serialize(): string {
+    const attributes = {
+      position: this.position,
+      angle: this.angle,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

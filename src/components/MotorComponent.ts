@@ -18,4 +18,14 @@ export default class MotorComponent extends Component {
     this.maxSpeed = speed;
     this.defaultSpeed = defaultSpeed;
   }
+
+  public serialize(): string {
+    const attributes = {
+      position: this.position,
+      maxSpeed: this.maxSpeed,
+      defaultSpeed: this.defaultSpeed,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

@@ -11,4 +11,6 @@ export default abstract class Component {
     this.id = Component.count;
     Component.count += 1;
   }
+
+  public abstract serialize(): string;
 }

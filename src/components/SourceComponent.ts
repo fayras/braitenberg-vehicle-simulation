@@ -13,4 +13,13 @@ export default class SourceComponent extends Component {
     this.substance = substance;
     this.range = range;
   }
+
+  public serialize(): string {
+    const attributes = {
+      substance: this.substance,
+      range: this.range,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }

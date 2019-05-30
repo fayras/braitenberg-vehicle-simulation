@@ -28,4 +28,15 @@ export default class SensorComponent extends Component {
     this.angle = angle;
     this.reactsTo = reactsTo;
   }
+
+  public serialize(): string {
+    const attributes = {
+      position: this.position,
+      range: this.range,
+      angle: this.angle,
+      reactsTo: this.reactsTo,
+    };
+
+    return JSON.stringify(attributes);
+  }
 }
