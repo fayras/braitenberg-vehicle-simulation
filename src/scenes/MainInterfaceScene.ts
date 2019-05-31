@@ -5,6 +5,8 @@ import MainScene from './MainScene';
 import buttonSpriteSheet from '../../assets/gui_icons.png';
 
 export default class MainInterfaceScene extends Phaser.Scene {
+  private buttons: Button[] = [];
+
   public constructor() {
     super({ key: 'MainInterfaceScene' });
   }
@@ -16,11 +18,13 @@ export default class MainInterfaceScene extends Phaser.Scene {
   public create(): void {
     const mainScene = this.scene.get('MainScene') as MainScene;
 
-    const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
+    const start = new ToggleButton(this, 70, 35, '', 4, 8, () => {
       mainScene.pause(!mainScene.isRunning());
     });
-    const resetButton = new Button(this, 200, 35, '', 29, button => {});
-    const EditorButton = new ToggleButton(this, 700, 35, '', 2, 2, button => {
+    const reset = new Button(this, 200, 35, '', 29, () => {
+      // mainScene.loadSnapshot();
+    });
+    const showEditor = new ToggleButton(this, 700, 35, '', 2, 2, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('EditorScene');
         button.setPosition(700, 35);
@@ -29,12 +33,14 @@ export default class MainInterfaceScene extends Phaser.Scene {
         button.setPosition(535, 35);
       }
     });
-    const testButton = new ToggleButton(this, 350, 35, '', 14, 14, button => {
+    const test = new ToggleButton(this, 350, 35, '', 14, 14, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('SettingScene');
       } else {
         this.scene.launch('SettingScene');
       }
     });
+
+    this.buttons.push(start, reset, showEditor, test);
   }
 }
