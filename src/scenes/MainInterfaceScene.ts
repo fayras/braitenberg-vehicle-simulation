@@ -2,17 +2,16 @@ import Phaser from 'phaser';
 import ToggleButton from '../gui/ToggleButton';
 import Button from '../gui/Button';
 import MainScene from './MainScene';
+import buttonSpriteSheet from '../../assets/gui_icons.png';
 
 export default class MainInterfaceScene extends Phaser.Scene {
   public constructor() {
     super({ key: 'MainInterfaceScene' });
-    console.log('interface');
   }
 
-  // public preload(): void {
-  //   this.load.image('gui-window', windowImg);
-  //   this.load.image('tank', tankImg);
-  // }
+  public preload(): void {
+    this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 158, frameHeight: 159.2 });
+  }
 
   public create(): void {
     const mainScene = this.scene.get('MainScene') as MainScene;

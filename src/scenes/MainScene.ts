@@ -13,7 +13,6 @@ import Entity from '../Entity';
 import tankImg from '../../assets/tank.png';
 import logoImg from '../../assets/logo.png';
 import sourceImg from '../../assets/source.png';
-import buttonSpriteSheet from '../../assets/gui_icons.png';
 
 import EventBus from '../EventBus';
 import System from '../systems/System';
@@ -46,7 +45,6 @@ export default class MainScene extends Phaser.Scene {
     this.load.image('logo', logoImg);
     this.load.image('source', sourceImg);
     this.load.image('tank', tankImg);
-    this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 158, frameHeight: 159.2 });
   }
 
   public create(): void {
