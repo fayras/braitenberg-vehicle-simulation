@@ -22,8 +22,6 @@ import RenderSystem from '../systems/RenderSystem';
 import EngineSystem from '../systems/EngineSystem';
 import SensorSystem from '../systems/SensorSystem';
 
-import Button from '../gui/Button';
-import ToggleButton from '../gui/ToggleButton';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
@@ -53,7 +51,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
-    // this.drawDebugCanvas();
+    this.scene.launch('MainInterfaceScene');
 
     this.matter.world.setBounds();
     this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
@@ -92,28 +90,6 @@ export default class MainScene extends Phaser.Scene {
     light2.addComponent(new RenderComponent('source', 150, Phaser.BlendModes.ADD));
     light2.addComponent(new SourceComponent(150, SubstanceType.BARRIER));
     this.entities.push(light2);
-
-    const startButton = new ToggleButton(this, 70, 35, '', 4, 8, button => {
-      this.running = !this.running;
-      this.createSnapshot();
-    });
-    const resetButton = new Button(this, 200, 35, '', 29, button => {});
-    const EditorButton = new ToggleButton(this, 700, 35, '', 2, 2, button => {
-      if ((button as ToggleButton).isPressed()) {
-        this.scene.sleep('EditorScene');
-        button.setPosition(700, 35);
-      } else {
-        this.scene.launch('EditorScene', { x: 500, y: 0 });
-        button.setPosition(535, 35);
-      }
-    });
-    const testButton = new ToggleButton(this, 350, 35, '', 14, 14, button => {
-      if ((button as ToggleButton).isPressed()) {
-        this.scene.sleep('SettingScene');
-      } else {
-        this.scene.launch('SettingScene');
-      }
-    });
   }
 
   private createSystems(): void {
@@ -140,14 +116,24 @@ export default class MainScene extends Phaser.Scene {
     });
   }
 
+  public isRunning(): boolean {
+    return this.running;
+  }
+
+  public pause(flag: boolean): void {
+    this.running = flag;
+    // Wenn die Szene gestartet wird (play), wird ein neuer Snapshot erzeugt.
+    if (flag) {
+      this.createSnapshot();
+    }
+  }
+
   // Speicherung des aktuellen Status von allen Entitäten
   private createSnapshot(): void {
     const snapshot = this.entities.map(entity => entity.serialize());
 
-    const json = JSON.stringify(snapshot);
-    console.log(json, JSON.parse(json));
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
 
-  //private loadSnapshot(): void {}
+  // private loadSnapshot(): void {}
 }
