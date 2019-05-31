@@ -14,12 +14,10 @@ export default class SourceComponent extends Component {
     this.range = range;
   }
 
-  public serialize(): string {
-    const attributes = {
+  public serializeAttributes(): object {
+    return {
       substance: this.substance,
       range: this.range,
     };
-
-    return JSON.stringify(attributes);
   }
 }

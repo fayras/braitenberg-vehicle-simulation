@@ -41,12 +41,10 @@ export default class Entity {
     return components.every(name => available.includes(name));
   }
 
-  public serialize(): any {
-    return this.components.map(component => ({
-      id: component.id,
-      name: component.name,
-      // TODO: Hier wird kein String, sondern das Objekt erwartet
-      attributes: component.serialize(),
-    }));
+  public serialize(): SerializedEntity {
+    return {
+      id: this.id,
+      components: this.components.map(component => component.serialize()),
+    };
   }
 }

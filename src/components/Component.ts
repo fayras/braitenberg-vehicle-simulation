@@ -12,5 +12,15 @@ export default abstract class Component {
     Component.count += 1;
   }
 
-  public abstract serialize(): string;
+  protected abstract serializeAttributes(): object;
+
+  public serialize(): SerializedComponent {
+    const attributes = this.serializeAttributes();
+
+    return {
+      id: this.id,
+      name: this.name,
+      attributes,
+    };
+  }
 }

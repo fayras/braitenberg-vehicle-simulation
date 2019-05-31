@@ -17,13 +17,11 @@ export default class RenderComponent extends Component {
     this.blendMode = blendMode;
   }
 
-  public serialize(): string {
-    const attributes = {
+  public serializeAttributes(): object {
+    return {
       asset: this.asset,
       size: this.size,
       blendMode: this.blendMode,
     };
-
-    return JSON.stringify(attributes);
   }
 }

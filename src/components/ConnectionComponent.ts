@@ -17,13 +17,11 @@ export default class ConnectionComponent extends Component {
     this.weights = weights;
   }
 
-  public serialize(): string {
-    const attributes = {
+  public serializeAttributes(): object {
+    return {
       inputIds: this.inputIds,
       outputIds: this.outputIds,
       weights: this.weights,
     };
-
-    return JSON.stringify(attributes);
   }
 }

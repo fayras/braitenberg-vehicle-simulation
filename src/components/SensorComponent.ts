@@ -29,14 +29,12 @@ export default class SensorComponent extends Component {
     this.reactsTo = reactsTo;
   }
 
-  public serialize(): string {
-    const attributes = {
+  public serializeAttributes(): object {
+    return {
       position: this.position,
       range: this.range,
       angle: this.angle,
       reactsTo: this.reactsTo,
     };
-
-    return JSON.stringify(attributes);
   }
 }

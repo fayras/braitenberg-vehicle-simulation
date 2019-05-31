@@ -142,10 +142,7 @@ export default class MainScene extends Phaser.Scene {
 
   // Speicherung des aktuellen Status von allen Entitäten
   private createSnapshot(): void {
-    const snapshot = this.entities.map(entity => ({
-      id: entity.id,
-      components: entity.serialize(),
-    }));
+    const snapshot = this.entities.map(entity => entity.serialize());
 
     const json = JSON.stringify(snapshot);
     console.log(json, JSON.parse(json));

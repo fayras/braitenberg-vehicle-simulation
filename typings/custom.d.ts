@@ -52,6 +52,17 @@ interface CollisionBodies {
   other: ComponentPhysicsBody;
 }
 
+interface SerializedComponent {
+  id: number;
+  name: import('../src/enums').ComponentType;
+  attributes: object;
+}
+
+interface SerializedEntity {
+  id: number;
+  components: SerializedComponent[];
+}
+
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };
