@@ -30,6 +30,8 @@ import ReactionSystem from '../systems/ReactionSystem';
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
+  private renderSystem: RenderSystem;
+
   private entities: Entity[] = [];
 
   private eventBus: EventBus;
@@ -39,6 +41,9 @@ export default class MainScene extends Phaser.Scene {
   public constructor() {
     super({ key: 'MainScene' });
     this.eventBus = new EventBus();
+    // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
+    // wenn die Simulation z.b. pausiert ist.
+    this.renderSystem = new RenderSystem(this, this.eventBus);
   }
 
   public preload(): void {
@@ -97,20 +102,21 @@ export default class MainScene extends Phaser.Scene {
       new SensorSystem(this, this.eventBus),
       new ConnectionSystem(this, this.eventBus),
       new ReactionSystem(this, this.eventBus),
-      new RenderSystem(this, this.eventBus),
     ];
   }
 
   public update(time: number, delta: number): void {
-    if (this.running === false) {
-      return;
+    if (this.running) {
+      this.systems.forEach(s => MainScene.runSystem(s, this.entities, delta));
     }
 
-    this.systems.forEach(s => {
-      const entities = this.entities.filter((e): boolean => e.hasComponents(...s.expectedComponents));
+    MainScene.runSystem(this.renderSystem, this.entities, delta);
+  }
 
-      s.update(entities, delta);
-    });
+  private static runSystem(system: System, entities: Entity[], delta: number): void {
+    const expectedEntities = entities.filter((e): boolean => e.hasComponents(...system.expectedComponents));
+
+    system.update(expectedEntities, delta);
   }
 
   public isRunning(): boolean {
