@@ -56,6 +56,8 @@ export default class MainScene extends Phaser.Scene {
     this.createSystems();
     this.scene.launch('MainInterfaceScene');
 
+    this.scale.on('resize', this.handleResize.bind(this));
+
     this.matter.world.setBounds();
 
     this.scene.add('editor', EditorScene, false);
@@ -139,4 +141,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   // private loadSnapshot(): void {}
+
+  private handleResize(gameSize: Phaser.Structs.Size): void {
+    const { width, height } = gameSize;
+
+    this.cameras.resize(width, height);
+    this.matter.world.setBounds();
+  }
 }

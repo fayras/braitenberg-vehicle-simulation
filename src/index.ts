@@ -4,9 +4,12 @@ import MainInterfaceScene from './scenes/MainInterfaceScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
   backgroundColor: '#CCCCCC',
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    width: '100%',
+    height: '100%',
+  },
   dom: {
     createContainer: true,
   },
