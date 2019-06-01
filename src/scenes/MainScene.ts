@@ -52,7 +52,6 @@ export default class MainScene extends Phaser.Scene {
     this.scene.launch('MainInterfaceScene');
 
     this.matter.world.setBounds();
-    this.matter.add.mouseSpring({ length: 1, stiffness: 0.6 });
 
     this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
