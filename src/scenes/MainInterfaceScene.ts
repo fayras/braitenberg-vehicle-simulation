@@ -17,6 +17,8 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
   public create(): void {
     const mainScene = this.scene.get('MainScene') as MainScene;
+    this.scene.launch('EditorScene', { x: 500, y: 0 });
+    this.scene.sleep('EditorScene');
 
     const start = new ToggleButton(this, 70, 35, '', 4, 8, () => {
       mainScene.pause(!mainScene.isRunning());
@@ -29,7 +31,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
         this.scene.sleep('EditorScene');
         button.setPosition(700, 35);
       } else {
-        this.scene.launch('EditorScene', { x: 500, y: 0 });
+        this.scene.wake('EditorScene');
         button.setPosition(535, 35);
       }
     });
