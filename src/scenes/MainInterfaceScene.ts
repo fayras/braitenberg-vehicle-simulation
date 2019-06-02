@@ -16,8 +16,9 @@ export default class MainInterfaceScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.scale.on('resize', this.handleResize.bind(this));
     const mainScene = this.scene.get('MainScene') as MainScene;
-    this.scene.launch('EditorScene', { x: 500, y: 0 }); // Wofür macht es Sinn die Scene hier zu launchen ?
+    this.scene.launch('EditorScene'); // Wofür macht es Sinn die Scene hier zu launchen ?
     this.scene.sleep('EditorScene');
 
     const start = new ToggleButton(this, 70, 35, '', 4, 8, () => {
@@ -46,5 +47,11 @@ export default class MainInterfaceScene extends Phaser.Scene {
     });
 
     this.buttons.push(start, reset, showEditor, test);
+  }
+
+  private handleResize(gameSize: Phaser.Structs.Size): void {
+    const { width, height } = gameSize;
+
+    this.cameras.resize(width, height);
   }
 }

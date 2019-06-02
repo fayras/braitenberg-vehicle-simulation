@@ -13,7 +13,8 @@ export default class EditorScene extends Phaser.Scene {
     this.load.image('tank', tankImg);
   }
 
-  public create(data): void {
+  public create(): void {
+    this.scale.on('resize', this.handleResize.bind(this));
     const rect = new Phaser.Geom.Rectangle(
       this.cameras.main.displayWidth - 200,
       0,
@@ -54,5 +55,11 @@ export default class EditorScene extends Phaser.Scene {
         gameObject.setPosition(gameObject.input.dragStartX, gameObject.input.dragStartY);
       },
     );
+  }
+
+  private handleResize(gameSize: Phaser.Structs.Size): void {
+    const { width, height } = gameSize;
+
+    this.cameras.resize(width, height);
   }
 }
