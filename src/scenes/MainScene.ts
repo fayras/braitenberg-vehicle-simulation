@@ -33,13 +33,10 @@ export default class MainScene extends Phaser.Scene {
 
   private renderSystem: RenderSystem;
 
-  private entityManager: EntityManager;
-
   private running: boolean = true;
 
   public constructor() {
     super({ key: 'MainScene' });
-    this.entityManager = new EntityManager();
     // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
     // wenn die Simulation z.b. pausiert ist.
     this.renderSystem = new RenderSystem(this);
@@ -63,7 +60,7 @@ export default class MainScene extends Phaser.Scene {
     this.scene.add('settings', SettingScene, false);
 
     for (let i = 0; i < 1; i += 1) {
-      this.entityManager.createEntity(
+      EntityManager.createEntity(
         new TransformableComponent({ x: 300, y: 100 }),
         new SolidBodyComponent(100),
         new RenderComponent('logo', 110),
@@ -80,15 +77,15 @@ export default class MainScene extends Phaser.Scene {
     const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
     // const sensor2 = entity.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
     entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
-    this.entityManager.addExistingEntity(entity);
+    EntityManager.addExistingEntity(entity);
 
-    this.entityManager.createEntity(
+    EntityManager.createEntity(
       new TransformableComponent({ x: 500, y: 300 }),
       new RenderComponent('source', 300, Phaser.BlendModes.ADD),
       new SourceComponent(300),
     );
 
-    this.entityManager.createEntity(
+    EntityManager.createEntity(
       new TransformableComponent({ x: 200, y: 400 }),
       new RenderComponent('source', 150, Phaser.BlendModes.ADD),
       new SourceComponent(150, SubstanceType.BARRIER),
@@ -122,21 +119,21 @@ export default class MainScene extends Phaser.Scene {
     this.running = flag;
     // Wenn die Szene gestartet wird (play), wird ein neuer Snapshot erzeugt.
     if (flag) {
-      this.createSnapshot();
+      MainScene.createSnapshot();
     }
   }
 
   // Speicherung des aktuellen Status von allen Entitäten
-  private createSnapshot(): void {
-    const entities = this.entityManager.getEntities();
+  private static createSnapshot(): void {
+    const entities = EntityManager.getEntities();
     const snapshot = entities.map(entity => entity.serialize());
 
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
 
   // noch auf private ändern
-  public loadSnapshot(): void {
-    const entities = this.entityManager.getEntities();
+  public static loadSnapshot(): void {
+    const entities = EntityManager.getEntities();
     entities.map(entit => Entity.destroy());
     // const snapshot = localStorage.getItem('snapshot');
     //let i = 0;

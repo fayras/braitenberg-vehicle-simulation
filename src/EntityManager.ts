@@ -3,7 +3,7 @@ import EventBus from './EventBus';
 import Component from './components/Component';
 import { EventType } from './enums';
 
-export default class EntityManager {
+class EntityManager {
   private entities: { [id: number]: Entity } = {};
 
   public addExistingEntity(entity: Entity): void {
@@ -33,3 +33,5 @@ export default class EntityManager {
     return Object.values(this.entities);
   }
 }
+
+export default new EntityManager();

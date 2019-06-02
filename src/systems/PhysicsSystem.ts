@@ -21,9 +21,7 @@ export default class PhysicsSystem extends System {
     EventBus.subscribe(EventType.APPLY_FORCE, this.applyForce.bind(this));
   }
 
-  public update(): void {
-    // do nothing
-  }
+  public update(): void {}
 
   protected onEntityCreated(entity: Entity): void {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;

@@ -1,4 +1,4 @@
-import Phaser, { Display } from 'phaser';
+import Phaser from 'phaser';
 import ToggleButton from '../gui/ToggleButton';
 import Button from '../gui/Button';
 import MainScene from './MainScene';
@@ -25,7 +25,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
       mainScene.pause(!mainScene.isRunning());
     });
     const reset = new Button(this, 200, 35, '', 29, () => {
-      mainScene.loadSnapshot();
+      MainScene.loadSnapshot();
     });
 
     const showEditor = new ToggleButton(this, this.cameras.main.displayWidth - 35, 35, '', 2, 2, button => {
