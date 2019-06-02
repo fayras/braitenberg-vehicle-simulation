@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Display } from 'phaser';
 import ToggleButton from '../gui/ToggleButton';
 import Button from '../gui/Button';
 import MainScene from './MainScene';
@@ -17,7 +17,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
   public create(): void {
     const mainScene = this.scene.get('MainScene') as MainScene;
-    this.scene.launch('EditorScene', { x: 500, y: 0 });
+    this.scene.launch('EditorScene', { x: 500, y: 0 }); // Wofür macht es Sinn die Scene hier zu launchen ?
     this.scene.sleep('EditorScene');
 
     const start = new ToggleButton(this, 70, 35, '', 4, 8, () => {
@@ -26,15 +26,17 @@ export default class MainInterfaceScene extends Phaser.Scene {
     const reset = new Button(this, 200, 35, '', 29, () => {
       // mainScene.loadSnapshot();
     });
-    const showEditor = new ToggleButton(this, 700, 35, '', 2, 2, button => {
+
+    const showEditor = new ToggleButton(this, this.cameras.main.displayWidth - 35, 35, '', 2, 2, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('EditorScene');
-        button.setPosition(700, 35);
+        button.setPosition(this.cameras.main.width - 35, 35);
       } else {
         this.scene.wake('EditorScene');
-        button.setPosition(535, 35);
+        button.setPosition(this.cameras.main.width - 230, 35);
       }
     });
+
     const test = new ToggleButton(this, 350, 35, '', 14, 14, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('SettingScene');

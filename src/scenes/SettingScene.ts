@@ -22,7 +22,7 @@ export default class SettingScene extends Phaser.Scene {
     graphics.fillRectShape(rect);
 
     this.add.text(570, 80, this.text1);
-    this.add.text(570, 120, this.text2);
+    this.add.text(570, 140, this.text2);
 
     const sliderElement = this.add
       .dom(570, 100)

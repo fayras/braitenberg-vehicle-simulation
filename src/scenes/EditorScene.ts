@@ -14,18 +14,23 @@ export default class EditorScene extends Phaser.Scene {
   }
 
   public create(data): void {
-    const rect = new Phaser.Geom.Rectangle(640, 10, 150, 580);
+    const rect = new Phaser.Geom.Rectangle(
+      this.cameras.main.displayWidth - 200,
+      0,
+      this.cameras.main.displayWidth / 6,
+      this.cameras.main.displayHeight,
+    );
 
     const graphics = this.add.graphics({ fillStyle: { color: 0xcaff70 } });
     graphics.fillRectShape(rect);
 
     const tank = this.add
-      .image(675, 30, 'tank')
+      .image(this.cameras.main.displayWidth - 150, 30, 'tank')
       .setOrigin(0)
       .setInteractive();
 
     const tank2 = this.add
-      .image(675, 130, 'tank')
+      .image(this.cameras.main.displayWidth - 150, 130, 'tank')
       .setOrigin(0)
       .setInteractive();
 
