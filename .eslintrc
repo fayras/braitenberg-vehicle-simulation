@@ -13,6 +13,7 @@
     "jest": true
   },
   "rules": {
+    "class-methods-use-this": ["error", { "exceptMethods": ["update", "onEntityCreated"] }],
     "no-prototype-builtins": "off",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
