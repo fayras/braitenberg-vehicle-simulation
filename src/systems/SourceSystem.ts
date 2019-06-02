@@ -9,14 +9,29 @@ import { gaussian } from '../utils/reactions';
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: { [componentId: number]: SourcePhysicsObject } = {};
+  private physicsObjects: {
+    [componentId: number]: {
+      body: SourcePhysicsObject;
+      eventBeforeUpdate: Function;
+    };
+  } = {};
 
   public update(): void {}
 
   protected onEntityCreated(entity: Entity): void {
     const source = entity.getComponent(ComponentType.SOURCE) as SourceComponent;
     this.addSensorObject(entity, source);
-    this.entities.push(entity);
+  }
+
+  protected onEntityDestroyed(entity: Entity): void {
+    const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
+    sources.forEach(source => {
+      const { body, eventBeforeUpdate } = this.physicsObjects[source.id];
+
+      this.scene.matter.world.off('beforeupdate', eventBeforeUpdate);
+      this.scene.matter.world.remove(body, false);
+      delete this.physicsObjects[entity.id];
+    });
   }
 
   private addSensorObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {
@@ -24,7 +39,7 @@ export default class SourceSystem extends System {
       isSensor: true,
     }) as SourcePhysicsObject;
 
-    this.attachSynchronization(body, entity);
+    const emitter = this.attachSynchronization(body, entity);
 
     body.label = ComponentType.SOURCE;
     body.userData = {
@@ -35,18 +50,24 @@ export default class SourceSystem extends System {
       },
     };
     this.scene.matter.world.add(body);
-    this.physicsObjects[source.id] = body;
+    this.physicsObjects[source.id] = {
+      body,
+      eventBeforeUpdate: emitter,
+    };
 
     return body;
   }
 
-  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): void {
+  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): Function {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-    this.scene.matter.world.on('beforeupdate', () => {
+    const onBefore = (): void => {
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
         x: transform.position.x,
         y: transform.position.y,
       });
-    });
+    };
+    this.scene.matter.world.on('beforeupdate', onBefore);
+
+    return onBefore;
   }
 }

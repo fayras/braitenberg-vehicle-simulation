@@ -46,4 +46,16 @@ export default class RenderSystem extends System {
     this.renderObjects[entity.id] = image;
     this.entities.push(entity);
   }
+
+  protected onEntityDestroyed(entity: Entity): void {
+    const render = this.renderObjects[entity.id];
+
+    render.destroy();
+    delete this.renderObjects[entity.id];
+
+    const index = this.entities.findIndex(e => e.id === entity.id);
+    if (index > -1) {
+      this.entities.splice(index, 1);
+    }
+  }
 }

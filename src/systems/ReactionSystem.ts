@@ -17,6 +17,8 @@ export default class ReactionSystem extends System {
 
   protected onEntityCreated(entity: Entity): void {}
 
+  protected onEntityDestroyed(entity: Entity): void {}
+
   private static handleReaction(payload: EventMessages.Reaction): void {
     if (payload.other.label === ComponentType.SOURCE) {
       const source = payload.other as SourcePhysicsObject;

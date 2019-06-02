@@ -7,7 +7,11 @@ import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
 
 interface PhysicsObjectDictionary {
-  [entityId: number]: Phaser.Physics.Matter.Matter.Body;
+  [entityId: number]: {
+    body: Phaser.Physics.Matter.Matter.Body;
+    eventBeforeUpdate: Function;
+    eventAfterUpdate: Function;
+  };
 }
 
 export default class PhysicsSystem extends System {
@@ -28,10 +32,23 @@ export default class PhysicsSystem extends System {
 
     const body = PhysicsSystem.getBody(component);
 
-    this.attachSynchronization(body, entity);
+    const emitters = this.attachSynchronization(body, entity);
 
     this.scene.matter.world.add(body);
-    this.physicsObjects[entity.id] = body;
+    this.physicsObjects[entity.id] = {
+      body,
+      eventBeforeUpdate: emitters[0],
+      eventAfterUpdate: emitters[1],
+    };
+  }
+
+  protected onEntityDestroyed(entity: Entity): void {
+    const { body, eventBeforeUpdate, eventAfterUpdate } = this.physicsObjects[entity.id];
+
+    this.scene.matter.world.off('beforeupdate', eventBeforeUpdate);
+    this.scene.matter.world.off('afterupdate', eventAfterUpdate);
+    this.scene.matter.world.remove(body, false);
+    delete this.physicsObjects[entity.id];
   }
 
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
@@ -50,23 +67,27 @@ export default class PhysicsSystem extends System {
     }
   }
 
-  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): void {
+  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): Function[] {
     const component = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    this.scene.matter.world.on('beforeupdate', () => {
+    const onBefore = (): void => {
       Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
       Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle);
-    });
+    };
+    this.scene.matter.world.on('beforeupdate', onBefore);
 
-    this.scene.matter.world.on('afterupdate', () => {
+    const onAfter = (): void => {
       component.position.x = body.position.x;
       component.position.y = body.position.y;
       component.angle = body.angle;
-    });
+    };
+    this.scene.matter.world.on('afterupdate', onAfter);
+
+    return [onBefore, onAfter];
   }
 
   private applyForce(payload: EventMessages.ApplyForce): void {
-    const body = this.physicsObjects[payload.id];
+    const { body } = this.physicsObjects[payload.id];
 
     if (!body) return;
 

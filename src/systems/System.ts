@@ -16,9 +16,17 @@ export default abstract class System {
         this.onEntityCreated(entity);
       }
     });
+
+    EventBus.subscribe(EventType.ENTITY_DESTROYED, (entity: Entity) => {
+      if (entity.hasComponents(...this.expectedComponents)) {
+        this.onEntityDestroyed(entity);
+      }
+    });
   }
 
   public abstract update(delta: number): void;
 
   protected abstract onEntityCreated(entity: Entity): void;
+
+  protected abstract onEntityDestroyed(entity: Entity): void;
 }

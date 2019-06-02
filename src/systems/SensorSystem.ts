@@ -10,7 +10,12 @@ import { gaussian } from '../utils/reactions';
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: { [componentId: number]: SensorPhysicsObject } = {};
+  private physicsObjects: {
+    [componentId: number]: {
+      body: SensorPhysicsObject;
+      eventBeforeUpdate: Function;
+    };
+  } = {};
 
   public constructor(scene: Phaser.Scene) {
     super(scene);
@@ -29,10 +34,21 @@ export default class SensorSystem extends System {
     this.entities.push(entity);
   }
 
+  protected onEntityDestroyed(entity: Entity): void {
+    const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+    sensors.forEach(sensor => {
+      const { body, eventBeforeUpdate } = this.physicsObjects[sensor.id];
+
+      this.scene.matter.world.off('beforeupdate', eventBeforeUpdate);
+      this.scene.matter.world.remove(body, false);
+      delete this.physicsObjects[entity.id];
+    });
+  }
+
   private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
     const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
 
-    this.attachSynchronization(body, entity, sensor);
+    const emitter = this.attachSynchronization(body, entity, sensor);
 
     body.label = ComponentType.SENSOR;
     body.userData = {
@@ -46,7 +62,10 @@ export default class SensorSystem extends System {
       },
     };
     this.scene.matter.world.add(body);
-    this.physicsObjects[sensor.id] = body;
+    this.physicsObjects[sensor.id] = {
+      body,
+      eventBeforeUpdate: emitter,
+    };
 
     return body;
   }
@@ -55,20 +74,24 @@ export default class SensorSystem extends System {
     body: Phaser.Physics.Matter.Matter.Body,
     entity: Entity,
     component: SensorComponent,
-  ): void {
+  ): Function {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    // Hier brauchen wir nur `beforeupdate` (Kein `afterupdate`), da die Position und Winkel
-    // des Sensors immer relativ zum Objekt selbst sind und somit nicht durch die Physik-
-    // Engine beeinflusst werden.
-    this.scene.matter.world.on('beforeupdate', () => {
+    const onBefore = (): void => {
       const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
         x: transform.position.x + direction.x,
         y: transform.position.y + direction.y,
       });
       Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle);
-    });
+    };
+
+    // Hier brauchen wir nur `beforeupdate` (Kein `afterupdate`), da die Position und Winkel
+    // des Sensors immer relativ zum Objekt selbst sind und somit nicht durch die Physik-
+    // Engine beeinflusst werden.
+    this.scene.matter.world.on('beforeupdate', onBefore);
+
+    return onBefore;
   }
 
   private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
