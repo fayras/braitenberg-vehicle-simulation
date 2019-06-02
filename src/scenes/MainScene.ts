@@ -26,13 +26,14 @@ import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
 import { SubstanceType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
+import EntityManager from '../EntityManager';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
   private renderSystem: RenderSystem;
 
-  private entities: Entity[] = [];
+  private entityManager: EntityManager;
 
   private eventBus: EventBus;
 
@@ -41,6 +42,7 @@ export default class MainScene extends Phaser.Scene {
   public constructor() {
     super({ key: 'MainScene' });
     this.eventBus = new EventBus();
+    this.entityManager = new EntityManager(this.eventBus);
     // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
     // wenn die Simulation z.b. pausiert ist.
     this.renderSystem = new RenderSystem(this, this.eventBus);
@@ -64,36 +66,36 @@ export default class MainScene extends Phaser.Scene {
     this.scene.add('settings', SettingScene, false);
 
     for (let i = 0; i < 1; i += 1) {
-      const entity = new Entity();
-      entity.addComponent(new TransformableComponent({ x: 300, y: 100 }));
-      entity.addComponent(new SolidBodyComponent(100));
-      entity.addComponent(new RenderComponent('logo', 110));
+      this.entityManager.createEntity(
+        new TransformableComponent({ x: 300, y: 100 }),
+        new SolidBodyComponent(100),
+        new RenderComponent('logo', 110),
+      );
       // entity.addComponent(new SourceComponent(150));
-      this.entities.push(entity);
     }
 
-    const entity2 = new Entity();
-    entity2.addComponent(new TransformableComponent({ x: 300, y: 200 }));
-    entity2.addComponent(new SolidBodyComponent(100));
-    entity2.addComponent(new RenderComponent('tank', 100));
-    const motor1 = entity2.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
-    const motor2 = entity2.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity2.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
-    // const sensor2 = entity2.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
-    entity2.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
-    this.entities.push(entity2);
+    const entity = new Entity();
+    entity.addComponent(new TransformableComponent({ x: 300, y: 200 }));
+    entity.addComponent(new SolidBodyComponent(100));
+    entity.addComponent(new RenderComponent('tank', 100));
+    const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
+    const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
+    const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+    // const sensor2 = entity.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
+    entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
+    this.entityManager.addExistingEntity(entity);
 
-    const light = new Entity();
-    light.addComponent(new TransformableComponent({ x: 500, y: 300 }));
-    light.addComponent(new RenderComponent('source', 300, Phaser.BlendModes.ADD));
-    light.addComponent(new SourceComponent(300));
-    this.entities.push(light);
+    this.entityManager.createEntity(
+      new TransformableComponent({ x: 500, y: 300 }),
+      new RenderComponent('source', 300, Phaser.BlendModes.ADD),
+      new SourceComponent(300),
+    );
 
-    const light2 = new Entity();
-    light2.addComponent(new TransformableComponent({ x: 200, y: 400 }));
-    light2.addComponent(new RenderComponent('source', 150, Phaser.BlendModes.ADD));
-    light2.addComponent(new SourceComponent(150, SubstanceType.BARRIER));
-    this.entities.push(light2);
+    this.entityManager.createEntity(
+      new TransformableComponent({ x: 200, y: 400 }),
+      new RenderComponent('source', 150, Phaser.BlendModes.ADD),
+      new SourceComponent(150, SubstanceType.BARRIER),
+    );
   }
 
   private createSystems(): void {
@@ -108,11 +110,13 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public update(time: number, delta: number): void {
+    const entities = this.entityManager.getEntities();
+
     if (this.running) {
-      this.systems.forEach(s => MainScene.runSystem(s, this.entities, delta));
+      this.systems.forEach(s => MainScene.runSystem(s, entities, delta));
     }
 
-    MainScene.runSystem(this.renderSystem, this.entities, delta);
+    MainScene.runSystem(this.renderSystem, entities, delta);
   }
 
   private static runSystem(system: System, entities: Entity[], delta: number): void {
@@ -135,14 +139,16 @@ export default class MainScene extends Phaser.Scene {
 
   // Speicherung des aktuellen Status von allen Entitäten
   private createSnapshot(): void {
-    const snapshot = this.entities.map(entity => entity.serialize());
+    const entities = this.entityManager.getEntities();
+    const snapshot = entities.map(entity => entity.serialize());
 
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
 
   // noch auf private ändern
   public loadSnapshot(): void {
-    this.entities.map(entit => Entity.destroy());
+    const entities = this.entityManager.getEntities();
+    entities.map(entit => Entity.destroy());
     // const snapshot = localStorage.getItem('snapshot');
     //let i = 0;
     //let aktuellerStatus;
