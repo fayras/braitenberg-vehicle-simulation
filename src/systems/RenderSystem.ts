@@ -13,12 +13,8 @@ export default class RenderSystem extends System {
 
   private renderObjects: RenderObjectDictionary = {};
 
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
-      if (!this.renderObjects[entity.id]) {
-        this.addEntity(entity);
-      }
-
+  public update(): void {
+    this.entities.forEach(entity => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const renderObject = this.renderObjects[entity.id];
 
@@ -27,7 +23,7 @@ export default class RenderSystem extends System {
     });
   }
 
-  private addEntity(entity: Entity): void {
+  protected onEntityCreated(entity: Entity): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
 
@@ -48,5 +44,6 @@ export default class RenderSystem extends System {
     });
 
     this.renderObjects[entity.id] = image;
+    this.entities.push(entity);
   }
 }

@@ -15,19 +15,17 @@ export default class PhysicsSystem extends System {
 
   private physicsObjects: PhysicsObjectDictionary = {};
 
-  public constructor(scene: Phaser.Scene, bus: EventBus) {
-    super(scene, bus);
+  public constructor(scene: Phaser.Scene) {
+    super(scene);
 
-    this.eventBus.subscribe(EventType.APPLY_FORCE, this.applyForce.bind(this));
+    EventBus.subscribe(EventType.APPLY_FORCE, this.applyForce.bind(this));
   }
 
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
-      if (!this.physicsObjects[entity.id]) this.addEntity(entity);
-    });
+  public update(): void {
+    // do nothing
   }
 
-  private addEntity(entity: Entity): void {
+  protected onEntityCreated(entity: Entity): void {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
     const body = PhysicsSystem.getBody(component);

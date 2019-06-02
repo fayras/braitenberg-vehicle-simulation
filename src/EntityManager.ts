@@ -6,15 +6,9 @@ import { EventType } from './enums';
 export default class EntityManager {
   private entities: { [id: number]: Entity } = {};
 
-  private eventBus: EventBus;
-
-  public constructor(eventBus: EventBus) {
-    this.eventBus = eventBus;
-  }
-
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
-    this.eventBus.publish(EventType.ENTITY_CREATED, entity);
+    EventBus.publish(EventType.ENTITY_CREATED, entity);
   }
 
   public createEntity(...components: Component[]): Entity {
@@ -23,7 +17,7 @@ export default class EntityManager {
       entity.addComponent(c);
     });
     this.entities[entity.id] = entity;
-    this.eventBus.publish(EventType.ENTITY_CREATED, entity);
+    EventBus.publish(EventType.ENTITY_CREATED, entity);
 
     return entity;
   }
@@ -31,7 +25,7 @@ export default class EntityManager {
   public destroyEntity(id: number): void {
     const entity = this.entities[id];
 
-    this.eventBus.publish(EventType.ENTITY_DESTROYED, entity);
+    EventBus.publish(EventType.ENTITY_DESTROYED, entity);
     delete this.entities[id];
   }
 

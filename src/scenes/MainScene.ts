@@ -35,17 +35,14 @@ export default class MainScene extends Phaser.Scene {
 
   private entityManager: EntityManager;
 
-  private eventBus: EventBus;
-
   private running: boolean = true;
 
   public constructor() {
     super({ key: 'MainScene' });
-    this.eventBus = new EventBus();
-    this.entityManager = new EntityManager(this.eventBus);
+    this.entityManager = new EntityManager();
     // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
     // wenn die Simulation z.b. pausiert ist.
-    this.renderSystem = new RenderSystem(this, this.eventBus);
+    this.renderSystem = new RenderSystem(this);
   }
 
   public preload(): void {
@@ -100,29 +97,21 @@ export default class MainScene extends Phaser.Scene {
 
   private createSystems(): void {
     this.systems = [
-      new PhysicsSystem(this, this.eventBus),
-      new SourceSystem(this, this.eventBus),
-      new EngineSystem(this, this.eventBus),
-      new SensorSystem(this, this.eventBus),
-      new ConnectionSystem(this, this.eventBus),
-      new ReactionSystem(this, this.eventBus),
+      new PhysicsSystem(this),
+      new SourceSystem(this),
+      new EngineSystem(this),
+      new SensorSystem(this),
+      new ConnectionSystem(this),
+      new ReactionSystem(this),
     ];
   }
 
   public update(time: number, delta: number): void {
-    const entities = this.entityManager.getEntities();
-
     if (this.running) {
-      this.systems.forEach(s => MainScene.runSystem(s, entities, delta));
+      this.systems.forEach(s => s.update(delta));
     }
 
-    MainScene.runSystem(this.renderSystem, entities, delta);
-  }
-
-  private static runSystem(system: System, entities: Entity[], delta: number): void {
-    const expectedEntities = entities.filter((e): boolean => e.hasComponents(...system.expectedComponents));
-
-    system.update(expectedEntities, delta);
+    this.renderSystem.update();
   }
 
   public isRunning(): boolean {

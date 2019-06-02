@@ -9,9 +9,8 @@ import SensorComponent from '../components/SensorComponent';
 export default class ConnectionSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.CONNECTION, ComponentType.MOTOR, ComponentType.SENSOR];
 
-  // eslint-disable-next-line
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
+  public update(): void {
+    this.entities.forEach(entity => {
       const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
@@ -30,5 +29,9 @@ export default class ConnectionSystem extends System {
         }
       });
     });
+  }
+
+  protected onEntityCreated(entity: Entity): void {
+    this.entities.push(entity);
   }
 }

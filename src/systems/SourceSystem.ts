@@ -11,11 +11,12 @@ export default class SourceSystem extends System {
 
   private physicsObjects: { [componentId: number]: SourcePhysicsObject } = {};
 
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
-      const source = entity.getComponent(ComponentType.SOURCE) as SourceComponent;
-      if (!this.physicsObjects[source.id]) this.addSensorObject(entity, source);
-    });
+  public update(): void {}
+
+  protected onEntityCreated(entity: Entity): void {
+    const source = entity.getComponent(ComponentType.SOURCE) as SourceComponent;
+    this.addSensorObject(entity, source);
+    this.entities.push(entity);
   }
 
   private addSensorObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {

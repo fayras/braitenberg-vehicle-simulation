@@ -1,18 +1,24 @@
-import { ComponentType } from '../enums';
+import { ComponentType, EventType } from '../enums';
 import EventBus from '../EventBus';
 import Entity from '../Entity';
 
 export default abstract class System {
   public expectedComponents: ComponentType[] = [];
 
+  protected entities: Entity[] = [];
+
   protected scene: Phaser.Scene;
 
-  protected eventBus: EventBus;
-
-  public constructor(scene: Phaser.Scene, bus: EventBus) {
+  public constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.eventBus = bus;
+    EventBus.subscribe(EventType.ENTITY_CREATED, (entity: Entity) => {
+      if (entity.hasComponents(...this.expectedComponents)) {
+        this.onEntityCreated(entity);
+      }
+    });
   }
 
-  public abstract update(entities: Entity[], delta: number): void;
+  public abstract update(delta: number): void;
+
+  protected abstract onEntityCreated(entity: Entity): void;
 }

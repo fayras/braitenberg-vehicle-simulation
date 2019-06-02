@@ -7,14 +7,15 @@ import EventBus from '../EventBus';
 export default class ReactionSystem extends System {
   public expectedComponents: ComponentType[] = [];
 
-  public constructor(scene: Phaser.Scene, bus: EventBus) {
-    super(scene, bus);
+  public constructor(scene: Phaser.Scene) {
+    super(scene);
 
-    this.eventBus.subscribe(EventType.REACTION, ReactionSystem.handleReaction);
+    EventBus.subscribe(EventType.REACTION, ReactionSystem.handleReaction);
   }
 
-  // eslint-disable-next-line
-  public update(entities: Entity[]): void {}
+  public update(): void {}
+
+  protected onEntityCreated(entity: Entity): void {}
 
   private static handleReaction(payload: EventMessages.Reaction): void {
     if (payload.other.label === ComponentType.SOURCE) {

@@ -12,21 +12,21 @@ export default class SensorSystem extends System {
 
   private physicsObjects: { [componentId: number]: SensorPhysicsObject } = {};
 
-  public constructor(scene: Phaser.Scene, bus: EventBus) {
-    super(scene, bus);
+  public constructor(scene: Phaser.Scene) {
+    super(scene);
     // this.scene.matter.world.on('collisionstart', SensorSystem.onCollision);
-    this.scene.matter.world.on('collisionactive', this.onCollision.bind(this));
+    this.scene.matter.world.on('collisionactive', SensorSystem.onCollision);
     this.scene.matter.world.on('collisionend', SensorSystem.onCollisionEnd);
   }
 
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
-      const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+  public update(): void {}
 
-      sensors.forEach(sensor => {
-        if (!this.physicsObjects[sensor.id]) this.addSensorObject(entity, sensor);
-      });
+  protected onEntityCreated(entity: Entity): void {
+    const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+    sensors.forEach(sensor => {
+      this.addSensorObject(entity, sensor);
     });
+    this.entities.push(entity);
   }
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
@@ -118,7 +118,7 @@ export default class SensorSystem extends System {
     return null;
   }
 
-  public onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
+  public static onCollision(event: Phaser.Physics.Matter.Events.CollisionActiveEvent): void {
     event.pairs.forEach(pair => {
       if (!pair.isSensor) return;
 
@@ -129,7 +129,7 @@ export default class SensorSystem extends System {
         // const dX = o.position.x - s.position.x;
         // const dY = o.position.y - s.position.y;
 
-        this.eventBus.publish(EventType.REACTION, bodies);
+        EventBus.publish(EventType.REACTION, bodies);
 
         // const result = s.userData.kernel(dX, dY);
         // console.log(result);

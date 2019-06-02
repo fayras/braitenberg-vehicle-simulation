@@ -4,12 +4,13 @@ import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import TransformableComponent from '../components/TransformableComponent';
 import MotorComponent from '../components/MotorComponent';
+import EventBus from '../EventBus';
 
 export default class EngineSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.MOTOR];
 
-  public update(entities: Entity[]): void {
-    entities.forEach(entity => {
+  public update(): void {
+    this.entities.forEach(entity => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
 
@@ -23,12 +24,16 @@ export default class EngineSystem extends System {
         // haben kann.
         const force = Phaser.Physics.Matter.Matter.Vector.rotate({ x: 0, y: thrust * 0.001 }, transform.angle);
 
-        this.eventBus.publish(EventType.APPLY_FORCE, {
+        EventBus.publish(EventType.APPLY_FORCE, {
           id: entity.id,
           offset,
           force,
         });
       });
     });
+  }
+
+  protected onEntityCreated(entity: Entity): void {
+    this.entities.push(entity);
   }
 }
