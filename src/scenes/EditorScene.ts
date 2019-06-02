@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
 import tankImg from '../../assets/tank.png';
+import EntityManager from '../EntityManager';
+import TransformableComponent from '../components/TransformableComponent';
+import SolidBodyComponent from '../components/SolidBodyComponent';
+import RenderComponent from '../components/RenderComponent';
 
 export default class EditorScene extends Phaser.Scene {
   // public editor: Phaser.GameObjects.Image;
@@ -56,7 +60,15 @@ export default class EditorScene extends Phaser.Scene {
     this.input.on(
       'dragend',
       (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropped: boolean) => {
-        console.log(dropped);
+        const position = { x: 0, y: 0 };
+        container.getWorldTransformMatrix().transformPoint(gameObject.x, gameObject.y, position);
+
+        EntityManager.createEntity(
+          new TransformableComponent(position),
+          new RenderComponent('logo', 100),
+          new SolidBodyComponent(100),
+        );
+
         gameObject.setPosition(gameObject.input.dragStartX, gameObject.input.dragStartY);
       },
     );
