@@ -140,7 +140,19 @@ export default class MainScene extends Phaser.Scene {
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
 
-  // private loadSnapshot(): void {}
+  // noch auf private ändern
+  public loadSnapshot(): void {
+    this.entities.map(entit => Entity.destroy());
+    // const snapshot = localStorage.getItem('snapshot');
+    //let i = 0;
+    //let aktuellerStatus;
+    //if (!snapshot) {
+    // snapshot.array.forEach(element => {
+    //  aktuellerStatus[i] = JSON.parse(snapshot);
+    //  i++;
+    // });
+    //} else console.log('Beim Laden ist ein Fehler aufgetreten!');
+  }
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
     const { width, height } = gameSize;

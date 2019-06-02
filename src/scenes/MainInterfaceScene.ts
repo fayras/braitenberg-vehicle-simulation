@@ -24,7 +24,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
       mainScene.pause(!mainScene.isRunning());
     });
     const reset = new Button(this, 200, 35, '', 29, () => {
-      // mainScene.loadSnapshot();
+      mainScene.loadSnapshot();
     });
 
     const showEditor = new ToggleButton(this, this.cameras.main.displayWidth - 35, 35, '', 2, 2, button => {
