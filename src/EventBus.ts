@@ -4,7 +4,7 @@ interface EventHandlerDictionary {
   [index: string]: EventHandler[];
 }
 
-export default class EventBus {
+class EventBus {
   private handlers: EventHandlerDictionary = {};
 
   public publish(event: EventType, payload: EventMessage): void {
@@ -21,3 +21,5 @@ export default class EventBus {
     this.handlers[event].push(handler);
   }
 }
+
+export default new EventBus();
