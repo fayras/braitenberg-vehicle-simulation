@@ -36,12 +36,23 @@ export default class EditorScene extends Phaser.Scene {
 
     this.input.setDraggable(tank);
     this.input.setDraggable(tank2);
-    this.input.on('dragstart', (pointer, gameObject) => {
-      // TODO
+
+    this.input.on('dragstart', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject) => {
+      this.children.bringToTop(gameObject);
     });
-    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    });
+    this.input.on(
+      'drag',
+      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dragX: number, dragY: number) => {
+        gameObject.setPosition(dragX, dragY);
+      },
+    );
+
+    this.input.on(
+      'dragend',
+      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropped: boolean) => {
+        console.log(dropped);
+        gameObject.setPosition(gameObject.input.dragStartX, gameObject.input.dragStartY);
+      },
+    );
   }
 }
