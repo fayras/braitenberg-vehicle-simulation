@@ -5,6 +5,7 @@ import MainInterfaceScene from './scenes/MainInterfaceScene';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   backgroundColor: '#CCCCCC',
+  parent: 'body',
   scale: {
     mode: Phaser.Scale.RESIZE,
     width: '100%',

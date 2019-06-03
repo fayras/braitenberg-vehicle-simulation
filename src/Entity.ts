@@ -41,6 +41,10 @@ export default class Entity {
     return components.every(name => available.includes(name));
   }
 
+  public getAllComponents(): Component[] {
+    return this.components;
+  }
+
   public serialize(): SerializedEntity {
     return {
       id: this.id,
