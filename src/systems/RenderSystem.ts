@@ -1,8 +1,9 @@
 import System from './System';
 import Entity from '../Entity';
-import { ComponentType } from '../enums';
+import { ComponentType, EventType } from '../enums';
 import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
+import EventBus from '../EventBus';
 
 interface RenderObjectDictionary {
   [entityId: number]: Phaser.GameObjects.Image;
@@ -41,6 +42,15 @@ export default class RenderSystem extends System {
     image.on('drag', (gameObject: unknown, x: number, y: number) => {
       transform.position.x = x;
       transform.position.y = y;
+    });
+
+    image.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+      const dragThreshold = 3;
+      if (pointer.getDistance() > dragThreshold) {
+        return;
+      }
+
+      EventBus.publish(EventType.ENTITY_SELECTED, entity);
     });
 
     this.renderObjects[entity.id] = image;
