@@ -3,6 +3,7 @@ import ToggleButton from '../gui/ToggleButton';
 import Button from '../gui/Button';
 import MainScene from './MainScene';
 import buttonSpriteSheet from '../../assets/gui_icons.png';
+import EditorScene from './EditorScene';
 
 export default class MainInterfaceScene extends Phaser.Scene {
   private buttons: Button[] = [];
@@ -34,7 +35,8 @@ export default class MainInterfaceScene extends Phaser.Scene {
         button.setPosition(this.cameras.main.width - 35, 35);
       } else {
         this.scene.wake('EditorScene');
-        button.setPosition(this.cameras.main.width - 230, 35);
+        const scene = this.scene.get('EditorScene') as EditorScene;
+        button.setPosition(this.cameras.main.width - scene.getWidth() - 35, 35);
       }
     });
 
@@ -53,5 +55,12 @@ export default class MainInterfaceScene extends Phaser.Scene {
     const { width, height } = gameSize;
 
     this.cameras.resize(width, height);
+    const showEditor = this.buttons[2];
+    if ((showEditor as ToggleButton).isPressed()) {
+      const scene = this.scene.get('EditorScene') as EditorScene;
+      showEditor.setPosition(this.cameras.main.width - scene.getWidth() - 35, 35);
+    } else {
+      showEditor.setPosition(this.cameras.main.width - 35, 35);
+    }
   }
 }
