@@ -1,9 +1,7 @@
 import Phaser from 'phaser';
 import System from './System';
-import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import EventBus from '../EventBus';
-import { gaussian } from '../utils/reactions';
 
 export default class ReactionSystem extends System {
   public expectedComponents: ComponentType[] = [];
@@ -16,9 +14,9 @@ export default class ReactionSystem extends System {
 
   public update(): void {}
 
-  protected onEntityCreated(entity: Entity): void {}
+  protected onEntityCreated(): void {}
 
-  protected onEntityDestroyed(entity: Entity): void {}
+  protected onEntityDestroyed(): void {}
 
   private static handleReaction(payload: EventMessages.Reaction): void {
     if (payload.other.label === ComponentType.SOURCE) {
