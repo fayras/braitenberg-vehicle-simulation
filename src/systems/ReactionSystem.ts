@@ -3,6 +3,7 @@ import System from './System';
 import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import EventBus from '../EventBus';
+import { gaussian } from '../utils/reactions';
 
 export default class ReactionSystem extends System {
   public expectedComponents: ComponentType[] = [];
@@ -22,9 +23,13 @@ export default class ReactionSystem extends System {
   private static handleReaction(payload: EventMessages.Reaction): void {
     if (payload.other.label === ComponentType.SOURCE) {
       const source = payload.other as SourcePhysicsObject;
-      if (!ReactionSystem.reactTogether(payload.sensor, source)) return;
+      const { sensor } = payload;
+      if (!ReactionSystem.reactTogether(sensor, source)) return;
 
-      console.log(payload.sensor, source);
+      const distance = Phaser.Physics.Matter.Matter.Vector.sub(sensor.position, source.position);
+      const activation = source.userData.kernel(distance.x, distance.y);
+
+      sensor.userData.belongsTo.component.activation = activation;
     }
   }
 

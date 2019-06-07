@@ -43,7 +43,9 @@ export default class SourceSystem extends System {
 
     body.label = ComponentType.SOURCE;
     body.userData = {
-      kernel: gaussian({ x: 0, y: 0 }, { x: source.range, y: source.range }),
+      // Die Range wird hier durch 4 geteilt, weil der zweite Parameter nur die
+      // Standardabweichung ist, und die Gausskurve aber darüber hinaus geht.
+      kernel: gaussian({ x: 0, y: 0 }, { x: source.range / 4, y: source.range / 4 }),
       belongsTo: {
         entity,
         component: source,
