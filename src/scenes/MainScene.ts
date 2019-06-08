@@ -24,7 +24,7 @@ import SensorSystem from '../systems/SensorSystem';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
-import { SubstanceType } from '../enums';
+import { SubstanceType, EventType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
@@ -58,6 +58,10 @@ export default class MainScene extends Phaser.Scene {
 
     this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
+
+    EventBus.subscribe(EventType.ENTITY_SELECTED, entity => {
+      this.scene.launch('SettingScene', entity);
+    });
 
     for (let i = 0; i < 1; i += 1) {
       EntityManager.createEntity(
