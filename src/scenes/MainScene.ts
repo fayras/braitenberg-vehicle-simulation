@@ -24,7 +24,7 @@ import SensorSystem from '../systems/SensorSystem';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
-import { SubstanceType, EventType } from '../enums';
+import { SubstanceType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
@@ -58,10 +58,6 @@ export default class MainScene extends Phaser.Scene {
 
     this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
-
-    EventBus.subscribe(EventType.ENTITY_SELECTED, entity => {
-      this.scene.launch('SettingScene', entity);
-    });
 
     for (let i = 0; i < 1; i += 1) {
       EntityManager.createEntity(
@@ -135,19 +131,20 @@ export default class MainScene extends Phaser.Scene {
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
 
-  // noch auf private ändern
   public static loadSnapshot(): void {
     const entities = EntityManager.getEntities();
-    entities.map(entit => Entity.destroy());
-    // const snapshot = localStorage.getItem('snapshot');
-    //let i = 0;
-    //let aktuellerStatus;
-    //if (!snapshot) {
-    // snapshot.array.forEach(element => {
-    //  aktuellerStatus[i] = JSON.parse(snapshot);
-    //  i++;
-    // });
-    //} else console.log('Beim Laden ist ein Fehler aufgetreten!');
+    // hier auf Funktion des Entität Managers zugreifen
+    entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+    const snapshot = localStorage.getItem('snapshot');
+    console.log(snapshot);
+
+    let aktuellerStatus;
+    if (snapshot) {
+      aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
+      EntityManager.loadEntities(aktuellerStatus);
+    } else {
+      console.log('Beim Laden ist ein Fehler aufgetreten!');
+    }
   }
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
