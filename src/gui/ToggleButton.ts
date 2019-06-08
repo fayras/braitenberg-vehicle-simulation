@@ -11,12 +11,11 @@ export default class ToggleButton extends Button {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    text: string,
     deaktivIcon: number,
     activIcon: number,
     klickaction: (btn: Button) => void,
   ) {
-    super(scene, x, y, text, deaktivIcon, klickaction);
+    super(scene, x, y, deaktivIcon, klickaction);
     this.activeIcon = activIcon;
     this.deactiveIcon = deaktivIcon;
   }
@@ -24,10 +23,10 @@ export default class ToggleButton extends Button {
   protected handleClick(action: (btn: Button) => void): void {
     action(this);
     if (this.pressed === false) {
-      this.button.setFrame(this.deactiveIcon);
+      this.setFrame(this.deactiveIcon);
       this.pressed = true;
     } else {
-      this.button.setFrame(this.activeIcon);
+      this.setFrame(this.activeIcon);
       this.pressed = false;
     }
   }

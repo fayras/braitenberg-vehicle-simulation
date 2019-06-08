@@ -22,15 +22,15 @@ export default class MainInterfaceScene extends Phaser.Scene {
     this.scene.launch('EditorScene'); // Wofür macht es Sinn die Scene hier zu launchen ?
     this.scene.sleep('EditorScene');
 
-    const start = new ToggleButton(this, 35, 35, '', 4, 3, () => {
+    const start = new ToggleButton(this, 35, 35, 4, 3, () => {
       mainScene.pause(!mainScene.isRunning());
     });
 
-    const reset = new Button(this, 45 + start.getWidth(), 35, '', 5, () => {
+    const reset = new Button(this, 45 + start.getWidth(), 35, 5, () => {
       MainScene.loadSnapshot();
     });
 
-    const showEditor = new ToggleButton(this, this.cameras.main.displayWidth - 35, 35, '', 0, 1, button => {
+    const showEditor = new ToggleButton(this, this.cameras.main.displayWidth - 35, 35, 0, 1, button => {
       if ((button as ToggleButton).isPressed()) {
         this.scene.sleep('EditorScene');
         button.setPosition(this.cameras.main.width - 35, 35);
