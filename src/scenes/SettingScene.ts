@@ -24,7 +24,7 @@ export default class SettingScene extends Phaser.Scene {
   public create(entity: Entity): void {
     this.scale.on('resize', this.handleResize.bind(this));
 
-    const container = this.add.container(this.cameras.main.displayWidth - SettingScene.getWidth(), 0);
+    const container = this.add.container(this.cameras.main.displayWidth, 0);
     this.container = container;
 
     const rect = new Phaser.Geom.Rectangle(0, 0, SettingScene.getWidth(), this.cameras.main.displayHeight);
@@ -32,10 +32,17 @@ export default class SettingScene extends Phaser.Scene {
     this.background.fillRectShape(rect);
     container.add(this.background);
 
-    const reset = new Button(this, -35, 35, 0, () => {
-      this.scene.stop('SettingScene');
+    const close = new Button(this, -35, 35, 0, () => {
+      this.tweens.add({
+        targets: this.container,
+        x: `+=${SettingScene.getWidth()}`,
+        y: 0,
+        duration: 100,
+        ease: 'Expo.easeInOut',
+        onComplete: () => this.scene.stop('SettingScene'),
+      });
     });
-    container.add(reset);
+    container.add(close);
 
     let height = 0;
     entity.getAllComponents().forEach(component => {
@@ -64,6 +71,14 @@ export default class SettingScene extends Phaser.Scene {
         container.add(sliderElement);
         height += sliderElement.height;
       }
+    });
+
+    this.tweens.add({
+      targets: this.container,
+      x: `-=${SettingScene.getWidth()}`,
+      y: 0,
+      duration: 200,
+      ease: 'Expo.easeInOut',
     });
   }
 
