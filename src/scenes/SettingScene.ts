@@ -13,7 +13,7 @@ export default class SettingScene extends Phaser.Scene {
   }
 
   public preload(): void {
-    this.load.html('slider', 'assets/slider.html');
+    this.load.html('slider', 'assets/templates/motor.html');
   }
 
   public static getWidth(): number {
