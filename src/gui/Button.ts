@@ -14,7 +14,6 @@ export default class Button {
     klickaction: (btn: Button) => void,
   ) {
     this.button = scene.add.sprite(x, y, 'button', icon).setInteractive();
-    this.button.setScale(0.4);
 
     this.button.on('pointerover', () => {
       this.text.setFill('red');
@@ -45,5 +44,9 @@ export default class Button {
     this.text.setText(text);
     this.text.x = this.text.x - this.text.displayWidth / 2;
     this.text.y = this.text.y - this.text.displayHeight / 2;
+  }
+
+  public getWidth(): number {
+    return this.button.width;
   }
 }

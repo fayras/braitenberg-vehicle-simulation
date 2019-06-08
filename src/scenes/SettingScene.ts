@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import { get, set } from 'lodash-es';
-import windowImg from '../../assets/gui_window.png';
 import Entity from '../Entity';
 import { ComponentType } from '../enums';
 
@@ -14,22 +13,20 @@ export default class SettingScene extends Phaser.Scene {
   }
 
   public preload(): void {
-    this.load.image('gui-window', windowImg);
     this.load.html('slider', 'assets/slider.html');
   }
 
-  // eslint-disable-next-line
-  public getWidth(): number {
-    return 250;
+  public static getWidth(): number {
+    return 256;
   }
 
   public create(entity: Entity): void {
     this.scale.on('resize', this.handleResize.bind(this));
 
-    const container = this.add.container(this.cameras.main.displayWidth - this.getWidth(), 0);
+    const container = this.add.container(this.cameras.main.displayWidth - SettingScene.getWidth(), 0);
     this.container = container;
 
-    const rect = new Phaser.Geom.Rectangle(0, 0, this.getWidth(), this.cameras.main.displayHeight);
+    const rect = new Phaser.Geom.Rectangle(0, 0, SettingScene.getWidth(), this.cameras.main.displayHeight);
     this.background = this.add.graphics({ fillStyle: { color: 0xcaff70 } });
     this.background.fillRectShape(rect);
 
@@ -69,10 +66,10 @@ export default class SettingScene extends Phaser.Scene {
 
     this.cameras.resize(width, height);
     if (this.container) {
-      this.container.setPosition(this.cameras.main.displayWidth - this.getWidth(), 0);
+      this.container.setPosition(this.cameras.main.displayWidth - SettingScene.getWidth(), 0);
     }
     if (this.background) {
-      const rect = new Phaser.Geom.Rectangle(0, 0, this.getWidth(), this.cameras.main.displayHeight);
+      const rect = new Phaser.Geom.Rectangle(0, 0, SettingScene.getWidth(), this.cameras.main.displayHeight);
       this.background.fillRectShape(rect);
     }
   }

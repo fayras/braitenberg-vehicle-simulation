@@ -21,25 +21,25 @@ export default class EditorScene extends Phaser.Scene {
     this.load.image('tank', tankImg);
   }
 
-  public getWidth(): number {
-    return Math.max(150, this.cameras.main.displayWidth / 6);
+  public static getWidth(): number {
+    return 256;
   }
 
   public create(): void {
     this.scale.on('resize', this.handleResize.bind(this));
 
-    const container = this.add.container(this.cameras.main.displayWidth - this.getWidth(), 0);
+    const container = this.add.container(this.cameras.main.displayWidth - EditorScene.getWidth(), 0);
     this.container = container;
 
-    const rect = new Phaser.Geom.Rectangle(0, 0, this.getWidth(), this.cameras.main.displayHeight);
+    const rect = new Phaser.Geom.Rectangle(0, 0, EditorScene.getWidth(), this.cameras.main.displayHeight);
     this.background = this.add.graphics({ fillStyle: { color: 0xcaff70 } });
     this.background.fillRectShape(rect);
 
     container.add(this.background);
 
-    const tank = this.add.image(this.getWidth() / 2, 70, 'tank').setInteractive();
+    const tank = this.add.image(EditorScene.getWidth() / 2, 70, 'tank').setInteractive();
 
-    const tank2 = this.add.image(this.getWidth() / 2, 170, 'tank').setInteractive();
+    const tank2 = this.add.image(EditorScene.getWidth() / 2, 170, 'tank').setInteractive();
 
     container.add(tank);
     container.add(tank2);
@@ -79,10 +79,10 @@ export default class EditorScene extends Phaser.Scene {
 
     this.cameras.resize(width, height);
     if (this.container) {
-      this.container.setPosition(this.cameras.main.displayWidth - this.getWidth(), 0);
+      this.container.setPosition(this.cameras.main.displayWidth - EditorScene.getWidth(), 0);
     }
     if (this.background) {
-      const rect = new Phaser.Geom.Rectangle(0, 0, this.getWidth(), this.cameras.main.displayHeight);
+      const rect = new Phaser.Geom.Rectangle(0, 0, EditorScene.getWidth(), this.cameras.main.displayHeight);
       this.background.fillRectShape(rect);
     }
   }
