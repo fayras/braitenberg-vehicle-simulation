@@ -25,8 +25,10 @@ export default class EditorScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container): void {
-    const vehicle = this.add.image(EditorScene.getWidth() / 2, 70, 'vehicle');
-    const source = this.add.image(EditorScene.getWidth() / 2, 170, 'source_icon');
+    const vehicle = this.add.image(0, 0, 'vehicle');
+    const source = this.add.image(0, 0, 'source_icon');
+    const motor = this.add.image(0, 0, 'motor');
+    const sensor = this.add.image(0, 0, 'sensor');
 
     this.makeInteractable(vehicle, () => {
       const position = { x: 0, y: 0 };
@@ -45,9 +47,10 @@ export default class EditorScene extends SidebarScene {
         new SourceComponent(100),
       );
     });
+    this.makeInteractable(motor, position => {});
+    this.makeInteractable(sensor, position => {});
 
-    container.add(vehicle);
-    container.add(source);
+    this.pack([vehicle, source, motor, sensor]);
   }
 
   private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {

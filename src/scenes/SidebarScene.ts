@@ -57,6 +57,19 @@ export default abstract class SidebarScene extends Phaser.Scene {
     });
   }
 
+  protected pack(objects: Phaser.GameObjects.Image[] | Phaser.GameObjects.Sprite[]): void {
+    if (this.container) {
+      const padding = 15;
+      let height = padding;
+      for (let i = 0; i < objects.length; i += 1) {
+        const objectHeight = objects[i].height;
+        objects[i].setPosition(SidebarScene.getWidth() / 2, height + objectHeight / 2);
+        this.container.add(objects[i]);
+        height = height + objectHeight + padding;
+      }
+    }
+  }
+
   private fillBackground(): void {
     if (this.background) {
       const rect = new Phaser.Geom.Rectangle(0, 0, SidebarScene.getWidth(), this.cameras.main.displayHeight);
