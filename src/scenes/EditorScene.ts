@@ -4,39 +4,18 @@ import EntityManager from '../EntityManager';
 import TransformableComponent from '../components/TransformableComponent';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
+import SidebarScene from './SidebarScene';
 
-export default class EditorScene extends Phaser.Scene {
-  // public editor: Phaser.GameObjects.Image;
-  private dragObject: Phaser.GameObjects.GameObject | null = null;
-
-  private container: Phaser.GameObjects.Container | null = null;
-
-  private background: Phaser.GameObjects.Graphics | null = null;
-
+export default class EditorScene extends SidebarScene {
   public constructor() {
-    super({ key: 'EditorScene' });
+    super('EditorScene');
   }
 
   public preload(): void {
     this.load.image('tank', tankImg);
   }
 
-  public static getWidth(): number {
-    return 256;
-  }
-
-  public create(): void {
-    this.scale.on('resize', this.handleResize.bind(this));
-
-    const container = this.add.container(this.cameras.main.displayWidth - EditorScene.getWidth(), 0);
-    this.container = container;
-
-    const rect = new Phaser.Geom.Rectangle(0, 0, EditorScene.getWidth(), this.cameras.main.displayHeight);
-    this.background = this.add.graphics({ fillStyle: { color: 0xcaff70 } });
-    this.background.fillRectShape(rect);
-
-    container.add(this.background);
-
+  public onCreate(container: Phaser.GameObjects.Container): void {
     const tank = this.add.image(EditorScene.getWidth() / 2, 70, 'tank').setInteractive();
 
     const tank2 = this.add.image(EditorScene.getWidth() / 2, 170, 'tank').setInteractive();
@@ -72,18 +51,5 @@ export default class EditorScene extends Phaser.Scene {
         gameObject.setPosition(gameObject.input.dragStartX, gameObject.input.dragStartY);
       },
     );
-  }
-
-  private handleResize(gameSize: Phaser.Structs.Size): void {
-    const { width, height } = gameSize;
-
-    this.cameras.resize(width, height);
-    if (this.container) {
-      this.container.setPosition(this.cameras.main.displayWidth - EditorScene.getWidth(), 0);
-    }
-    if (this.background) {
-      const rect = new Phaser.Geom.Rectangle(0, 0, EditorScene.getWidth(), this.cameras.main.displayHeight);
-      this.background.fillRectShape(rect);
-    }
   }
 }
