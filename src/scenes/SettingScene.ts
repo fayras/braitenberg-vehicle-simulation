@@ -19,13 +19,13 @@ export default class SettingScene extends SidebarScene {
     const uiElements = entity.getAllComponents().map(component => {
       if (component.name === ComponentType.MOTOR) {
         const sliderElement = this.add.dom(0, 0).createFromCache('motor');
-        SettingScene.bind(sliderElement, component);
+        SettingScene.bindValues(sliderElement, component);
         return sliderElement;
       }
 
       if (component.name === ComponentType.SENSOR) {
         const sliderElement = this.add.dom(0, 0).createFromCache('sensor');
-        SettingScene.bind(sliderElement, component);
+        SettingScene.bindValues(sliderElement, component);
         return sliderElement;
       }
 
@@ -35,7 +35,7 @@ export default class SettingScene extends SidebarScene {
     this.pack(uiElements);
   }
 
-  private static bind(element: Phaser.GameObjects.DOMElement, component: Component): void {
+  private static bindValues(element: Phaser.GameObjects.DOMElement, component: Component): void {
     const children = element.node.querySelectorAll('*');
     children.forEach(child => {
       const bind = child.getAttribute('component-bind');
