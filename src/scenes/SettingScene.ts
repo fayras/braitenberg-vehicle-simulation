@@ -14,13 +14,9 @@ export default class SettingScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
-    let height = 0;
-    entity.getAllComponents().forEach(component => {
+    const uiElements = entity.getAllComponents().map(component => {
       if (component.name === ComponentType.MOTOR) {
-        const sliderElement = this.add
-          .dom(0, height)
-          .createFromCache('slider')
-          .setOrigin(0, 0);
+        const sliderElement = this.add.dom(0, 0).createFromCache('slider');
 
         const children = sliderElement.node.querySelectorAll('*');
         children.forEach(child => {
@@ -38,9 +34,12 @@ export default class SettingScene extends SidebarScene {
           set(component, bind, t.value);
         });
 
-        container.add(sliderElement);
-        height += sliderElement.height;
+        return sliderElement;
       }
+
+      return undefined;
     });
+
+    this.pack(uiElements);
   }
 }

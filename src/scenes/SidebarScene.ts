@@ -57,14 +57,20 @@ export default abstract class SidebarScene extends Phaser.Scene {
     });
   }
 
-  protected pack(objects: Phaser.GameObjects.Image[] | Phaser.GameObjects.Sprite[]): void {
+  protected pack(
+    objects: (Phaser.GameObjects.Image | Phaser.GameObjects.Sprite | Phaser.GameObjects.DOMElement | undefined)[],
+  ): void {
     if (this.container) {
       const padding = 15;
       for (let i = 0; i < objects.length; i += 1) {
-        const objectHeight = objects[i].height;
-        objects[i].setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
-        this.container.add(objects[i]);
-        this.container.height += objectHeight + padding;
+        const object = objects[i];
+
+        if (object) {
+          const objectHeight = object.height;
+          object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
+          this.container.add(object);
+          this.container.height += objectHeight + padding;
+        }
       }
     }
   }
