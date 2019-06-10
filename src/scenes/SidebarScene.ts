@@ -6,8 +6,11 @@ export default abstract class SidebarScene extends Phaser.Scene {
 
   protected background: Phaser.GameObjects.Graphics | null = null;
 
+  protected key: string;
+
   public constructor(key: string) {
     super({ key });
+    this.key = key;
   }
 
   public static getWidth(): number {
@@ -34,7 +37,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
         y: 0,
         duration: 100,
         ease: 'Expo.easeInOut',
-        onComplete: () => this.scene.stop('SidebarScene'),
+        onComplete: () => this.scene.stop(this.key),
       });
     });
     container.add(close);
