@@ -60,12 +60,11 @@ export default abstract class SidebarScene extends Phaser.Scene {
   protected pack(objects: Phaser.GameObjects.Image[] | Phaser.GameObjects.Sprite[]): void {
     if (this.container) {
       const padding = 15;
-      let height = padding;
       for (let i = 0; i < objects.length; i += 1) {
         const objectHeight = objects[i].height;
-        objects[i].setPosition(SidebarScene.getWidth() / 2, height + objectHeight / 2);
+        objects[i].setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
         this.container.add(objects[i]);
-        height = height + objectHeight + padding;
+        this.container.height += objectHeight + padding;
       }
     }
   }
