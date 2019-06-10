@@ -26,8 +26,10 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.container = container;
 
     const rect = new Phaser.Geom.Rectangle(0, 0, SidebarScene.getWidth(), this.cameras.main.displayHeight);
-    this.background = this.add.graphics({ fillStyle: { color: 0xcaff70 } });
+    this.background = this.add.graphics({ fillStyle: { color: 0xf8f8f8 } });
     this.background.fillRectShape(rect);
+    this.background.lineStyle(1, 0xe0e0e0);
+    this.background.strokeLineShape(new Phaser.Geom.Line(0, 0, 0, this.cameras.main.displayHeight));
     container.add(this.background);
 
     const close = new Button(this, -35, 35, 0, () => {
