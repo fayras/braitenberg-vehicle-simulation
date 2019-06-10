@@ -68,7 +68,13 @@ interface SerializedEntity {
 // };
 
 type AssetKey = string;
+type EventMessage =
+  | EventMessages.ApplyForce
+  | EventMessages.SensorActive
+  | EventMessages.Reaction
+  | import('../src/Entity').default;
 type EventHandler =
   | ((event: EventMessages.ApplyForce) => void)
   | ((event: EventMessages.SensorActive) => void)
-  | ((event: EventMessages.Reaction) => void);
+  | ((event: EventMessages.Reaction) => void)
+  | ((event: import('../src/Entity').default) => void);

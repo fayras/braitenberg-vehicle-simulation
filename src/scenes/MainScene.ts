@@ -59,7 +59,7 @@ export default class MainScene extends Phaser.Scene {
     this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
 
-    EventBus.subscribe(EventType.ENTITY_SELECTED, entity => {
+    EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
       this.scene.launch('SettingScene', entity);
     });
 

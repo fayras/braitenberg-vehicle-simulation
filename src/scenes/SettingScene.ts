@@ -22,16 +22,19 @@ export default class SettingScene extends SidebarScene {
         children.forEach(child => {
           const bind = child.getAttribute('component-bind');
           if (bind) {
-            child.value = get(component, bind);
+            const element = child as HTMLInputElement;
+            element.value = get(component, bind);
           }
         });
 
         sliderElement.addListener('change');
-        sliderElement.on('change', event => {
+        sliderElement.on('change', (event: { target: HTMLInputElement }) => {
           console.log('change', event);
           const t = event.target;
           const bind = t.getAttribute('component-bind');
-          set(component, bind, t.value);
+          if (bind) {
+            set(component, bind, t.value);
+          }
         });
 
         return sliderElement;
