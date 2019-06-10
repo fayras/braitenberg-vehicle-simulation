@@ -40,10 +40,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
     this.cameras.resize(width, height);
     const showEditor = this.buttons[2];
-    if ((showEditor as ToggleButton).isPressed()) {
-      showEditor.setPosition(this.cameras.main.width - EditorScene.getWidth() - 35, 35);
-    } else {
-      showEditor.setPosition(this.cameras.main.width - 35, 35);
-    }
+
+    showEditor.setPosition(this.cameras.main.width - 35, 35);
   }
 }
