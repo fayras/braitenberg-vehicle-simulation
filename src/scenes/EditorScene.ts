@@ -1,10 +1,16 @@
 import Phaser from 'phaser';
-import tankImg from '../../assets/tank.png';
+import vehicleImg from '../../assets/vehicle.png';
+import sensorImg from '../../assets/sensor.png';
+import motorImg from '../../assets/motor.png';
+import sourceImg from '../../assets/source_icon.png';
 import EntityManager from '../EntityManager';
 import TransformableComponent from '../components/TransformableComponent';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
 import SidebarScene from './SidebarScene';
+import SourceComponent from '../components/SourceComponent';
+
+type DropHandler = (position: { x: number; y: number }) => void;
 
 export default class EditorScene extends SidebarScene {
   public constructor() {
@@ -12,44 +18,57 @@ export default class EditorScene extends SidebarScene {
   }
 
   public preload(): void {
-    this.load.image('tank', tankImg);
+    this.load.image('vehicle', vehicleImg);
+    this.load.image('sensor', sensorImg);
+    this.load.image('motor', motorImg);
+    this.load.image('source_icon', sourceImg);
   }
 
   public onCreate(container: Phaser.GameObjects.Container): void {
-    const tank = this.add.image(EditorScene.getWidth() / 2, 70, 'tank').setInteractive();
+    const vehicle = this.add.image(EditorScene.getWidth() / 2, 70, 'vehicle');
+    const source = this.add.image(EditorScene.getWidth() / 2, 170, 'source_icon');
 
-    const tank2 = this.add.image(EditorScene.getWidth() / 2, 170, 'tank').setInteractive();
+    this.makeInteractable(vehicle, () => {
+      const position = { x: 0, y: 0 };
+      container.getWorldTransformMatrix().transformPoint(vehicle.x, vehicle.y, position);
 
-    container.add(tank);
-    container.add(tank2);
-
-    this.input.setDraggable(tank);
-    this.input.setDraggable(tank2);
-
-    this.input.on('dragstart', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject) => {
-      this.children.bringToTop(gameObject);
+      EntityManager.createEntity(
+        new TransformableComponent(position),
+        new RenderComponent('logo', 100),
+        new SolidBodyComponent(100),
+      );
     });
-    this.input.on(
-      'drag',
-      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dragX: number, dragY: number) => {
-        gameObject.setPosition(dragX, dragY);
-      },
-    );
+    this.makeInteractable(source, position => {
+      EntityManager.createEntity(
+        new TransformableComponent(position),
+        new RenderComponent('source', 100, Phaser.BlendModes.ADD),
+        new SourceComponent(100),
+      );
+    });
 
-    this.input.on(
-      'dragend',
-      (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Image, dropped: boolean) => {
-        const position = { x: 0, y: 0 };
-        container.getWorldTransformMatrix().transformPoint(gameObject.x, gameObject.y, position);
+    container.add(vehicle);
+    container.add(source);
+  }
 
-        EntityManager.createEntity(
-          new TransformableComponent(position),
-          new RenderComponent('logo', 100),
-          new SolidBodyComponent(100),
-        );
+  private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {
+    image.setInteractive({ draggable: true });
 
-        gameObject.setPosition(gameObject.input.dragStartX, gameObject.input.dragStartY);
-      },
-    );
+    image.on('dragstart', () => {
+      this.children.bringToTop(image);
+    });
+
+    image.on('drag', (pointer: Phaser.Input.Pointer, x: number, y: number) => {
+      image.setPosition(x, y);
+    });
+
+    image.on('dragend', (pointer: Phaser.Input.Pointer, x: number, y: number, dropped: boolean) => {
+      const position = { x: 0, y: 0 };
+      this.container.getWorldTransformMatrix().transformPoint(image.x, image.y, position);
+
+      onDrop(position);
+
+      console.log(x, y, image.x, image.y, dropped);
+      image.setPosition(image.input.dragStartX, image.input.dragStartY);
+    });
   }
 }
