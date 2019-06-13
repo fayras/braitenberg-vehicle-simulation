@@ -26,6 +26,11 @@ export default class MainInterfaceScene extends Phaser.Scene {
       this.scene.launch('EditorScene');
     });
 
+    //To-Do passendes Icon suchen
+    const save = new Button(this, 120 + start.getWidth(), 35, 1, () => {
+      MainScene.createSnapshot();
+    });
+
     this.buttons.push(start, reset, showEditor);
   }
 

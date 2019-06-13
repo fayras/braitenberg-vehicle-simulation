@@ -119,12 +119,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   // Speicherung des aktuellen Status von allen Entitäten
-  private static createSnapshot(): void {
+  public static createSnapshot(): void {
     const entities = EntityManager.getEntities();
     const snapshot = entities.map(entity => entity.serialize());
 
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
-    console.log(snapshot);
   }
 
   public static loadSnapshot(): void {
