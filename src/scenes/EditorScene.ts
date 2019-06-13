@@ -54,10 +54,12 @@ export default class EditorScene extends SidebarScene {
     });
 
     image.on('dragend', (pointer: Phaser.Input.Pointer, x: number, y: number, dropped: boolean) => {
-      const position = { x: 0, y: 0 };
-      this.container.getWorldTransformMatrix().transformPoint(image.x, image.y, position);
+      if (this.container) {
+        const position = { x: 0, y: 0 };
+        this.container.getWorldTransformMatrix().transformPoint(image.x, image.y, position);
 
-      onDrop(position);
+        onDrop(position);
+      }
 
       console.log(x, y, image.x, image.y, dropped);
       image.setPosition(image.input.dragStartX, image.input.dragStartY);
