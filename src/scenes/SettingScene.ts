@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { get, set } from 'lodash-es';
 import Entity from '../Entity';
-import { ComponentType } from '../enums';
+import { ComponentType, SubstanceType } from '../enums';
 import SidebarScene from './SidebarScene';
 import Component from '../components/Component';
 
@@ -18,15 +18,19 @@ export default class SettingScene extends SidebarScene {
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
     const uiElements = entity.getAllComponents().map(component => {
       if (component.name === ComponentType.MOTOR) {
-        const sliderElement = this.add.dom(0, 0).createFromCache('motor');
-        SettingScene.bindValues(sliderElement, component);
-        return sliderElement;
+        const element = this.add.dom(0, 0).createFromCache('motor');
+        SettingScene.bindValues(element, component);
+        return element;
       }
 
       if (component.name === ComponentType.SENSOR) {
-        const sliderElement = this.add.dom(0, 0).createFromCache('sensor');
-        SettingScene.bindValues(sliderElement, component);
-        return sliderElement;
+        const element = this.add.dom(0, 0).createFromCache('sensor');
+        const reactsToSelect = element.getChildByName('reactsTo') as HTMLSelectElement;
+        Object.entries(SubstanceType).forEach(([key, value]) => {
+          reactsToSelect.add(new Option(value, key));
+        });
+        SettingScene.bindValues(element, component);
+        return element;
       }
 
       return undefined;
