@@ -13,6 +13,7 @@ export default class SettingScene extends SidebarScene {
   public preload(): void {
     this.load.html('motor', 'assets/templates/motor.html');
     this.load.html('sensor', 'assets/templates/sensor.html');
+    this.load.html('source', 'assets/templates/source.html');
   }
 
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
@@ -28,6 +29,16 @@ export default class SettingScene extends SidebarScene {
         const reactsToSelect = element.getChildByName('reactsTo') as HTMLSelectElement;
         Object.entries(SubstanceType).forEach(([key, value]) => {
           reactsToSelect.add(new Option(value, key));
+        });
+        SettingScene.bindValues(element, component);
+        return element;
+      }
+
+      if (component.name === ComponentType.SOURCE) {
+        const element = this.add.dom(0, 0).createFromCache('source');
+        const substanceSelect = element.getChildByName('substance') as HTMLSelectElement;
+        Object.entries(SubstanceType).forEach(([key, value]) => {
+          substanceSelect.add(new Option(value, key));
         });
         SettingScene.bindValues(element, component);
         return element;
