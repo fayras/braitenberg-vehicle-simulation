@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import MainScene from './scenes/MainScene';
 import MainInterfaceScene from './scenes/MainInterfaceScene';
+import LoadingScene from './scenes/LoadingScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
   dom: {
     createContainer: true,
   },
-  scene: [MainScene, MainInterfaceScene],
+  scene: [LoadingScene, MainScene, MainInterfaceScene],
   physics: {
     default: 'matter',
     matter: {

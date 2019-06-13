@@ -1,8 +1,4 @@
 import Phaser from 'phaser';
-import vehicleImg from '../../assets/vehicle.png';
-import sensorImg from '../../assets/sensor.png';
-import motorImg from '../../assets/motor.png';
-import sourceImg from '../../assets/source_icon.png';
 import EntityManager from '../EntityManager';
 import TransformableComponent from '../components/TransformableComponent';
 import SolidBodyComponent from '../components/SolidBodyComponent';
@@ -17,18 +13,11 @@ export default class EditorScene extends SidebarScene {
     super('EditorScene');
   }
 
-  public preload(): void {
-    this.load.image('vehicle', vehicleImg);
-    this.load.image('sensor', sensorImg);
-    this.load.image('motor', motorImg);
-    this.load.image('source_icon', sourceImg);
-  }
-
   public onCreate(container: Phaser.GameObjects.Container): void {
-    const vehicle = this.add.image(0, 0, 'vehicle');
+    const vehicle = this.add.image(0, 0, 'vehicle_icon');
     const source = this.add.image(0, 0, 'source_icon');
-    const motor = this.add.image(0, 0, 'motor');
-    const sensor = this.add.image(0, 0, 'sensor');
+    const motor = this.add.image(0, 0, 'motor_icon');
+    const sensor = this.add.image(0, 0, 'sensor_icon');
 
     this.makeInteractable(vehicle, () => {
       const position = { x: 0, y: 0 };

@@ -10,23 +10,16 @@ export default class SettingScene extends SidebarScene {
     super('SettingScene');
   }
 
-  public preload(): void {
-    this.load.html('motor', 'assets/templates/motor.html');
-    this.load.html('sensor', 'assets/templates/sensor.html');
-    this.load.html('source', 'assets/templates/source.html');
-    this.load.html('body', 'assets/templates/body.html');
-  }
-
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
     const uiElements = entity.getAllComponents().map(component => {
       if (component.name === ComponentType.MOTOR) {
-        const element = this.add.dom(0, 0).createFromCache('motor');
+        const element = this.add.dom(0, 0).createFromCache('motor_template');
         SettingScene.bindValues(element, component);
         return element;
       }
 
       if (component.name === ComponentType.SENSOR) {
-        const element = this.add.dom(0, 0).createFromCache('sensor');
+        const element = this.add.dom(0, 0).createFromCache('sensor_template');
         const reactsToSelect = element.getChildByName('reactsTo') as HTMLSelectElement;
         Object.entries(SubstanceType).forEach(([key, value]) => {
           reactsToSelect.add(new Option(value, key));
@@ -36,7 +29,7 @@ export default class SettingScene extends SidebarScene {
       }
 
       if (component.name === ComponentType.SOURCE) {
-        const element = this.add.dom(0, 0).createFromCache('source');
+        const element = this.add.dom(0, 0).createFromCache('source_template');
         const substanceSelect = element.getChildByName('substance') as HTMLSelectElement;
         Object.entries(SubstanceType).forEach(([key, value]) => {
           substanceSelect.add(new Option(value, key));
@@ -46,7 +39,7 @@ export default class SettingScene extends SidebarScene {
       }
 
       if (component.name === ComponentType.SOLID_BODY) {
-        const element = this.add.dom(0, 0).createFromCache('body');
+        const element = this.add.dom(0, 0).createFromCache('body_template');
         SettingScene.bindValues(element, component);
         return element;
       }

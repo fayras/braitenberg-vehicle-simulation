@@ -10,9 +10,6 @@ import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 
 import Entity from '../Entity';
-import tankImg from '../../assets/tank.png';
-import logoImg from '../../assets/logo.png';
-import sourceImg from '../../assets/source.png';
 
 import EventBus from '../EventBus';
 import System from '../systems/System';
@@ -40,12 +37,6 @@ export default class MainScene extends Phaser.Scene {
     // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
     // wenn die Simulation z.b. pausiert ist.
     this.renderSystem = new RenderSystem(this);
-  }
-
-  public preload(): void {
-    this.load.image('logo', logoImg);
-    this.load.image('source', sourceImg);
-    this.load.image('tank', tankImg);
   }
 
   public create(): void {
