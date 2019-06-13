@@ -3,12 +3,13 @@ import Entity from './Entity';
 import EventBus from './EventBus';
 
 import Component from './components/Component';
-import { EventType } from './enums';
+import { EventType, ComponentType } from './enums';
 import MotorComponent from './components/MotorComponent';
 import SolidBodyComponent from './components/SolidBodyComponent';
 import TransformableComponent from './components/TransformableComponent';
 import RenderComponent from './components/RenderComponent';
 import SensorComponent from './components/SensorComponent';
+
 
 import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
@@ -48,12 +49,12 @@ class EntityManager {
       const entity = new Entity();
       serializedEntity.components.forEach(serializedComponent => {
         const { name, id } = serializedComponent;
-        if (name === 'TRANSFORMABLE') {
+        if (name === ComponentType.TRANSFORMABLE) {
           const component = new TransformableComponent(serializedComponent.attributes.position);
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'SOURCE') {
+        if (name === ComponentType.SOURCE) {
           const component = new SourceComponent(
             serializedComponent.attributes.range,
             serializedComponent.attributes.substance,
@@ -61,7 +62,7 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'BODY') {
+        if (name === ComponentType.SOLID_BODY) {
           const component = new SolidBodyComponent(
             serializedComponent.attributes.size,
             serializedComponent.attributes.shape,
@@ -69,7 +70,7 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'RENDER') {
+        if (name === ComponentType.RENDER) {
           const component = new RenderComponent(
             serializedComponent.attributes.asset,
             serializedComponent.attributes.width,
@@ -78,7 +79,7 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'MOTOR') {
+        if (name === ComponentType.MOTOR) {
           const component = new MotorComponent(
             serializedComponent.attributes.position,
             serializedComponent.attributes.maxSpeed,
@@ -87,7 +88,7 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'SENSOR') {
+        if (name === ComponentType.SENSOR) {
           const component = new SensorComponent(
             serializedComponent.attributes.position,
             serializedComponent.attributes.range,
@@ -97,7 +98,7 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
-        if (name === 'CONNECTION') {
+        if (name === ComponentType.CONNECTION) {
           const component = new ConnectionComponent(
             serializedComponent.attributes.inputIds,
             serializedComponent.attributes.outputIds,
