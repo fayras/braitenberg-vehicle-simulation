@@ -56,7 +56,7 @@ export default class PhysicsSystem extends System {
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
     switch (component.shape) {
       case BodyShape.CIRCLE: {
-        const options = {
+        const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.1,
           frictionAir: 0.3,
           density: component.mass,
@@ -65,7 +65,7 @@ export default class PhysicsSystem extends System {
       }
       case BodyShape.RECTANGLE:
       default: {
-        const options = {
+        const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.7,
           frictionAir: 0.6,
           density: component.mass,
