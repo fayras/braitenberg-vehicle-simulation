@@ -129,17 +129,17 @@ export default class MainScene extends Phaser.Scene {
 
   public static loadSnapshot(): void {
     const entities = EntityManager.getEntities();
-    // hier auf Funktion des Entität Managers zugreifen
-    entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+
     const snapshot = localStorage.getItem('snapshot');
-    console.log(snapshot);
 
     let aktuellerStatus;
     if (snapshot) {
       aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
+      entities.forEach(entity => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
       console.log('Beim Laden ist ein Fehler aufgetreten!');
+      alert('Beim Laden ist ein Fehler aufgetreten!');
     }
   }
 
