@@ -138,8 +138,7 @@ export default class MainScene extends Phaser.Scene {
       entities.forEach(entity => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
-      console.log('Beim Laden ist ein Fehler aufgetreten!');
-      alert('Beim Laden ist ein Fehler aufgetreten!');
+      alert('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.');
     }
   }
 

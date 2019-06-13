@@ -10,7 +10,6 @@ import TransformableComponent from './components/TransformableComponent';
 import RenderComponent from './components/RenderComponent';
 import SensorComponent from './components/SensorComponent';
 
-
 import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
 
@@ -73,7 +72,7 @@ class EntityManager {
         if (name === ComponentType.RENDER) {
           const component = new RenderComponent(
             serializedComponent.attributes.asset,
-            serializedComponent.attributes.width,
+            serializedComponent.attributes.size,
             serializedComponent.attributes.blendMode,
           );
           component.id = id;
