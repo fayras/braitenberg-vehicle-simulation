@@ -63,14 +63,14 @@ export default class MainScene extends Phaser.Scene {
       this.scene.launch('SettingScene', entity);
     });
 
-    for (let i = 0; i < 1; i += 1) {
-      EntityManager.createEntity(
-        new TransformableComponent({ x: 300, y: 100 }),
-        new SolidBodyComponent(100),
-        new RenderComponent('logo', 110),
-      );
-      // entity.addComponent(new SourceComponent(150));
-    }
+    // for (let i = 0; i < 1; i += 1) {
+    // EntityManager.createEntity(
+    //   new TransformableComponent({ x: 300, y: 100 }),
+    //   new SolidBodyComponent(100),
+    //   new RenderComponent('logo', 110),
+    // );
+    // entity.addComponent(new SourceComponent(150));
+    //}
 
     const entity = new Entity();
     entity.addComponent(new TransformableComponent({ x: 300, y: 200 }));
@@ -133,6 +133,7 @@ export default class MainScene extends Phaser.Scene {
     const snapshot = entities.map(entity => entity.serialize());
 
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
+    console.log(snapshot);
   }
 
   public static loadSnapshot(): void {

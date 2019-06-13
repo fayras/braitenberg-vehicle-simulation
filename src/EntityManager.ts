@@ -2,15 +2,27 @@ import Phaser from 'phaser';
 import Entity from './Entity';
 import EventBus from './EventBus';
 
+import tankImg from '../assets/tank.png';
+import logoImg from '../assets/logo.png';
+import sourceImg from '../assets/source.png';
+
 import Component from './components/Component';
 import { EventType } from './enums';
 import MotorComponent from './components/MotorComponent';
 import SolidBodyComponent from './components/SolidBodyComponent';
 import TransformableComponent from './components/TransformableComponent';
 import RenderComponent from './components/RenderComponent';
+import SensorComponent from './components/SensorComponent';
+import { Render } from 'matter-js';
+import ConnectionComponent from './components/ConnectionComponent';
+import SourceComponent from './components/SourceComponent';
 
 class EntityManager {
   private entities: { [id: number]: Entity } = {};
+
+  load.image('logo', logoImg);
+  load.image('source', sourceImg);
+  load.image('tank', tankImg);
 
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
@@ -49,6 +61,14 @@ class EntityManager {
           component.id = id;
           entity.addComponent(component);
         }
+        if (name === 'SOURCE') {
+          const component = new SourceComponent(
+            serializedComponent.attributes.range,
+            serializedComponent.attributes.substance,
+          );
+          component.id = id;
+          entity.addComponent(component);
+        }
         if (name === 'BODY') {
           const component = new SolidBodyComponent(
             serializedComponent.attributes.size,
@@ -58,7 +78,13 @@ class EntityManager {
           entity.addComponent(component);
         }
         if (name === 'RENDER') {
-          //component.id = id;
+          const component = new RenderComponent(
+            serializedComponent.attributes.asset,
+            serializedComponent.attributes.width,
+            serializedComponent.attributes.blendMode,
+          );
+          component.id = id;
+          entity.addComponent(component);
         }
         if (name === 'MOTOR') {
           const component = new MotorComponent(
@@ -67,28 +93,33 @@ class EntityManager {
             serializedComponent.attributes.defaultSpeed,
           );
           component.id = id;
-          console.log('Ich bin ein Motor');
           entity.addComponent(component);
         }
         if (name === 'SENSOR') {
-          //component.id = id;
+          const component = new SensorComponent(
+            serializedComponent.attributes.position,
+            serializedComponent.attributes.range,
+            serializedComponent.attributes.angle,
+            serializedComponent.attributes.reactsTo,
+          );
+          component.id = id;
+          entity.addComponent(component);
         }
         if (name === 'CONNECTION') {
-          // component.id = id;
+          const component = new ConnectionComponent(
+            serializedComponent.attributes.inputIds,
+            serializedComponent.attributes.outputIds,
+            serializedComponent.attributes.weights,
+          );
+          component.id = id;
+          entity.addComponent(component);
         }
 
         console.log(serializedComponent);
       });
 
       this.addExistingEntity(entity);
-      // this.addExistingEntity(render);
     });
-
-    // Name aus JSON bekommen um component mit Name zu bekommen.
-    // name = componet type, Name im Construktor verwenden
-    //   //this.entities[entity.id] = entity;
-    //   EventBus.publish(EventType.ENTITY_CREATED, entity);
-    //   //addcomponent gibt id zurück
   }
 }
 
