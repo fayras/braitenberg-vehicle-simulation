@@ -55,7 +55,7 @@ interface CollisionBodies {
 interface SerializedComponent {
   id: number;
   name: import('../src/enums').ComponentType;
-  attributes: object;
+  attributes: any;
 }
 
 interface SerializedEntity {
