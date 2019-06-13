@@ -10,9 +10,6 @@ import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 
 import Entity from '../Entity';
-import tankImg from '../../assets/tank.png';
-import logoImg from '../../assets/logo.png';
-import sourceImg from '../../assets/source.png';
 
 import EventBus from '../EventBus';
 import System from '../systems/System';
@@ -24,7 +21,7 @@ import SensorSystem from '../systems/SensorSystem';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
-import { SubstanceType, EventType } from '../enums';
+import { SubstanceType, EventType, BodyShape } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
@@ -42,12 +39,6 @@ export default class MainScene extends Phaser.Scene {
     this.renderSystem = new RenderSystem(this);
   }
 
-  public preload(): void {
-    this.load.image('logo', logoImg);
-    this.load.image('source', sourceImg);
-    this.load.image('tank', tankImg);
-  }
-
   public create(): void {
     this.createSystems();
     this.scene.launch('MainInterfaceScene');
@@ -63,14 +54,14 @@ export default class MainScene extends Phaser.Scene {
       this.scene.launch('SettingScene', entity);
     });
 
-    // for (let i = 0; i < 1; i += 1) {
-    // EntityManager.createEntity(
-    //   new TransformableComponent({ x: 300, y: 100 }),
-    //   new SolidBodyComponent(100),
-    //   new RenderComponent('logo', 110),
-    // );
-    // entity.addComponent(new SourceComponent(150));
-    //}
+    for (let i = 0; i < 1; i += 1) {
+      EntityManager.createEntity(
+        new TransformableComponent({ x: 300, y: 100 }),
+        new SolidBodyComponent(100, BodyShape.RECTANGLE, 100),
+        new RenderComponent('logo', 110),
+      );
+      // entity.addComponent(new SourceComponent(150));
+    }
 
     const entity = new Entity();
     entity.addComponent(new TransformableComponent({ x: 300, y: 200 }));

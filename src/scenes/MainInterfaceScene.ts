@@ -2,18 +2,12 @@ import Phaser from 'phaser';
 import ToggleButton from '../gui/ToggleButton';
 import Button from '../gui/Button';
 import MainScene from './MainScene';
-import buttonSpriteSheet from '../../assets/gui_buttons.png';
-import EditorScene from './EditorScene';
 
 export default class MainInterfaceScene extends Phaser.Scene {
   private buttons: Button[] = [];
 
   public constructor() {
     super({ key: 'MainInterfaceScene' });
-  }
-
-  public preload(): void {
-    this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 50, frameHeight: 48 });
   }
 
   public create(): void {

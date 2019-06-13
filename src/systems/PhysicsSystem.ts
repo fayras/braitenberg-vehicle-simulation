@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { pickBy } from 'lodash-es';
 import System from './System';
 import Entity from '../Entity';
 import { ComponentType, BodyShape, EventType } from '../enums';
@@ -31,6 +32,7 @@ export default class PhysicsSystem extends System {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
     const body = PhysicsSystem.getBody(component);
+    component.mass = body.mass;
 
     const emitters = this.attachSynchronization(body, entity);
 
@@ -53,17 +55,29 @@ export default class PhysicsSystem extends System {
 
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
     switch (component.shape) {
-      case BodyShape.CIRCLE:
-        return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, {
+      case BodyShape.CIRCLE: {
+        const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.1,
           frictionAir: 0.3,
-        });
+          density: component.mass,
+        };
+        return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, pickBy(options, v => v !== undefined));
+      }
       case BodyShape.RECTANGLE:
-      default:
-        return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, component.size, component.size, {
+      default: {
+        const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.7,
           frictionAir: 0.6,
-        });
+          density: component.mass,
+        };
+        return Phaser.Physics.Matter.Matter.Bodies.rectangle(
+          0,
+          0,
+          component.size,
+          component.size,
+          pickBy(options, v => v !== undefined),
+        );
+      }
     }
   }
 
