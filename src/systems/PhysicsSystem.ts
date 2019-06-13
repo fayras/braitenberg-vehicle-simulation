@@ -32,6 +32,7 @@ export default class PhysicsSystem extends System {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
     const body = PhysicsSystem.getBody(component);
+    component.mass = body.mass;
 
     const emitters = this.attachSynchronization(body, entity);
 
