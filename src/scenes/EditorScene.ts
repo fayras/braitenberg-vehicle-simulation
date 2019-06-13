@@ -5,6 +5,10 @@ import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
 import SidebarScene from './SidebarScene';
 import SourceComponent from '../components/SourceComponent';
+import Entity from '../Entity';
+import MotorComponent from '../components/MotorComponent';
+import SensorComponent from '../components/SensorComponent';
+import ConnectionComponent from '../components/ConnectionComponent';
 
 type DropHandler = (position: { x: number; y: number }) => void;
 
@@ -14,15 +18,25 @@ export default class EditorScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container): void {
+    const prefab = this.add.image(0, 0, 'vehicle_icon');
     const vehicle = this.add.image(0, 0, 'vehicle_icon');
     const source = this.add.image(0, 0, 'source_icon');
     const motor = this.add.image(0, 0, 'motor_icon');
     const sensor = this.add.image(0, 0, 'sensor_icon');
 
-    this.makeInteractable(vehicle, () => {
-      const position = { x: 0, y: 0 };
-      container.getWorldTransformMatrix().transformPoint(vehicle.x, vehicle.y, position);
+    this.makeInteractable(prefab, position => {
+      const entity = new Entity();
+      entity.addComponent(new TransformableComponent(position));
+      entity.addComponent(new SolidBodyComponent(100));
+      entity.addComponent(new RenderComponent('vehicle_icon', 100));
+      const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
+      const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
+      const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+      entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
+      EntityManager.addExistingEntity(entity);
+    });
 
+    this.makeInteractable(vehicle, position => {
       EntityManager.createEntity(
         new TransformableComponent(position),
         new RenderComponent('logo', 100),
@@ -39,7 +53,7 @@ export default class EditorScene extends SidebarScene {
     this.makeInteractable(motor, position => {});
     this.makeInteractable(sensor, position => {});
 
-    this.pack([vehicle, source, motor, sensor]);
+    this.pack([prefab, vehicle, source, motor, sensor]);
   }
 
   private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {
