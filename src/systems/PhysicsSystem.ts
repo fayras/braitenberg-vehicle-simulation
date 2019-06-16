@@ -69,7 +69,6 @@ export default class PhysicsSystem extends System {
           frictionAir: 0.6,
           isStatic: component.isStatic,
         };
-        console.log(component, options);
         return Phaser.Physics.Matter.Matter.Bodies.rectangle(
           0,
           0,
@@ -106,6 +105,20 @@ export default class PhysicsSystem extends System {
     if (!body) return;
 
     const { offset, force } = payload;
+
+    const V = Phaser.Physics.Matter.Matter.Vector;
+    const t = V.cross(V.neg(offset), force);
+
+    // Das Drehmoment wird hier manuell berechnet, da `applyForce` nicht selbstständig
+    // das Drehmoment berechnet. Die Formel stimmt nicht mit der Realität überein,
+    // fühlt sich in der Simulation besser an, da das Vehikel schneller zur bzw.
+    // weg von der Quelle dreht.
+    // Die Potenz sorgt dafür, dass kleinere Drehungen mehr Drehmoment erzeugen und das
+    // Vehikel sich dadurch eher dreht. Es ist wichtig eine ungerade Potenz zu nehmen,
+    // damit entgegengesetztes Drehmoment die Rotatioin ausgleicht.
+    body.torque -= (t + Math.sign(t)) ** 3;
+
+    // console.log(body.torque, t);
 
     Phaser.Physics.Matter.Matter.Body.applyForce(
       body,
