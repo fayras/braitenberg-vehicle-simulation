@@ -32,6 +32,12 @@ type ComponentPhysicsBody = Phaser.Physics.Matter.Matter.Body & {
 type SensorPhysicsObject = ComponentPhysicsBody & {
   userData: {
     kernel: (x: number, y: number) => number;
+    tensors: [
+      {
+        angle: number;
+        tensor: import('@tensorflow/tfjs-core').Tensor4D;
+      },
+    ];
     belongsTo: {
       component: import('../src/components/SensorComponent').default;
     };
@@ -41,6 +47,7 @@ type SensorPhysicsObject = ComponentPhysicsBody & {
 type SourcePhysicsObject = ComponentPhysicsBody & {
   userData: {
     kernel: (x: number, y: number) => number;
+    tensor: import('@tensorflow/tfjs-core').Tensor3D;
     belongsTo: {
       component: import('../src/components/SourceComponent').default;
     };

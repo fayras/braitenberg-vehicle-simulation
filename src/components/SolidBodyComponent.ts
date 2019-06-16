@@ -8,20 +8,20 @@ export default class SolidBodyComponent extends Component {
 
   public shape: BodyShape;
 
-  public mass: number | undefined;
+  public isStatic: boolean;
 
-  public constructor(size: number = 50, shape: BodyShape = BodyShape.RECTANGLE, mass: number | undefined = undefined) {
+  public constructor(size: number = 50, shape: BodyShape = BodyShape.RECTANGLE, isStatic: boolean = false) {
     super();
     this.size = size;
     this.shape = shape;
-    this.mass = mass;
+    this.isStatic = isStatic;
   }
 
   public serializeAttributes(): object {
     return {
       size: this.size,
       shape: this.shape,
-      mass: this.mass,
+      isStatic: this.isStatic,
     };
   }
 }

@@ -18,6 +18,11 @@ export enum SubstanceType {
   BARRIER = 'BARRIER',
 }
 
+export enum EmissionType {
+  GAUSSIAN = 'GAUSSIAN',
+  FLAT = 'FLAT',
+}
+
 export enum SensorActivation {
   LINEAR = 'LINEAR',
   QUADRATIC = 'QUADRATIC',
@@ -31,3 +36,5 @@ export enum EventType {
   ENTITY_DESTROYED = 'ENTITY_DESTROYED',
   ENTITY_SELECTED = 'ENTITY_SELECTED',
 }
+
+export const CORRELATION_SCALE = 4;

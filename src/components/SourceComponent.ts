@@ -1,4 +1,4 @@
-import { ComponentType, SubstanceType } from '../enums';
+import { ComponentType, SubstanceType, EmissionType } from '../enums';
 import Component from './Component';
 
 export default class SourceComponent extends Component {
@@ -8,10 +8,13 @@ export default class SourceComponent extends Component {
 
   public substance: SubstanceType;
 
-  public constructor(range: number, substance: SubstanceType = SubstanceType.LIGHT) {
+  public emissionType: EmissionType;
+
+  public constructor(range: number, substance = SubstanceType.LIGHT, emission = EmissionType.GAUSSIAN) {
     super();
     this.substance = substance;
     this.range = range;
+    this.emissionType = emission;
   }
 
   public serializeAttributes(): object {

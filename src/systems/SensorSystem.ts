@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
+import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
-import { ComponentType, EventType } from '../enums';
+import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
@@ -47,12 +48,69 @@ export default class SensorSystem extends System {
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
     const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
     const emitter = this.attachSynchronization(body, entity, sensor);
 
+    // TODO: Width und height stimmen noch nicht
+    const width = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const height = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+
+    const offScreenCanvas = document.createElement('canvas');
+    offScreenCanvas.width = width;
+    offScreenCanvas.height = height;
+    const context = offScreenCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+    const values = new Float32Array(width * height);
+    const gauss = gaussian({ x: 0, y: 0 }, { x: sensor.angle, y: sensor.range });
+    const f = (x: number, y: number): number => {
+      // `atan2` ist für x = 0 und y = 0 nicht definiert.
+      if (x === 0 && y === 0) return 1;
+
+      const r = Math.sqrt(x ** 2 + y ** 2);
+      const phi = Math.atan2(x, y);
+      return gauss(phi, r);
+    };
+
+    let max = 0;
+    const halfWidth = width / 2;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        let v = f((x - halfWidth) * CORRELATION_SCALE, y * CORRELATION_SCALE);
+
+        // x und y werden hier vertauscht, was einer Spiegelung gleichkommt.
+        // Weil wir später die Cross-Correlation und nicht die Convolution
+        // berechnen wollen.
+        const mirrorX = width - x - 1;
+        const mirrorY = height - y - 1;
+
+        values[mirrorY * width + mirrorX] = v;
+
+        // console.log(x - width, y, v);
+
+        if (v > max) max = v;
+
+        v = Math.round(v * 255);
+        context.fillStyle = `rgb(${v}, ${v}, ${v})`;
+        context.fillRect(mirrorX, mirrorY, 1, 1);
+      }
+    }
+
+    console.log(max);
+
+    window.open(offScreenCanvas.toDataURL(), '_blank');
+
+    const input = tf.tensor4d(values, [height, width, 1, 1]);
+
     body.label = ComponentType.SENSOR;
     body.userData = {
-      kernel: gaussian({ x: 0, y: 0 }, { x: sensor.angle * 20, y: sensor.range }),
+      kernel: f,
+      tensors: [
+        {
+          angle: 0,
+          tensor: input,
+        },
+      ],
       belongsTo: {
         entity,
         // TODO: Hier wird jetzt die Referenz auf die gesamte Komponente gespeichert.
