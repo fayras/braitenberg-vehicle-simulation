@@ -37,4 +37,4 @@ export enum EventType {
   ENTITY_SELECTED = 'ENTITY_SELECTED',
 }
 
-export const CORRELATION_SCALE = 3;
+export const CORRELATION_SCALE = 4;
