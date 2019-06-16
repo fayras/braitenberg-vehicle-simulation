@@ -56,7 +56,7 @@ export default class ReactionSystem extends System {
         }
 
         const value = this.correlations[lookUpKey][y][x];
-        sensorComponent.activation = value;
+        sensorComponent.activation = Math.max(value, sensorComponent.activation);
       }
     }
   }

@@ -136,6 +136,7 @@ export default class SensorSystem extends System {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
     const onBefore = (): void => {
+      component.activation = 0;
       const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
         x: transform.position.x + direction.x,
