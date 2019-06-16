@@ -31,9 +31,9 @@ export function flatCircle(center: VectorLike, radius: number): KernelFunction {
   };
 }
 
-export function flatRect(center: VectorLike, width: number, height: number): KernelFunction {
-  const x0 = center.x || 0;
-  const y0 = center.y || 0;
+export function flatRect(topLeft: VectorLike, width: number, height: number): KernelFunction {
+  const x0 = topLeft.x || 0;
+  const y0 = topLeft.y || 0;
   const rect = new Phaser.Geom.Rectangle(x0, y0, width, height);
 
   return (x: number, y: number) => {

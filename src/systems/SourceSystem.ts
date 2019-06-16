@@ -5,7 +5,7 @@ import { ComponentType, EmissionType, CORRELATION_SCALE } from '../enums';
 import System from './System';
 import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
-import { gaussian, flat, flatRect } from '../utils/reactions';
+import { gaussian, flatRect } from '../utils/reactions';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 
 export default class SourceSystem extends System {
@@ -60,12 +60,13 @@ export default class SourceSystem extends System {
 
     // Das Ganze ggf in einem/mehreren Worker Thread(s) machen?
     const values = new Float32Array(width * height);
+    const size = solidBody ? solidBody.size : source.range;
     const f = isGaussian
       ? gaussian(transform.position, { x: source.range, y: source.range })
       : flatRect(
-          transform.position,
-          solidBody ? solidBody.size : source.range,
-          solidBody ? solidBody.size : source.range,
+          Phaser.Physics.Matter.Matter.Vector.sub(transform.position, { x: size / 2 + 10, y: size / 2 + 10 }),
+          size + 20,
+          size + 20,
         );
 
     let max = 0;
