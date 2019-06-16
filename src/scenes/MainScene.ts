@@ -57,7 +57,7 @@ export default class MainScene extends Phaser.Scene {
     for (let i = 0; i < 1; i += 1) {
       EntityManager.createEntity(
         new TransformableComponent({ x: 300, y: 100 }),
-        new SolidBodyComponent(100, BodyShape.RECTANGLE, 100),
+        new SolidBodyComponent(100, BodyShape.RECTANGLE, true),
         new RenderComponent('logo', 110),
       );
       // entity.addComponent(new SourceComponent(150));
