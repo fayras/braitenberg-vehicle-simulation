@@ -66,17 +66,17 @@ export default class MainScene extends Phaser.Scene {
     const entity = new Entity();
     entity.addComponent(new TransformableComponent({ x: 300, y: 200 }));
     entity.addComponent(new SolidBodyComponent(100));
-    entity.addComponent(new RenderComponent('tank', 100));
+    entity.addComponent(new RenderComponent('vehicle_icon', 100));
     const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 0.4));
-    // const sensor2 = entity.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
-    entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
+    const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4));
+    const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4));
+    entity.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[0, 1], [1, 0]]));
     EntityManager.addExistingEntity(entity);
 
     EntityManager.createEntity(
       new TransformableComponent({ x: 500, y: 300 }),
-      new RenderComponent('source', 300, Phaser.BlendModes.ADD),
+      new RenderComponent('source_icon', 100),
       new SourceComponent(300),
     );
 
