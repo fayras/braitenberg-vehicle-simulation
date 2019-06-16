@@ -85,7 +85,7 @@ export default class SourceSystem extends System {
 
     console.log(max);
 
-    window.open(offScreenCanvas.toDataURL(), '_blank');
+    // window.open(offScreenCanvas.toDataURL(), '_blank');
 
     const input = tf.tensor3d(values, [height, width, 1]);
     window.tf = tf;

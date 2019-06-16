@@ -98,7 +98,7 @@ export default class SensorSystem extends System {
 
     console.log(max);
 
-    window.open(offScreenCanvas.toDataURL(), '_blank');
+    // window.open(offScreenCanvas.toDataURL(), '_blank');
 
     const input = tf.tensor4d(values, [height, width, 1, 1]);
 
