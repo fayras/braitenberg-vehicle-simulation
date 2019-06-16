@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
-import { ComponentType, EventType } from '../enums';
+import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
@@ -52,11 +52,9 @@ export default class SensorSystem extends System {
 
     const emitter = this.attachSynchronization(body, entity, sensor);
 
-    const SCALE = 3;
-
     // TODO: Width und height stimmen noch nicht
-    const width = Math.ceil((sensor.range * 2) / SCALE);
-    const height = Math.ceil((sensor.range * 2) / SCALE);
+    const width = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const height = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
 
     const offScreenCanvas = document.createElement('canvas');
     offScreenCanvas.width = width;
@@ -78,7 +76,7 @@ export default class SensorSystem extends System {
     const halfWidth = width / 2;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
-        let v = f((x - halfWidth) * SCALE, y * SCALE);
+        let v = f((x - halfWidth) * CORRELATION_SCALE, y * CORRELATION_SCALE);
 
         // x und y werden hier vertauscht, was einer Spiegelung gleichkommt.
         // Weil wir später die Cross-Correlation und nicht die Convolution

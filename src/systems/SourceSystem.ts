@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
-import { ComponentType, EmissionType } from '../enums';
+import { ComponentType, EmissionType, CORRELATION_SCALE } from '../enums';
 import System from './System';
 import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
@@ -45,11 +45,9 @@ export default class SourceSystem extends System {
     const emitter = this.attachSynchronization(body, entity);
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    const SCALE = 3;
-
     // const { width, height } = this.scene.cameras.main;
-    const width = Math.ceil(this.scene.cameras.main.width / SCALE);
-    const height = Math.ceil(this.scene.cameras.main.height / SCALE);
+    const width = Math.ceil(this.scene.cameras.main.width / CORRELATION_SCALE);
+    const height = Math.ceil(this.scene.cameras.main.height / CORRELATION_SCALE);
 
     const offScreenCanvas = document.createElement('canvas');
     offScreenCanvas.width = width;
@@ -68,7 +66,7 @@ export default class SourceSystem extends System {
     let max = 0;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
-        let v = f(x * SCALE, y * SCALE);
+        let v = f(x * CORRELATION_SCALE, y * CORRELATION_SCALE);
         values[y * width + x] = v;
 
         if (v > max) max = v;

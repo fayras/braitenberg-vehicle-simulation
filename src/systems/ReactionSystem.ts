@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { conv2d, squeeze, tidy, Tensor2D } from '@tensorflow/tfjs-core';
 import System from './System';
-import { ComponentType, EventType } from '../enums';
+import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
 import EventBus from '../EventBus';
 
 export default class ReactionSystem extends System {
@@ -50,10 +50,9 @@ export default class ReactionSystem extends System {
         });
       }
 
-      const SCALE = 3;
       if (this.correlations[lookUpKey]) {
-        const x = Math.floor(sensor.position.x / SCALE);
-        const y = Math.floor(sensor.position.y / SCALE);
+        const x = Math.floor(sensor.position.x / CORRELATION_SCALE);
+        const y = Math.floor(sensor.position.y / CORRELATION_SCALE);
         const value = this.correlations[lookUpKey][y][x];
         sensorComponent.activation = value;
       }
