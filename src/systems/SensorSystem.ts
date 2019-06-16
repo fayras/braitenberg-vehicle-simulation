@@ -48,11 +48,8 @@ export default class SensorSystem extends System {
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): SensorPhysicsObject {
     const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
-    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-
     const emitter = this.attachSynchronization(body, entity, sensor);
 
-    // TODO: Width und height stimmen noch nicht
     const width = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
     const height = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
 
@@ -154,25 +151,24 @@ export default class SensorSystem extends System {
   }
 
   private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
+    const width = Math.ceil(component.range * 2);
+    const height = Math.ceil(component.range * 2);
+
     const direction = Phaser.Physics.Matter.Matter.Vector.normalise(component.position);
-    const fullVector = Phaser.Physics.Matter.Matter.Vector.mult(direction, component.range);
-    const vertices = [
-      { x: 0, y: 0 },
-      Phaser.Physics.Matter.Matter.Vector.rotate(fullVector, component.angle / 2),
-      Phaser.Physics.Matter.Matter.Vector.rotate(fullVector, -component.angle / 2),
-    ];
-    const body = Phaser.Physics.Matter.Matter.Bodies.fromVertices(0, 0, [vertices], {
+    // const fullVector = Phaser.Physics.Matter.Matter.Vector.mult(direction, component.range);
+
+    const body = Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, width, height, {
       isSensor: true,
     });
 
-    const offset = Phaser.Physics.Matter.Matter.Vertices.centre(vertices);
+    // const offset = Phaser.Physics.Matter.Matter.Vertices.centre(body.vertices);
 
     // Hier muss die Position gesetzt werden, was ein Workaround
     // dafür ist Origin-Punkt des Dreiecks zu setzen.
-    body.positionPrev.x -= offset.x;
-    body.positionPrev.y -= offset.y;
-    body.position.x -= offset.x;
-    body.position.y -= offset.y;
+    // body.positionPrev.x -= height / 2;
+    body.positionPrev.y -= height / 2 - 20;
+    // body.position.x -= height / 2;
+    body.position.y -= height / 2 - 20;
 
     return body;
   }

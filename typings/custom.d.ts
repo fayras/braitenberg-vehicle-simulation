@@ -85,3 +85,8 @@ type EventHandler =
   | ((event: EventMessages.SensorActive) => void)
   | ((event: EventMessages.Reaction) => void)
   | ((event: import('../src/Entity').default) => void);
+
+interface Dimensions {
+  width: number;
+  height: number;
+}

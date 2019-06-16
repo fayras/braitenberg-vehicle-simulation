@@ -54,15 +54,26 @@ export default class MainScene extends Phaser.Scene {
       this.scene.launch('SettingScene', entity);
     });
 
-    for (let i = 0; i < 1; i += 1) {
-      EntityManager.createEntity(
-        new TransformableComponent({ x: 400, y: 450 }),
-        new SolidBodyComponent(100, BodyShape.RECTANGLE, true),
-        new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-        new RenderComponent('logo', 110),
-      );
-      // entity.addComponent(new SourceComponent(150));
-    }
+    EntityManager.createEntity(
+      new TransformableComponent({ x: 600, y: 450 }),
+      new SolidBodyComponent({ width: 20, height: 400 }, BodyShape.RECTANGLE, true),
+      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
+      new RenderComponent('logo', 110),
+    );
+
+    EntityManager.createEntity(
+      new TransformableComponent({ x: 450, y: 250 }),
+      new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
+      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
+      new RenderComponent('logo', 110),
+    );
+
+    EntityManager.createEntity(
+      new TransformableComponent({ x: 450, y: 650 }),
+      new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
+      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
+      new RenderComponent('logo', 110),
+    );
 
     const entity = new Entity();
     entity.addComponent(new TransformableComponent({ x: 100, y: 300 }));

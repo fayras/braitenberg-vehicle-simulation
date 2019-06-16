@@ -60,7 +60,12 @@ export default class PhysicsSystem extends System {
           frictionAir: 0.3,
           isStatic: component.isStatic,
         };
-        return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, component.size, pickBy(options, v => v !== undefined));
+        return Phaser.Physics.Matter.Matter.Bodies.circle(
+          0,
+          0,
+          component.size.width,
+          pickBy(options, v => v !== undefined),
+        );
       }
       case BodyShape.RECTANGLE:
       default: {
@@ -72,8 +77,8 @@ export default class PhysicsSystem extends System {
         return Phaser.Physics.Matter.Matter.Bodies.rectangle(
           0,
           0,
-          component.size,
-          component.size,
+          component.size.width,
+          component.size.height,
           pickBy(options, v => v !== undefined),
         );
       }

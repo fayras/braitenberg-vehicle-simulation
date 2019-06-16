@@ -60,13 +60,15 @@ export default class SourceSystem extends System {
 
     // Das Ganze ggf in einem/mehreren Worker Thread(s) machen?
     const values = new Float32Array(width * height);
-    const size = solidBody ? solidBody.size : source.range;
     const f = isGaussian
       ? gaussian(transform.position, { x: source.range, y: source.range })
       : flatRect(
-          Phaser.Physics.Matter.Matter.Vector.sub(transform.position, { x: size / 2 + 10, y: size / 2 + 10 }),
-          size + 20,
-          size + 20,
+          Phaser.Physics.Matter.Matter.Vector.sub(transform.position, {
+            x: (solidBody ? solidBody.size.width : source.range) / 2,
+            y: (solidBody ? solidBody.size.height : source.range) / 2,
+          }),
+          solidBody ? solidBody.size.width : source.range,
+          solidBody ? solidBody.size.height : source.range,
         );
 
     let max = 0;
@@ -115,9 +117,15 @@ export default class SourceSystem extends System {
       }) as SourcePhysicsObject;
     }
 
-    return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, solidBody.size, solidBody.size, {
-      isSensor: true,
-    }) as SourcePhysicsObject;
+    return Phaser.Physics.Matter.Matter.Bodies.rectangle(
+      0,
+      0,
+      solidBody.size.width + 150,
+      solidBody.size.height + 150,
+      {
+        isSensor: true,
+      },
+    ) as SourcePhysicsObject;
   }
 
   private static createCircleShape(range: number): SourcePhysicsObject {
