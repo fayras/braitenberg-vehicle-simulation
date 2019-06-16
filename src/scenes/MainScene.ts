@@ -21,7 +21,7 @@ import SensorSystem from '../systems/SensorSystem';
 import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
-import { SubstanceType, EventType, BodyShape } from '../enums';
+import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
@@ -58,6 +58,7 @@ export default class MainScene extends Phaser.Scene {
       EntityManager.createEntity(
         new TransformableComponent({ x: 300, y: 100 }),
         new SolidBodyComponent(100, BodyShape.RECTANGLE, true),
+        new SourceComponent(100, SubstanceType.LIGHT, EmissionType.FLAT),
         new RenderComponent('logo', 110),
       );
       // entity.addComponent(new SourceComponent(150));

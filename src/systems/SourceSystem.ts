@@ -5,7 +5,8 @@ import { ComponentType, EmissionType, CORRELATION_SCALE } from '../enums';
 import System from './System';
 import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
-import { gaussian, flat } from '../utils/reactions';
+import { gaussian, flat, flatRect } from '../utils/reactions';
+import SolidBodyComponent from '../components/SolidBodyComponent';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
@@ -38,9 +39,12 @@ export default class SourceSystem extends System {
   }
 
   private addSourceObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {
-    const body = Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, source.range * 3, {
-      isSensor: true,
-    }) as SourcePhysicsObject;
+    const isGaussian = source.emissionType === EmissionType.GAUSSIAN;
+    const solidBody = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent | undefined;
+
+    const body = isGaussian
+      ? SourceSystem.createCircleShape(source.range * 3)
+      : SourceSystem.createRectShape(solidBody, source.range);
 
     const emitter = this.attachSynchronization(body, entity);
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
@@ -56,12 +60,13 @@ export default class SourceSystem extends System {
 
     // Das Ganze ggf in einem/mehreren Worker Thread(s) machen?
     const values = new Float32Array(width * height);
-    let f;
-    if (source.emissionType === EmissionType.GAUSSIAN) {
-      f = gaussian(transform.position, { x: source.range, y: source.range });
-    } else {
-      f = flat();
-    }
+    const f = isGaussian
+      ? gaussian(transform.position, { x: source.range, y: source.range })
+      : flatRect(
+          transform.position,
+          solidBody ? solidBody.size : source.range,
+          solidBody ? solidBody.size : source.range,
+        );
 
     let max = 0;
     for (let y = 0; y < height; y += 1) {
@@ -100,6 +105,24 @@ export default class SourceSystem extends System {
     };
 
     return body;
+  }
+
+  private static createRectShape(solidBody: SolidBodyComponent | undefined, range: number): SourcePhysicsObject {
+    if (solidBody === undefined) {
+      return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, range, range, {
+        isSensor: true,
+      }) as SourcePhysicsObject;
+    }
+
+    return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, solidBody.size, solidBody.size, {
+      isSensor: true,
+    }) as SourcePhysicsObject;
+  }
+
+  private static createCircleShape(range: number): SourcePhysicsObject {
+    return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, range, {
+      isSensor: true,
+    }) as SourcePhysicsObject;
   }
 
   private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): Function {

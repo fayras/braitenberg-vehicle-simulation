@@ -51,7 +51,7 @@ export default class ReactionSystem extends System {
         const x = Math.floor(sensor.position.x / CORRELATION_SCALE);
 
         if (!this.correlations[lookUpKey][y] || !this.correlations[lookUpKey][y][x]) {
-          sensorComponent.activation = 0;
+          // sensorComponent.activation = sensorComponent.activation;
           return;
         }
 
