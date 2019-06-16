@@ -18,6 +18,11 @@ export enum SubstanceType {
   BARRIER = 'BARRIER',
 }
 
+export enum EmissionType {
+  GAUSSIAN = 'GAUSSIAN',
+  FLAT = 'FLAT',
+}
+
 export enum SensorActivation {
   LINEAR = 'LINEAR',
   QUADRATIC = 'QUADRATIC',

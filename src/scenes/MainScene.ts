@@ -69,7 +69,7 @@ export default class MainScene extends Phaser.Scene {
     entity.addComponent(new RenderComponent('tank', 100));
     const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+    const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 0.4));
     // const sensor2 = entity.addComponent(new SensorComponent({ x: 40, y: 55 }, 80, 1.3));
     entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
     EntityManager.addExistingEntity(entity);
@@ -80,11 +80,11 @@ export default class MainScene extends Phaser.Scene {
       new SourceComponent(300),
     );
 
-    EntityManager.createEntity(
-      new TransformableComponent({ x: 200, y: 400 }),
-      new RenderComponent('source', 150, Phaser.BlendModes.ADD),
-      new SourceComponent(150, SubstanceType.BARRIER),
-    );
+    // EntityManager.createEntity(
+    //   new TransformableComponent({ x: 200, y: 400 }),
+    //   new RenderComponent('source', 150, Phaser.BlendModes.ADD),
+    //   new SourceComponent(150, SubstanceType.BARRIER),
+    // );
   }
 
   private createSystems(): void {
