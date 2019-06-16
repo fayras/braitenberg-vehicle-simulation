@@ -29,9 +29,9 @@ export default class ReactionSystem extends System {
       const { sensor } = payload;
       if (!ReactionSystem.reactTogether(sensor, source)) return;
 
-      const sensorId = sensor.userData.belongsTo.component.id;
-      const sourceId = source.userData.belongsTo.component.id;
-      const lookUpKey = `${sensorId}:${sourceId}`;
+      const sensorComponent = sensor.userData.belongsTo.component;
+      const sourceComponent = source.userData.belongsTo.component;
+      const lookUpKey = `${sensorComponent.id}:${sourceComponent.id}`;
 
       if (!this.correlations[lookUpKey] && !this.computing[lookUpKey]) {
         this.computing[lookUpKey] = true;
@@ -54,7 +54,8 @@ export default class ReactionSystem extends System {
       if (this.correlations[lookUpKey]) {
         const x = Math.floor(sensor.position.x / SCALE);
         const y = Math.floor(sensor.position.y / SCALE);
-        console.log(x, y, this.correlations[lookUpKey][y][x]);
+        const value = this.correlations[lookUpKey][y][x];
+        sensorComponent.activation = value;
       }
 
       // const distance = Phaser.Physics.Matter.Matter.Vector.sub(sensor.position, source.position);
