@@ -36,14 +36,10 @@ export default class ReactionSystem extends System {
       if (!this.correlations[lookUpKey] && !this.computing[lookUpKey]) {
         this.computing[lookUpKey] = true;
         tidy(() => {
-          console.log('conv: ', source.userData.tensor.shape, sensor.userData.tensors[0].tensor.shape);
           const conv = squeeze<Tensor2D>(conv2d(source.userData.tensor, sensor.userData.tensors[0].tensor, 1, 'same'));
           const maxValue = conv.max().dataSync()[0];
-          // const normalized = localResponseNormalization(conv);
           const result = conv.div<Tensor2D>(maxValue);
-          console.log(result.shape);
           result.array().then(value => {
-            console.log(value);
             this.correlations[lookUpKey] = value;
             this.computing[lookUpKey] = false;
           });
@@ -56,11 +52,6 @@ export default class ReactionSystem extends System {
         const value = this.correlations[lookUpKey][y][x];
         sensorComponent.activation = value;
       }
-
-      // const distance = Phaser.Physics.Matter.Matter.Vector.sub(sensor.position, source.position);
-      // const activation = source.userData.kernel(distance.x, distance.y);
-
-      // sensor.userData.belongsTo.component.activation = activation;
     }
   }
 
