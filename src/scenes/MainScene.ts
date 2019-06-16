@@ -56,27 +56,31 @@ export default class MainScene extends Phaser.Scene {
 
     for (let i = 0; i < 1; i += 1) {
       EntityManager.createEntity(
-        new TransformableComponent({ x: 300, y: 100 }),
+        new TransformableComponent({ x: 400, y: 450 }),
         new SolidBodyComponent(100, BodyShape.RECTANGLE, true),
-        new SourceComponent(100, SubstanceType.LIGHT, EmissionType.FLAT),
+        new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
         new RenderComponent('logo', 110),
       );
       // entity.addComponent(new SourceComponent(150));
     }
 
     const entity = new Entity();
-    entity.addComponent(new TransformableComponent({ x: 300, y: 200 }));
+    entity.addComponent(new TransformableComponent({ x: 100, y: 300 }));
     entity.addComponent(new SolidBodyComponent(100));
     entity.addComponent(new RenderComponent('vehicle_icon', 100));
     const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
     const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4));
     const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4));
-    entity.addComponent(new ConnectionComponent([sensor1, sensor2], [motor1, motor2], [[0, 1], [1, 0]]));
+    const sensor3 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4, SubstanceType.BARRIER));
+    const sensor4 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4, SubstanceType.BARRIER));
+    entity.addComponent(
+      new ConnectionComponent([sensor1, sensor2, sensor3, sensor4], [motor1, motor2], [[0, 1], [1, 0], [1, 0], [0, 1]]),
+    );
     EntityManager.addExistingEntity(entity);
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 500, y: 300 }),
+      new TransformableComponent({ x: 800, y: 300 }),
       new RenderComponent('source_icon', 100),
       new SourceComponent(300),
     );
