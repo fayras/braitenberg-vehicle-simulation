@@ -27,7 +27,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
     });
 
     //To-Do passendes Icon suchen
-    const save = new Button(this, 120 + start.getWidth(), 35, 1, () => {
+    const save = new Button(this, 110 + start.getWidth(), 35, 1, () => {
       MainScene.createSnapshot();
     });
 

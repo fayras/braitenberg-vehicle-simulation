@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Scene } from 'phaser';
 import EditorScene from './EditorScene';
 import SettingScene from './SettingScene';
 
