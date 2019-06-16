@@ -35,8 +35,17 @@ export function flatRect(topLeft: VectorLike, width: number, height: number): Ke
   const x0 = topLeft.x || 0;
   const y0 = topLeft.y || 0;
   const rect = new Phaser.Geom.Rectangle(x0, y0, width, height);
+  const outerRect = Phaser.Geom.Rectangle.Inflate(Phaser.Geom.Rectangle.Clone(rect), 10, 10);
 
   return (x: number, y: number) => {
-    return rect.contains(x, y) ? 1 : 0;
+    if (rect.contains(x, y)) {
+      return 1;
+    }
+
+    if (outerRect.contains(x, y)) {
+      return 0.8;
+    }
+
+    return 0;
   };
 }
