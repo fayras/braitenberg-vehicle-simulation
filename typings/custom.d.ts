@@ -90,3 +90,5 @@ interface Dimensions {
   width: number;
   height: number;
 }
+
+type Color = number;

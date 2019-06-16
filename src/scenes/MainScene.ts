@@ -58,21 +58,21 @@ export default class MainScene extends Phaser.Scene {
       new TransformableComponent({ x: 600, y: 450 }),
       new SolidBodyComponent({ width: 20, height: 400 }, BodyShape.RECTANGLE, true),
       new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent('logo', 110),
+      new RenderComponent(0xcccccc, 110),
     );
 
     EntityManager.createEntity(
       new TransformableComponent({ x: 450, y: 250 }),
       new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
       new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent('logo', 110),
+      new RenderComponent(0xcccccc, 110),
     );
 
     EntityManager.createEntity(
       new TransformableComponent({ x: 450, y: 650 }),
       new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
       new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent('logo', 110),
+      new RenderComponent(0xcccccc, 110),
     );
 
     const entity = new Entity();

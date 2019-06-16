@@ -4,9 +4,10 @@ import { ComponentType, EventType } from '../enums';
 import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
+import SolidBodyComponent from '../components/SolidBodyComponent';
 
 interface RenderObjectDictionary {
-  [entityId: number]: Phaser.GameObjects.Image;
+  [entityId: number]: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
 }
 
 export default class RenderSystem extends System {
@@ -27,10 +28,23 @@ export default class RenderSystem extends System {
   protected onEntityCreated(entity: Entity): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+    const body = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
-    const image = this.scene.add.image(transform.position.x, transform.position.y, render.asset);
-    const scale = render.size / image.width;
-    image.setScale(scale);
+    let image;
+    if (body && typeof render.asset === 'number') {
+      image = this.scene.add.rectangle(
+        transform.position.x,
+        transform.position.y,
+        body.size.width,
+        body.size.height,
+        render.asset,
+      );
+    } else {
+      image = this.scene.add.image(transform.position.x, transform.position.y, render.asset as string);
+      const scale = render.size / image.width;
+      image.setScale(scale);
+    }
+
     if (render.blendMode) {
       image.setBlendMode(render.blendMode);
     }
