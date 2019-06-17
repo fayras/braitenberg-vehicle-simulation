@@ -1,11 +1,14 @@
 export default class Attribute<T, S extends Phaser.GameObjects.DOMElement> {
   private value: T;
 
-  private element: S;
+  private label: string;
 
-  public constructor(value: T, renderAs: S) {
+  private Element: new (scene: Phaser.Scene) => S;
+
+  public constructor(value: T, label: string, renderAs: new (scene: Phaser.Scene) => S) {
     this.value = value;
-    this.element = renderAs;
+    this.label = label;
+    this.Element = renderAs;
   }
 
   public get(): T {
@@ -16,7 +19,15 @@ export default class Attribute<T, S extends Phaser.GameObjects.DOMElement> {
     this.value = value;
   }
 
-  public render(): void {
-    console.log(this.value);
+  public render(container: Phaser.Scene): S {
+    const element = new this.Element(container);
+
+    (element.node as HTMLInputElement).value = this.get() as any;
+    element.addListener('change');
+    element.on('change', (event: { target: HTMLInputElement }) => {
+      this.set(event.target.value as any);
+    });
+
+    return element;
   }
 }
