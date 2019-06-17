@@ -76,7 +76,9 @@ export default class MainScene extends Phaser.Scene {
     );
 
     const entity = new Entity();
-    entity.addComponent(new TransformableComponent({ x: 100, y: 300 }));
+    const transform = new TransformableComponent({ x: 100, y: 500 });
+    transform.angle = -Math.PI / 2;
+    entity.addComponent(transform);
     entity.addComponent(new SolidBodyComponent(100));
     entity.addComponent(new RenderComponent('vehicle_icon', 100));
     const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
@@ -91,7 +93,7 @@ export default class MainScene extends Phaser.Scene {
     EntityManager.addExistingEntity(entity);
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 800, y: 300 }),
+      new TransformableComponent({ x: 950, y: 350 }),
       new RenderComponent('source_icon', 100),
       new SourceComponent(300),
     );

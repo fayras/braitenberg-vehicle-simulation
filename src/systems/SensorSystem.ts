@@ -50,30 +50,39 @@ export default class SensorSystem extends System {
     const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
     const emitter = this.attachSynchronization(body, entity, sensor);
 
-    const width = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
-    const height = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const halfWidth = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const halfHeight = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const width = halfWidth * 2;
+    const height = halfHeight * 2;
 
     const offScreenCanvas = document.createElement('canvas');
     offScreenCanvas.width = width;
     offScreenCanvas.height = height;
     const context = offScreenCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-    const values = new Float32Array(width * height);
+    const offScreenCanvasDown = document.createElement('canvas');
+    offScreenCanvasDown.width = width;
+    offScreenCanvasDown.height = height;
+    const contextDown = offScreenCanvasDown.getContext('2d') as CanvasRenderingContext2D;
+
+    const valuesUp = new Float32Array(width * height);
+    const valuesRight = new Float32Array(width * height);
+    const valuesDown = new Float32Array(width * height);
+    const valuesLeft = new Float32Array(width * height);
     const gauss = gaussian({ x: 0, y: 0 }, { x: sensor.angle, y: sensor.range });
-    const f = (x: number, y: number): number => {
+    const f = (x: number, y: number, rotation: number = 0): number => {
       // `atan2` ist für x = 0 und y = 0 nicht definiert.
       if (x === 0 && y === 0) return 1;
 
       const r = Math.sqrt(x ** 2 + y ** 2);
       const phi = Math.atan2(x, y);
-      return gauss(phi, r);
+      return gauss(phi + rotation, r);
     };
 
-    let max = 0;
-    const halfWidth = width / 2;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
-        let v = f((x - halfWidth) * CORRELATION_SCALE, y * CORRELATION_SCALE);
+        let vUp = f((x - halfWidth) * CORRELATION_SCALE, (y - halfHeight) * CORRELATION_SCALE);
+        let vRight = f((x - halfWidth) * CORRELATION_SCALE, (y - halfHeight) * CORRELATION_SCALE, Math.PI / 2);
 
         // x und y werden hier vertauscht, was einer Spiegelung gleichkommt.
         // Weil wir später die Cross-Correlation und nicht die Convolution
@@ -81,23 +90,27 @@ export default class SensorSystem extends System {
         const mirrorX = width - x - 1;
         const mirrorY = height - y - 1;
 
-        values[mirrorY * width + mirrorX] = v;
+        valuesUp[y * width + x] = vUp;
+        valuesRight[y * width + x] = vRight;
+        valuesDown[mirrorY * width + mirrorX] = vUp;
+        valuesLeft[mirrorY * width + mirrorX] = vRight;
 
-        // console.log(x - width, y, v);
-
-        if (v > max) max = v;
-
-        v = Math.round(v * 255);
-        context.fillStyle = `rgb(${v}, ${v}, ${v})`;
-        context.fillRect(mirrorX, mirrorY, 1, 1);
+        vUp = Math.round(vUp * 255);
+        context.fillStyle = `rgb(${vUp}, ${vUp}, ${vUp})`;
+        context.fillRect(x, y, 1, 1);
+        vRight = Math.round(vRight * 255);
+        contextDown.fillStyle = `rgb(${vRight}, ${vRight}, ${vRight})`;
+        contextDown.fillRect(x, y, 1, 1);
       }
     }
 
-    console.log(max);
-
     // window.open(offScreenCanvas.toDataURL(), '_blank');
+    // window.open(offScreenCanvasDown.toDataURL(), '_blank');
 
-    const input = tf.tensor4d(values, [height, width, 1, 1]);
+    const up = tf.tensor4d(valuesUp, [height, width, 1, 1]);
+    const right = tf.tensor4d(valuesRight, [height, width, 1, 1]);
+    const down = tf.tensor4d(valuesDown, [height, width, 1, 1]);
+    const left = tf.tensor4d(valuesLeft, [height, width, 1, 1]);
 
     body.label = ComponentType.SENSOR;
     body.userData = {
@@ -105,7 +118,19 @@ export default class SensorSystem extends System {
       tensors: [
         {
           angle: 0,
-          tensor: input,
+          tensor: up,
+        },
+        {
+          angle: Math.PI / 2,
+          tensor: right,
+        },
+        {
+          angle: Math.PI,
+          tensor: down,
+        },
+        {
+          angle: Math.PI + Math.PI / 2,
+          tensor: left,
         },
       ],
       belongsTo: {

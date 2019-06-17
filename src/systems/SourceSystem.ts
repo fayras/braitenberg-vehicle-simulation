@@ -117,15 +117,9 @@ export default class SourceSystem extends System {
       }) as SourcePhysicsObject;
     }
 
-    return Phaser.Physics.Matter.Matter.Bodies.rectangle(
-      0,
-      0,
-      solidBody.size.width + 150,
-      solidBody.size.height + 150,
-      {
-        isSensor: true,
-      },
-    ) as SourcePhysicsObject;
+    return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, solidBody.size.width + 20, solidBody.size.height + 20, {
+      isSensor: true,
+    }) as SourcePhysicsObject;
   }
 
   private static createCircleShape(range: number): SourcePhysicsObject {

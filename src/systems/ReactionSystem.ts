@@ -3,6 +3,9 @@ import { conv2d, squeeze, tidy, Tensor2D } from '@tensorflow/tfjs-core';
 import System from './System';
 import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
 import EventBus from '../EventBus';
+import TransformableComponent from '../components/TransformableComponent';
+
+const mod = (x: number, n: number): number => ((x % n) + n) % n;
 
 export default class ReactionSystem extends System {
   public expectedComponents: ComponentType[] = [];
@@ -29,14 +32,32 @@ export default class ReactionSystem extends System {
       const { sensor } = payload;
       if (!ReactionSystem.reactTogether(sensor, source)) return;
 
+      const transform = sensor.userData.belongsTo.entity.getComponent(
+        ComponentType.TRANSFORMABLE,
+      ) as TransformableComponent;
+
+      const availableAngles = sensor.userData.tensors.map(t => t.angle);
+      const currentAngle = mod(transform.angle, Math.PI * 2);
+
+      const closestAngle = availableAngles.reduce((prev, curr) => {
+        return Math.abs(curr - currentAngle) < Math.abs(prev - transform.angle) ? curr : prev;
+      });
+
       const sensorComponent = sensor.userData.belongsTo.component;
       const sourceComponent = source.userData.belongsTo.component;
-      const lookUpKey = `${sensorComponent.id}:${sourceComponent.id}`;
+      const lookUpKey = `${sensorComponent.id}:${sourceComponent.id}:${closestAngle}`;
 
       if (!this.correlations[lookUpKey] && !this.computing[lookUpKey]) {
         this.computing[lookUpKey] = true;
         tidy(() => {
-          const conv = squeeze<Tensor2D>(conv2d(source.userData.tensor, sensor.userData.tensors[0].tensor, 1, 'same'));
+          const sensorTensor = sensor.userData.tensors.find(t => t.angle === closestAngle);
+
+          if (!sensorTensor) {
+            console.warn(`could not find kernel for angle ${closestAngle}`);
+            return;
+          }
+
+          const conv = squeeze<Tensor2D>(conv2d(source.userData.tensor, sensorTensor.tensor, 1, 'same'));
           const maxValue = conv.max().dataSync()[0];
           const result = conv.div<Tensor2D>(maxValue);
           result.array().then(value => {
