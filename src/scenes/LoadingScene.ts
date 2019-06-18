@@ -25,10 +25,6 @@ export default class MainInterfaceScene extends Phaser.Scene {
     this.load.image('source_icon', sourceIcon);
     this.load.image('obstacle_Icon', obstacleIcon);
     this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 50, frameHeight: 48 });
-    this.load.html('motor_template', 'assets/templates/motor.html');
-    this.load.html('sensor_template', 'assets/templates/sensor.html');
-    this.load.html('source_template', 'assets/templates/source.html');
-    this.load.html('body_template', 'assets/templates/body.html');
   }
 
   public create(): void {
