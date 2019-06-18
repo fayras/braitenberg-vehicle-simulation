@@ -6,9 +6,9 @@ export default class Checkbox extends BaseInput<boolean> {
     const input = document.createElement('input');
 
     input.type = 'number';
-    input.value = (this.get() as unknown) as string;
+    input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
-      this.set((input.value as unknown) as boolean);
+      this.value = (input.value as unknown) as boolean;
     });
 
     root.appendChild(input);

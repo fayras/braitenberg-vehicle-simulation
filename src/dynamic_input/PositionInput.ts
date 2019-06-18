@@ -6,9 +6,9 @@ export default class PositionInput extends BaseInput<Vector2D> {
     const input = document.createElement('input');
 
     input.type = 'number';
-    input.value = (this.get() as unknown) as string;
+    input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
-      this.set((input.value as unknown) as Vector2D);
+      this.value = (input.value as unknown) as Vector2D;
     });
 
     root.appendChild(input);

@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
 
 export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement {
-  protected value: T;
+  protected m_value: T;
 
   protected onChangeHandler: (value: T) => void;
 
   public constructor(scene: Phaser.Scene, value: T, label: string) {
     super(scene, 0, 0);
 
-    this.value = value;
+    this.m_value = value;
     this.onChangeHandler = () => {};
 
     const root = document.createElement('div');
@@ -30,12 +30,16 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     this.onChangeHandler = handler;
   }
 
-  public set(value: T): void {
-    this.value = value;
-    this.onChangeHandler(value);
+  public set value(value: T) {
+    const old = this.m_value;
+    this.m_value = value;
+
+    if (old !== value) {
+      // this.attribute.set(value);
+    }
   }
 
-  public get(): T {
-    return this.value;
+  public get value(): T {
+    return this.m_value;
   }
 }

@@ -6,9 +6,9 @@ export default class TextInput extends BaseInput<string | number> {
     const input = document.createElement('input');
 
     input.type = 'number';
-    input.value = (this.get() as unknown) as string;
+    input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
-      this.set((input.value as unknown) as string);
+      this.value = (input.value as unknown) as string;
     });
 
     root.appendChild(input);

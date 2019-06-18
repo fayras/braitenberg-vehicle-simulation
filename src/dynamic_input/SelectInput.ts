@@ -6,9 +6,9 @@ export default class SelectInput<T> extends BaseInput<T> {
     const input = document.createElement('input');
 
     input.type = 'number';
-    input.value = (this.get() as unknown) as string;
+    input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
-      this.set((input.value as unknown) as T);
+      this.value = (input.value as unknown) as T;
     });
 
     root.appendChild(input);
