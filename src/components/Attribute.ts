@@ -5,11 +5,11 @@ export default class Attribute<T, S extends BaseInput<T>> {
 
   private label: string;
 
-  private Element: new (scene: Phaser.Scene, value: T) => S;
+  private Element: new (scene: Phaser.Scene, value: T, label: string) => S;
 
   private el: S | null = null;
 
-  public constructor(value: T, label: string, renderAs: new (scene: Phaser.Scene, value: T) => S) {
+  public constructor(value: T, label: string, renderAs: new (scene: Phaser.Scene, value: T, label: string) => S) {
     this.value = value;
     this.label = label;
     this.Element = renderAs;
@@ -27,7 +27,7 @@ export default class Attribute<T, S extends BaseInput<T>> {
   }
 
   public render(scene: Phaser.Scene): S {
-    this.el = new this.Element(scene, this.value);
+    this.el = new this.Element(scene, this.value, this.label);
 
     this.el.onChange(value => this.set(value));
 
