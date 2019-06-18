@@ -27,10 +27,10 @@ export default class SensorComponent extends Component {
     reactsTo: SubstanceType = SubstanceType.LIGHT,
   ) {
     super();
-    this.position = new Attribute(offsetPos, 'Anzeige', PositionInput);
-    this.range = new Attribute(range, 'Anzeige', NumberInput);
-    this.angle = new Attribute(angle, 'Anzeige', NumberInput);
-    this.reactsTo = new Attribute(reactsTo, 'Anzeige', SelectInput);
+    this.position = new Attribute(offsetPos, 'Position', PositionInput);
+    this.range = new Attribute(range, 'Reichweite', NumberInput);
+    this.angle = new Attribute(angle, 'Winkel', NumberInput);
+    this.reactsTo = new Attribute(reactsTo, 'Reagiert auf', SelectInput);
     this.activation = new Attribute(0 as number, 'activation', NumberInput);
   }
 

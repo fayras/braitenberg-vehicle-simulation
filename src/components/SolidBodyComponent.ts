@@ -25,8 +25,8 @@ export default class SolidBodyComponent extends Component {
     } else {
       this.size = new Attribute(size, 'Größe', SizeInput);
     }
-    this.shape = new Attribute(shape, 'Größe', SelectInput);
-    this.isStatic = new Attribute(isStatic, 'Größe', Checkbox);
+    this.shape = new Attribute(shape, 'Form', SelectInput);
+    this.isStatic = new Attribute(isStatic, 'Statisch', Checkbox);
   }
 
   public serializeAttributes(): object {

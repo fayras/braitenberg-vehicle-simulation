@@ -7,6 +7,7 @@ export default class NumberInput extends BaseInput<number> {
     const input = document.createElement('input');
 
     input.type = 'number';
+    input.step = 'any';
 
     input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
@@ -22,7 +23,7 @@ export default class NumberInput extends BaseInput<number> {
 
   protected onUpdate(): void {
     if (this.inputElement) {
-      this.inputElement.value = (this.value as unknown) as string;
+      this.inputElement.value = this.value.toString();
     }
   }
 

@@ -12,6 +12,10 @@ export default class PositionInput extends BaseInput<Vector2D> {
 
     inputX.type = 'number';
     inputY.type = 'number';
+    inputX.step = '0.01';
+    inputY.step = '0.01';
+    inputX.style.display = 'block';
+    inputY.style.display = 'block';
     inputX.value = (this.value.x as unknown) as string;
     inputY.value = (this.value.y as unknown) as string;
     inputX.addEventListener('change', () => {
@@ -34,10 +38,10 @@ export default class PositionInput extends BaseInput<Vector2D> {
 
   protected onUpdate(): void {
     if (this.inputElementX) {
-      this.inputElementX.value = (this.value.x as unknown) as string;
+      this.inputElementX.value = this.value.x.toFixed(2);
     }
     if (this.inputElementY) {
-      this.inputElementY.value = (this.value.y as unknown) as string;
+      this.inputElementY.value = this.value.y.toFixed(2);
     }
   }
 
