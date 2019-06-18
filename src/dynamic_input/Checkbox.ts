@@ -1,6 +1,5 @@
 class Checkbox extends Phaser.GameObjets.DOMElement {
-  construcor (attribut: String)
-  {
+  construcor(attribut: String) {
     const div = document.createElement('div');
     div.style =
       'background-color: rgba(255,0,0,0.9); color: black; width: 250px; height: 100px; font: 24px Arial; font-weight: bold';
@@ -15,7 +14,5 @@ class Checkbox extends Phaser.GameObjets.DOMElement {
     const element = this.add.dom(0, 0, div);
 
     container.add([element]);
-
   }
-    
 }

@@ -23,6 +23,8 @@ export default class EditorScene extends SidebarScene {
     const source = this.add.image(0, 0, 'source_icon');
     const motor = this.add.image(0, 0, 'motor_icon');
     const sensor = this.add.image(0, 0, 'sensor_icon');
+    const grundformen = this.add.image(0, 0, 'grundformen');
+    const vorlagen = this.add.image(0, 0, 'vorlagen');
 
     this.makeInteractable(prefab, position => {
       const entity = new Entity();
@@ -46,14 +48,14 @@ export default class EditorScene extends SidebarScene {
     this.makeInteractable(source, position => {
       EntityManager.createEntity(
         new TransformableComponent(position),
-        new RenderComponent('source_icon', 100, Phaser.BlendModes.ADD),
+        new RenderComponent('source_icon', 100),
         new SourceComponent(100),
       );
     });
     this.makeInteractable(motor, position => {});
     this.makeInteractable(sensor, position => {});
 
-    this.pack([prefab, vehicle, source, motor, sensor]);
+    this.pack([vorlagen, prefab, grundformen, vehicle, source, motor, sensor]);
   }
 
   private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {
