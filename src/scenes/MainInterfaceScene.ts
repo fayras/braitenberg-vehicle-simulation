@@ -14,15 +14,15 @@ export default class MainInterfaceScene extends Phaser.Scene {
     this.scale.on('resize', this.handleResize.bind(this));
     const mainScene = this.scene.get('MainScene') as MainScene;
 
-    const start = new ToggleButton(this, 35, 35, 4, 6, () => {
+    const start = new ToggleButton(this, 35, 35, 5, 8, () => {
       mainScene.pause(!mainScene.isRunning());
     });
 
-    const reset = new Button(this, 45 + start.getWidth(), 35, 2, () => {
+    const reset = new Button(this, 45 + start.getWidth(), 35, 11, () => {
       MainScene.loadSnapshot();
     });
 
-    const save = new Button(this, 110 + start.getWidth(), 35, 8, () => {
+    const save = new Button(this, 110 + start.getWidth(), 35, 10, () => {
       MainScene.createSnapshot();
     });
 

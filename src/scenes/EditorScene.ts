@@ -46,7 +46,7 @@ export default class EditorScene extends SidebarScene {
     this.makeInteractable(source, position => {
       EntityManager.createEntity(
         new TransformableComponent(position),
-        new RenderComponent('source', 100, Phaser.BlendModes.ADD),
+        new RenderComponent('source_icon', 100, Phaser.BlendModes.ADD),
         new SourceComponent(100),
       );
     });
