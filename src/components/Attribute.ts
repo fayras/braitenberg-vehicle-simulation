@@ -21,15 +21,15 @@ export default class Attribute<T, S extends BaseInput<T>> {
 
   public set(value: T): void {
     this.value = value;
-    // if (this.el) {
-    //   this.el.set(value);
-    // }
+    if (this.el) {
+      this.el.value = value;
+    }
   }
 
   public render(scene: Phaser.Scene): S {
     this.el = new this.Element(scene, this.value, this.label);
 
-    this.el.onChange(value => this.set(value));
+    // this.el.onChange(value => this.set(value));
 
     return this.el;
   }
