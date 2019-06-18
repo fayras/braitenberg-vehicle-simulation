@@ -1,20 +1,30 @@
 import BaseInput from './BaseInput';
 
 export default class Checkbox extends BaseInput<boolean> {
+  private inputElement: HTMLInputElement | null = null;
+
   protected create(): Element {
-    const root = document.createElement('div');
     const input = document.createElement('input');
 
-    input.type = 'number';
-    input.value = (this.value as unknown) as string;
+    input.type = 'checkbox';
+    input.checked = this.value;
     input.addEventListener('change', () => {
-      this.value = (input.value as unknown) as boolean;
+      this.value = input.checked;
     });
 
-    root.appendChild(input);
+    setTimeout(() => {
+      this.inputElement = input;
+    }, 0);
 
-    return root;
+    return input;
   }
+
+  protected onValueSet(): void {
+    if (this.inputElement) {
+      this.inputElement.checked = this.value;
+    }
+  }
+
   // construcor (attribut: String)
   // {
   //   const div = document.createElement('div');
