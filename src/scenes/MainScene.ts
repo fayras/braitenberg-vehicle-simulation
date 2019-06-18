@@ -77,7 +77,7 @@ export default class MainScene extends Phaser.Scene {
 
     const entity = new Entity();
     const transform = new TransformableComponent({ x: 100, y: 500 });
-    transform.angle = -Math.PI / 2;
+    transform.angle.set(-Math.PI / 2);
     entity.addComponent(transform);
     entity.addComponent(new SolidBodyComponent(100));
     entity.addComponent(new RenderComponent('vehicle_icon', 100));

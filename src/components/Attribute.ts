@@ -1,11 +1,19 @@
-export default class Attribute<T, S extends Phaser.GameObjects.DOMElement> {
+import BaseInput from '../dynamic_input/BaseInput';
+
+export default class Attribute<T, S extends BaseInput<T>> implements Settable<T> {
   private value: T;
 
   private label: string;
 
-  private Element: new (scene: Phaser.Scene) => S;
+  private Element: new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S;
 
-  public constructor(value: T, label: string, renderAs: new (scene: Phaser.Scene) => S) {
+  private el: S | null = null;
+
+  public constructor(
+    value: T,
+    label: string,
+    renderAs: new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S,
+  ) {
     this.value = value;
     this.label = label;
     this.Element = renderAs;
@@ -17,17 +25,16 @@ export default class Attribute<T, S extends Phaser.GameObjects.DOMElement> {
 
   public set(value: T): void {
     this.value = value;
+    if (this.el) {
+      this.el.value = value;
+    }
   }
 
-  public render(container: Phaser.Scene): S {
-    const element = new this.Element(container);
+  public render(scene: Phaser.Scene): S {
+    this.el = new this.Element(scene, this, this.value, this.label);
 
-    (element.node as HTMLInputElement).value = this.get() as any;
-    element.addListener('change');
-    element.on('change', (event: { target: HTMLInputElement }) => {
-      this.set(event.target.value as any);
-    });
+    // this.el.onChange(value => this.set(value));
 
-    return element;
+    return this.el;
   }
 }

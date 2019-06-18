@@ -14,6 +14,15 @@ export default abstract class Component {
 
   protected abstract serializeAttributes(): object;
 
+  // protected serializeAttributes(): any {
+  //   const attrs: { [key: string]: any } = {};
+  //   Object.keys(this).forEach(attr => {
+  //     attrs[attr] = this[attr];
+  //   });
+
+  //   return attrs;
+  // }
+
   public serialize(): SerializedComponent {
     const attributes = this.serializeAttributes();
 

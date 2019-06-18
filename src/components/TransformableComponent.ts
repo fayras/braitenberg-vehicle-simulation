@@ -1,23 +1,26 @@
 import { ComponentType } from '../enums';
 import Component from './Component';
+import Attribute from './Attribute';
+import PositionInput from '../dynamic_input/PositionInput';
+import NumberInput from '../dynamic_input/NumberInput';
 
 export default class TransformableComponent extends Component {
   public name: ComponentType = ComponentType.TRANSFORMABLE;
 
-  public position: Phaser.Physics.Matter.Matter.Vector;
+  public position: Attribute<Vector2D, PositionInput>;
 
-  public angle: number;
+  public angle: Attribute<number, NumberInput>;
 
-  public constructor(pos: Phaser.Physics.Matter.Matter.Vector = { x: 0, y: 0 }) {
+  public constructor(pos: Vector2D = { x: 0, y: 0 }) {
     super();
-    this.position = pos;
-    this.angle = 0;
+    this.position = new Attribute(pos, 'Position', PositionInput);
+    this.angle = new Attribute(0 as number, 'Winkel', NumberInput);
   }
 
   public serializeAttributes(): object {
     return {
-      position: this.position,
-      angle: this.angle,
+      position: this.position.get(),
+      angle: this.angle.get(),
     };
   }
 }

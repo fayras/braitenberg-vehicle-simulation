@@ -68,6 +68,11 @@ interface SerializedEntity {
   components: SerializedComponent[];
 }
 
+interface Settable<T> {
+  public get(): T;
+  public set(value: T): void;
+}
+
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };

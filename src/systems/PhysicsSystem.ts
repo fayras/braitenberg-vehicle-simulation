@@ -53,17 +53,17 @@ export default class PhysicsSystem extends System {
   }
 
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
-    switch (component.shape) {
+    switch (component.shape.get()) {
       case BodyShape.CIRCLE: {
         const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.1,
           frictionAir: 0.3,
-          isStatic: component.isStatic,
+          isStatic: component.isStatic.get(),
         };
         return Phaser.Physics.Matter.Matter.Bodies.circle(
           0,
           0,
-          component.size.width,
+          component.size.get().width,
           pickBy(options, v => v !== undefined),
         );
       }
@@ -72,13 +72,13 @@ export default class PhysicsSystem extends System {
         const options: Phaser.Physics.Matter.Matter.IBodyDefinition = {
           friction: 0.7,
           frictionAir: 0.6,
-          isStatic: component.isStatic,
+          isStatic: component.isStatic.get(),
         };
         return Phaser.Physics.Matter.Matter.Bodies.rectangle(
           0,
           0,
-          component.size.width,
-          component.size.height,
+          component.size.get().width,
+          component.size.get().height,
           pickBy(options, v => v !== undefined),
         );
       }
@@ -89,15 +89,14 @@ export default class PhysicsSystem extends System {
     const component = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
     const onBefore = (): void => {
-      Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position);
-      Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle);
+      Phaser.Physics.Matter.Matter.Body.setPosition(body, component.position.get());
+      Phaser.Physics.Matter.Matter.Body.setAngle(body, component.angle.get());
     };
     this.scene.matter.world.on('beforeupdate', onBefore);
 
     const onAfter = (): void => {
-      component.position.x = body.position.x;
-      component.position.y = body.position.y;
-      component.angle = body.angle;
+      component.position.set(body.position);
+      component.angle.set(body.angle);
     };
     this.scene.matter.world.on('afterupdate', onAfter);
 

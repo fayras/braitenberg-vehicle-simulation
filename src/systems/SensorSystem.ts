@@ -50,8 +50,8 @@ export default class SensorSystem extends System {
     const body = SensorSystem.createSensor(sensor) as SensorPhysicsObject;
     const emitter = this.attachSynchronization(body, entity, sensor);
 
-    const halfWidth = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
-    const halfHeight = Math.ceil((sensor.range * 2) / CORRELATION_SCALE);
+    const halfWidth = Math.ceil((sensor.range.get() * 2) / CORRELATION_SCALE);
+    const halfHeight = Math.ceil((sensor.range.get() * 2) / CORRELATION_SCALE);
     const width = halfWidth * 2;
     const height = halfHeight * 2;
 
@@ -69,7 +69,7 @@ export default class SensorSystem extends System {
     const valuesRight = new Float32Array(width * height);
     const valuesDown = new Float32Array(width * height);
     const valuesLeft = new Float32Array(width * height);
-    const gauss = gaussian({ x: 0, y: 0 }, { x: sensor.angle, y: sensor.range });
+    const gauss = gaussian({ x: 0, y: 0 }, { x: sensor.angle.get(), y: sensor.range.get() });
     const f = (x: number, y: number, rotation: number = 0): number => {
       // `atan2` ist für x = 0 und y = 0 nicht definiert.
       if (x === 0 && y === 0) return 1;
@@ -158,13 +158,13 @@ export default class SensorSystem extends System {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
     const onBefore = (): void => {
-      component.activation = 0;
-      const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position, transform.angle);
+      component.activation.set(0);
+      const direction = Phaser.Physics.Matter.Matter.Vector.rotate(component.position.get(), transform.angle.get());
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
-        x: transform.position.x + direction.x,
-        y: transform.position.y + direction.y,
+        x: transform.position.get().x + direction.x,
+        y: transform.position.get().y + direction.y,
       });
-      Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle);
+      Phaser.Physics.Matter.Matter.Body.setAngle(body, transform.angle.get());
     };
 
     // Hier brauchen wir nur `beforeupdate` (Kein `afterupdate`), da die Position und Winkel
@@ -176,10 +176,10 @@ export default class SensorSystem extends System {
   }
 
   private static createSensor(component: SensorComponent): Phaser.Physics.Matter.Matter.Body {
-    const width = Math.ceil(component.range * 2);
-    const height = Math.ceil(component.range * 2);
+    const width = Math.ceil(component.range.get() * 2);
+    const height = Math.ceil(component.range.get() * 2);
 
-    const direction = Phaser.Physics.Matter.Matter.Vector.normalise(component.position);
+    const direction = Phaser.Physics.Matter.Matter.Vector.normalise(component.position.get());
     // const fullVector = Phaser.Physics.Matter.Matter.Vector.mult(direction, component.range);
 
     const body = Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, width, height, {
@@ -247,7 +247,7 @@ export default class SensorSystem extends System {
 
       const bodies = SensorSystem.getCollisionBodies(pair);
       if (bodies) {
-        bodies.sensor.userData.belongsTo.component.activation = 0.0;
+        bodies.sensor.userData.belongsTo.component.activation.set(0);
       }
     });
   }
