@@ -1,20 +1,24 @@
 import { ComponentType, SensorActivation, SubstanceType } from '../enums';
 import Component from './Component';
+import NumberInput from '../dynamic_input/NumberInput';
+import Attribute from './Attribute';
+import SelectInput from '../dynamic_input/SelectInput';
+import PositionInput from '../dynamic_input/PositionInput';
 
 export default class SensorComponent extends Component {
   public name: ComponentType = ComponentType.SENSOR;
 
-  public range: number;
+  public range: Attribute<number, NumberInput>;
 
-  public angle: number;
+  public angle: Attribute<number, NumberInput>;
 
-  public position: Phaser.Physics.Matter.Matter.Vector;
+  public position: Attribute<Vector2D, PositionInput>;
 
-  public activation: number = 0.0;
+  public activation: Attribute<number, NumberInput>; // = 0.0;
 
-  public type: SensorActivation = SensorActivation.LINEAR;
+  // public type: SensorActivation = SensorActivation.LINEAR;
 
-  public reactsTo: SubstanceType;
+  public reactsTo: Attribute<SubstanceType, SelectInput<SubstanceType>>;
 
   public constructor(
     offsetPos: Phaser.Physics.Matter.Matter.Vector,
@@ -23,18 +27,19 @@ export default class SensorComponent extends Component {
     reactsTo: SubstanceType = SubstanceType.LIGHT,
   ) {
     super();
-    this.position = offsetPos;
-    this.range = range;
-    this.angle = angle;
-    this.reactsTo = reactsTo;
+    this.position = new Attribute(offsetPos, 'Anzeige', PositionInput);
+    this.range = new Attribute(range, 'Anzeige', NumberInput);
+    this.angle = new Attribute(angle, 'Anzeige', NumberInput);
+    this.reactsTo = new Attribute(reactsTo, 'Anzeige', SelectInput);
+    this.activation = new Attribute(0 as number, 'activation', NumberInput);
   }
 
   public serializeAttributes(): object {
     return {
-      position: this.position,
-      range: this.range,
-      angle: this.angle,
-      reactsTo: this.reactsTo,
+      position: this.position.get(),
+      range: this.range.get(),
+      angle: this.angle.get(),
+      reactsTo: this.reactsTo.get(),
     };
   }
 }

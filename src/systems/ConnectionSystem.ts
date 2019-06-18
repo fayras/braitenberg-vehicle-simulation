@@ -17,7 +17,7 @@ export default class ConnectionSystem extends System {
 
       const inputs = connection.inputIds.map(id => {
         const sensor = sensors.find(s => s.id === id);
-        return sensor ? sensor.activation : 0;
+        return sensor ? sensor.activation.get() : 0;
       });
 
       const outputs = multiply(inputs, connection.weights);

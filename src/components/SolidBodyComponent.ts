@@ -1,14 +1,18 @@
 import { ComponentType, BodyShape } from '../enums';
 import Component from './Component';
+import Attribute from './Attribute';
+import SelectInput from '../dynamic_input/SelectInput';
+import Checkbox from '../dynamic_input/Checkbox';
+import SizeInput from '../dynamic_input/SizeInput';
 
 export default class SolidBodyComponent extends Component {
   public name: ComponentType = ComponentType.SOLID_BODY;
 
-  public size: Dimensions;
+  public size: Attribute<Dimensions, SizeInput>;
 
-  public shape: BodyShape;
+  public shape: Attribute<BodyShape, SelectInput<BodyShape>>;
 
-  public isStatic: boolean;
+  public isStatic: Attribute<boolean, Checkbox>;
 
   public constructor(
     size: Dimensions | number = 50,
@@ -17,19 +21,19 @@ export default class SolidBodyComponent extends Component {
   ) {
     super();
     if (typeof size === 'number') {
-      this.size = { width: size, height: size };
+      this.size = new Attribute({ width: size, height: size }, 'Größe', SizeInput);
     } else {
-      this.size = size;
+      this.size = new Attribute(size, 'Größe', SizeInput);
     }
-    this.shape = shape;
-    this.isStatic = isStatic;
+    this.shape = new Attribute(shape, 'Größe', SelectInput);
+    this.isStatic = new Attribute(isStatic, 'Größe', Checkbox);
   }
 
   public serializeAttributes(): object {
     return {
-      size: this.size,
-      shape: this.shape,
-      isStatic: this.isStatic,
+      size: this.size.get(),
+      shape: this.shape.get(),
+      isStatic: this.isStatic.get(),
     };
   }
 }

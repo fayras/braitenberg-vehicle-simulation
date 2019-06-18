@@ -2,11 +2,12 @@ import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './Attribute';
 import NumberInput from '../dynamic_input/NumberInput';
+import PositionInput from '../dynamic_input/PositionInput';
 
 export default class MotorComponent extends Component {
   public name: ComponentType = ComponentType.MOTOR;
 
-  public position: Attribute<Vector2D, NumberInput>;
+  public position: Attribute<Vector2D, PositionInput>;
 
   public defaultSpeed: Attribute<number, NumberInput>;
 
@@ -16,10 +17,10 @@ export default class MotorComponent extends Component {
 
   public constructor(pos: Vector2D, speed: number = 50, defaultSpeed: number = 0) {
     super();
-    this.position = new Attribute(pos, 'Position', NumberInput);
+    this.position = new Attribute(pos, 'Position', PositionInput);
     this.maxSpeed = new Attribute(speed, 'Max Speed', NumberInput);
     this.defaultSpeed = new Attribute(defaultSpeed, 'Default Speed', NumberInput);
-    this.throttle = new Attribute(0, 'default speed', NumberInput);
+    this.throttle = new Attribute(0 as number, 'Throttle', NumberInput);
   }
 
   public serializeAttributes(): object {

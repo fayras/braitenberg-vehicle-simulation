@@ -20,8 +20,8 @@ export default class RenderSystem extends System {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const renderObject = this.renderObjects[entity.id];
 
-      renderObject.setPosition(transform.position.x, transform.position.y);
-      renderObject.setRotation(transform.angle);
+      renderObject.setPosition(transform.position.get().x, transform.position.get().y);
+      renderObject.setRotation(transform.angle.get());
     });
   }
 
@@ -31,22 +31,26 @@ export default class RenderSystem extends System {
     const body = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
     let image;
-    if (body && typeof render.asset === 'number') {
+    if (body && typeof render.asset.get() === 'number') {
       image = this.scene.add.rectangle(
-        transform.position.x,
-        transform.position.y,
-        body.size.width,
-        body.size.height,
-        render.asset,
+        transform.position.get().x,
+        transform.position.get().y,
+        body.size.get().width,
+        body.size.get().height,
+        render.asset.get() as number,
       );
     } else {
-      image = this.scene.add.image(transform.position.x, transform.position.y, render.asset as string);
-      const scale = render.size / image.width;
+      image = this.scene.add.image(
+        transform.position.get().x,
+        transform.position.get().y,
+        render.asset.get() as string,
+      );
+      const scale = render.size.get() / image.width;
       image.setScale(scale);
     }
 
-    if (render.blendMode) {
-      image.setBlendMode(render.blendMode);
+    if (render.blendMode.get()) {
+      image.setBlendMode(render.blendMode.get() as Phaser.BlendModes);
     }
 
     // Alles was man rendert, kann man auch verschieben. Macht es trotzdem
@@ -54,8 +58,7 @@ export default class RenderSystem extends System {
     // nur anhand dessen ein Objekt draggable zu machen oder nicht?
     image.setInteractive({ draggable: true });
     image.on('drag', (gameObject: unknown, x: number, y: number) => {
-      transform.position.x = x;
-      transform.position.y = y;
+      transform.position.set({ x, y });
     });
 
     image.on('pointerup', (pointer: Phaser.Input.Pointer) => {

@@ -39,12 +39,12 @@ export default class SourceSystem extends System {
   }
 
   private addSourceObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {
-    const isGaussian = source.emissionType === EmissionType.GAUSSIAN;
+    const isGaussian = source.emissionType.get() === EmissionType.GAUSSIAN;
     const solidBody = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent | undefined;
 
     const body = isGaussian
-      ? SourceSystem.createCircleShape(source.range * 3)
-      : SourceSystem.createRectShape(solidBody, source.range);
+      ? SourceSystem.createCircleShape(source.range.get() * 3)
+      : SourceSystem.createRectShape(solidBody, source.range.get());
 
     const emitter = this.attachSynchronization(body, entity);
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
@@ -61,14 +61,14 @@ export default class SourceSystem extends System {
     // Das Ganze ggf in einem/mehreren Worker Thread(s) machen?
     const values = new Float32Array(width * height);
     const f = isGaussian
-      ? gaussian(transform.position, { x: source.range, y: source.range })
+      ? gaussian(transform.position.get(), { x: source.range.get(), y: source.range.get() })
       : flatRect(
-          Phaser.Physics.Matter.Matter.Vector.sub(transform.position, {
-            x: (solidBody ? solidBody.size.width : source.range) / 2,
-            y: (solidBody ? solidBody.size.height : source.range) / 2,
+          Phaser.Physics.Matter.Matter.Vector.sub(transform.position.get(), {
+            x: (solidBody ? solidBody.size.get().width : source.range.get()) / 2,
+            y: (solidBody ? solidBody.size.get().height : source.range.get()) / 2,
           }),
-          solidBody ? solidBody.size.width : source.range,
-          solidBody ? solidBody.size.height : source.range,
+          solidBody ? solidBody.size.get().width : source.range.get(),
+          solidBody ? solidBody.size.get().height : source.range.get(),
         );
 
     let max = 0;
@@ -117,9 +117,15 @@ export default class SourceSystem extends System {
       }) as SourcePhysicsObject;
     }
 
-    return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, solidBody.size.width + 20, solidBody.size.height + 20, {
-      isSensor: true,
-    }) as SourcePhysicsObject;
+    return Phaser.Physics.Matter.Matter.Bodies.rectangle(
+      0,
+      0,
+      solidBody.size.get().width + 20,
+      solidBody.size.get().height + 20,
+      {
+        isSensor: true,
+      },
+    ) as SourcePhysicsObject;
   }
 
   private static createCircleShape(range: number): SourcePhysicsObject {
@@ -132,8 +138,8 @@ export default class SourceSystem extends System {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const onBefore = (): void => {
       Phaser.Physics.Matter.Matter.Body.setPosition(body, {
-        x: transform.position.x,
-        y: transform.position.y,
+        x: transform.position.get().x,
+        y: transform.position.get().y,
       });
     };
     this.scene.matter.world.on('beforeupdate', onBefore);

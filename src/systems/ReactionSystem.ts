@@ -37,10 +37,10 @@ export default class ReactionSystem extends System {
       ) as TransformableComponent;
 
       const availableAngles = sensor.userData.tensors.map(t => t.angle);
-      const currentAngle = mod(transform.angle, Math.PI * 2);
+      const currentAngle = mod(transform.angle.get(), Math.PI * 2);
 
       const closestAngle = availableAngles.reduce((prev, curr) => {
-        return Math.abs(curr - currentAngle) < Math.abs(prev - transform.angle) ? curr : prev;
+        return Math.abs(curr - currentAngle) < Math.abs(prev - transform.angle.get()) ? curr : prev;
       });
 
       const sensorComponent = sensor.userData.belongsTo.component;
@@ -77,12 +77,12 @@ export default class ReactionSystem extends System {
         }
 
         const value = this.correlations[lookUpKey][y][x];
-        sensorComponent.activation = Math.max(value, sensorComponent.activation);
+        sensorComponent.activation.set(Math.max(value, sensorComponent.activation.get()));
       }
     }
   }
 
   private static reactTogether(sensor: SensorPhysicsObject, source: SourcePhysicsObject): boolean {
-    return sensor.userData.belongsTo.component.reactsTo === source.userData.belongsTo.component.substance;
+    return sensor.userData.belongsTo.component.reactsTo.get() === source.userData.belongsTo.component.substance.get();
   }
 }
