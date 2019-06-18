@@ -4,6 +4,7 @@ import Entity from '../Entity';
 import { ComponentType, SubstanceType } from '../enums';
 import SidebarScene from './SidebarScene';
 import Component from '../components/Component';
+import Attribute from '../components/Attribute';
 
 export default class SettingScene extends SidebarScene {
   public constructor() {
@@ -11,43 +12,28 @@ export default class SettingScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
-    const uiElements = entity.getAllComponents().map(component => {
-      if (component.name === ComponentType.MOTOR) {
-        const element = this.add.dom(0, 0).createFromCache('motor_template');
-        SettingScene.bindValues(element, component);
-        return element;
-      }
+    const uiElements = entity.getAllComponents().map((component): Phaser.GameObjects.DOMElement[] => {
+      if (
+        component.name === ComponentType.MOTOR ||
+        component.name === ComponentType.SENSOR ||
+        component.name === ComponentType.SOURCE ||
+        component.name === ComponentType.SOLID_BODY
+      ) {
+        // const element = this.add.dom(0, 0).createFromCache('motor_template');
+        // SettingScene.bindValues(element, component);
+        return Object.keys(component).map(attribute => {
+          if (component[attribute] instanceof Attribute) {
+            return (component[attribute] as Attribute<any, any>).render(this);
+          }
 
-      if (component.name === ComponentType.SENSOR) {
-        const element = this.add.dom(0, 0).createFromCache('sensor_template');
-        const reactsToSelect = element.getChildByName('reactsTo') as HTMLSelectElement;
-        Object.entries(SubstanceType).forEach(([key, value]) => {
-          reactsToSelect.add(new Option(value, key));
+          return undefined;
         });
-        SettingScene.bindValues(element, component);
-        return element;
       }
 
-      if (component.name === ComponentType.SOURCE) {
-        const element = this.add.dom(0, 0).createFromCache('source_template');
-        const substanceSelect = element.getChildByName('substance') as HTMLSelectElement;
-        Object.entries(SubstanceType).forEach(([key, value]) => {
-          substanceSelect.add(new Option(value, key));
-        });
-        SettingScene.bindValues(element, component);
-        return element;
-      }
-
-      if (component.name === ComponentType.SOLID_BODY) {
-        const element = this.add.dom(0, 0).createFromCache('body_template');
-        SettingScene.bindValues(element, component);
-        return element;
-      }
-
-      return undefined;
+      return [];
     });
 
-    this.pack(uiElements);
+    this.pack(uiElements.flat());
   }
 
   private static bindValues(element: Phaser.GameObjects.DOMElement, component: Component): void {

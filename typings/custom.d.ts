@@ -90,3 +90,5 @@ interface Dimensions {
 }
 
 type Color = number;
+
+type Vector2D = Phaser.Physics.Matter.Matter.Vector;
