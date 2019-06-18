@@ -32,7 +32,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
     return container;
   }
 
-  protected onValueSet(): void {
+  protected onUpdate(): void {
     if (this.inputElementX) {
       this.inputElementX.value = (this.value.x as unknown) as string;
     }

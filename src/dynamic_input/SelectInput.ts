@@ -17,7 +17,7 @@ export default class SelectInput<T> extends BaseInput<T> {
   }
 
   // eslint-disable-next-line
-  protected onValueSet(): void {}
+  protected onUpdate(): void {}
 
   // preUpdate(time, delta) {
   //     super.preUpdate(time, delta);

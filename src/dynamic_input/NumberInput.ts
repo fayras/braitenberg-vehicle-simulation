@@ -20,7 +20,7 @@ export default class NumberInput extends BaseInput<number> {
     return input;
   }
 
-  protected onValueSet(): void {
+  protected onUpdate(): void {
     if (this.inputElement) {
       this.inputElement.value = (this.value as unknown) as string;
     }

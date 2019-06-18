@@ -17,7 +17,7 @@ export default class TextInput extends BaseInput<string | number> {
   }
 
   // eslint-disable-next-line
-  protected onValueSet(): void {}
+  protected onUpdate(): void {}
 
   // preUpdate(time, delta) {
   //     super.preUpdate(time, delta);

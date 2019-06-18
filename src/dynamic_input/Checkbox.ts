@@ -19,7 +19,7 @@ export default class Checkbox extends BaseInput<boolean> {
     return input;
   }
 
-  protected onValueSet(): void {
+  protected onUpdate(): void {
     if (this.inputElement) {
       this.inputElement.checked = this.value;
     }
