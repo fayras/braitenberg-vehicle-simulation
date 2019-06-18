@@ -14,6 +14,7 @@ export default class SettingScene extends SidebarScene {
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
     const uiElements = entity.getAllComponents().map((component): Phaser.GameObjects.DOMElement[] => {
       if (
+        component.name === ComponentType.TRANSFORMABLE ||
         component.name === ComponentType.MOTOR ||
         component.name === ComponentType.SENSOR ||
         component.name === ComponentType.SOURCE ||
@@ -21,13 +22,16 @@ export default class SettingScene extends SidebarScene {
       ) {
         // const element = this.add.dom(0, 0).createFromCache('motor_template');
         // SettingScene.bindValues(element, component);
-        return Object.keys(component).map(attribute => {
+        const title = this.add.dom(0, 0, 'h3', '', component.name);
+        const attributes = Object.keys(component).map(attribute => {
           if (component[attribute] instanceof Attribute) {
             return (component[attribute] as Attribute<any, any>).render(this);
           }
 
           return undefined;
         });
+
+        return [title, ...attributes];
       }
 
       return [];
