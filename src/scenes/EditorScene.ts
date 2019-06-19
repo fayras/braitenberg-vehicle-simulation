@@ -23,8 +23,17 @@ export default class EditorScene extends SidebarScene {
     const source = this.add.image(0, 0, 'source_icon');
     const motor = this.add.image(0, 0, 'motor_icon');
     const sensor = this.add.image(0, 0, 'sensor_icon');
-    const grundformen = this.add.image(0, 0, 'grundformen');
-    const vorlagen = this.add.image(0, 0, 'vorlagen');
+
+    const vorlagen = this.add
+      .text(-40, 0, 'Vorlagen')
+      .setFontSize(23)
+      .setColor('black')
+      .setFontFamily('Calibri');
+    const grundformen = this.add
+      .text(-40, 0, 'Grundformen')
+      .setFontSize(23)
+      .setColor('black')
+      .setFontFamily('Calibri');
 
     this.makeInteractable(prefab, position => {
       const entity = new Entity();

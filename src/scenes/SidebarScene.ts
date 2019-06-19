@@ -58,7 +58,12 @@ export default abstract class SidebarScene extends Phaser.Scene {
   }
 
   protected pack(
-    objects: (Phaser.GameObjects.Image | Phaser.GameObjects.Sprite | Phaser.GameObjects.DOMElement | undefined)[],
+    objects: (
+      | Phaser.GameObjects.Image
+      | Phaser.GameObjects.Sprite
+      | Phaser.GameObjects.DOMElement
+      | Phaser.GameObjects.Text
+      | undefined)[],
   ): void {
     if (this.container) {
       const padding = 15;
@@ -71,6 +76,13 @@ export default abstract class SidebarScene extends Phaser.Scene {
           this.container.add(object);
           this.container.height += objectHeight + padding;
         }
+        // Wie hier auf Typ gleichheit prüfen ?
+        //if (object=== Phaser.GameObjects.Text) {
+        //const objectHeight = object.height;
+        //object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
+        //this.container.add(object);
+        //this.container.height += objectHeight + padding;
+        //}
       }
     }
   }
