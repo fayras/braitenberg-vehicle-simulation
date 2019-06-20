@@ -23,16 +23,16 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
     return this.value;
   }
 
-  public set(value: T): void {
+  public set(value: T, silent: boolean = false): void {
     const oldValue = this.value;
 
     this.value = value;
 
-    if (this.el) {
+    if (this.el && !silent) {
       this.el.value = value;
     }
 
-    if (value !== oldValue) {
+    if (value !== oldValue && !silent) {
       this.changeHanlers.forEach(handler => handler(value));
     }
   }
