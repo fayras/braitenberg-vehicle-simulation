@@ -159,10 +159,7 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  private handleResize(gameSize: Phaser.Structs.Size): void {
-    const { width, height } = gameSize;
-
-    this.cameras.resize(width, height);
+  private handleResize(): void {
     this.matter.world.setBounds();
   }
 }
