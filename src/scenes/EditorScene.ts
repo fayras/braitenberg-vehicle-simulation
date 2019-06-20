@@ -42,7 +42,7 @@ export default class EditorScene extends SidebarScene {
     this.makeInteractable(vehicle, position => {
       EntityManager.createEntity(
         new TransformableComponent(position),
-        new RenderComponent('logo', 100),
+        new RenderComponent('redX', 100),
         new SolidBodyComponent(100),
       );
     });

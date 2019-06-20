@@ -9,6 +9,7 @@ import sensorIcon from '../../assets/sensor.png';
 import motorIcon from '../../assets/motor.png';
 import sourceIcon from '../../assets/source_icon.png';
 import obstacleIcon from '../../assets/Mauer.png';
+import redX from '../../assets/x.png';
 import buttonSpriteSheet from '../../assets/gui_buttons.png';
 
 export default class MainInterfaceScene extends Phaser.Scene {
@@ -28,6 +29,7 @@ export default class MainInterfaceScene extends Phaser.Scene {
     this.load.image('motor_icon', motorIcon);
     this.load.image('source_icon', sourceIcon);
     this.load.image('obstacle_Icon', obstacleIcon);
+    this.load.image('redX', redX);
     this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 50, frameHeight: 48 });
   }
 
