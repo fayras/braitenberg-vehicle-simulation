@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
-import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
+import { ComponentType, EventType } from '../enums';
+import { CORRELATION_SCALE } from '../constants';
 import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';

@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { conv2d, squeeze, tidy, Tensor2D } from '@tensorflow/tfjs-core';
 import System from './System';
-import { ComponentType, EventType, CORRELATION_SCALE } from '../enums';
+import { ComponentType, EventType } from '../enums';
+import { CORRELATION_SCALE } from '../constants';
 import EventBus from '../EventBus';
 import TransformableComponent from '../components/TransformableComponent';
 
