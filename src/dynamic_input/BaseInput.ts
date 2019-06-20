@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { throttle } from 'lodash-es';
+import { throttle, isEqual } from 'lodash-es';
 import Entity from '../Entity';
 
 export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement {
@@ -40,7 +40,7 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     this.m_value = value;
     this.updateValue();
 
-    if (old !== value) {
+    if (!isEqual(old, value)) {
       this.attribute.set(value);
     }
   }

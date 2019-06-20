@@ -29,28 +29,33 @@ export default class PositionInput extends BaseInput<Vector2D> {
     const dragEl = getNode<HTMLDivElement>(nodes, '.position-indicator');
     dragEl.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
 
-    interact(dragEl).draggable({
-      listeners: {
-        move: event => {
-          const { target } = event;
-          this.position.x += event.dx;
-          this.position.y += event.dy;
+    interact(dragEl)
+      .draggable({
+        modifiers: [
+          interact.modifiers.restrict({
+            restriction: 'parent',
+            elementRect: { left: 0, right: 1, top: 0, bottom: 1 },
+          }),
+          interact.modifiers.snap({
+            targets: [interact.snappers.grid({ x: 10, y: 10 })],
+            relativePoints: [{ x: 0.5, y: 0.5 }],
+            offset: { x: 50, y: 50 },
+          }),
+        ],
+      })
+      .on('dragmove', event => {
+        const { target } = event;
+        this.position.x += event.dx;
+        this.position.y += event.dy;
 
-          target.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
-        },
-      },
-      modifiers: [
-        interact.modifiers.restrict({
-          restriction: 'parent',
-          elementRect: { left: 0.25, right: 0.75, top: 0.25, bottom: 0.75 },
-        }),
-        interact.modifiers.snap({
-          targets: [interact.snappers.grid({ x: 10, y: 10 })],
-          relativePoints: [{ x: 0.5, y: 0.5 }],
-          offset: 'parent',
-        }),
-      ],
-    });
+        target.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
+      })
+      .on('dragend', () => {
+        const x = Math.round(this.position.x - rect.width / 2);
+        const y = Math.round(this.position.y - rect.height / 2);
+
+        this.value = { x, y };
+      });
 
     // inputX.type = 'number';
     // inputY.type = 'number';
