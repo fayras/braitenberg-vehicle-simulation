@@ -1,14 +1,26 @@
 import interact from 'interactjs';
 import BaseInput from './BaseInput';
+import Entity from '../Entity';
+import { ComponentType } from '../enums';
+import SolidBodyComponent from '../components/SolidBodyComponent';
+import { calculateAspectRatioFit } from '../utils/size';
 
 export default class PositionInput extends BaseInput<Vector2D> {
   protected position: Vector2D = { x: 0, y: 0 };
 
-  protected create(): Element {
-    this.position = { x: this.value.x + 50, y: this.value.y + 50 };
+  protected create(entity: Entity): Element {
+    const solidBody = entity.getComponent(ComponentType.SOLID_BODY);
+
+    let rect = { width: 100, height: 100 };
+    if (solidBody) {
+      const { shape, size } = solidBody as SolidBodyComponent;
+      rect = calculateAspectRatioFit(size.get().width, size.get().height, 100, 100);
+    }
+
+    this.position = { x: this.value.x, y: this.value.y };
 
     const html = `
-      <div class="position-background">
+      <div class="position-background" style="width:${rect.width}px;height:${rect.height}px;">
         <div class="draggable position-indicator"></div>
       </div>
     `;
@@ -33,6 +45,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
         interact.modifiers.snap({
           targets: [interact.snappers.grid({ x: 10, y: 10 })],
           relativePoints: [{ x: 0.5, y: 0.5 }],
+          offset: { x: 0, y: 0 },
         }),
       ],
     });

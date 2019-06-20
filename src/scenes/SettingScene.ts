@@ -36,7 +36,7 @@ export default class SettingScene extends SidebarScene {
 
         const attributes = Object.keys(component).map(attribute => {
           if (component[attribute] instanceof Attribute) {
-            return (component[attribute] as Attribute<any, any>).render(this);
+            return (component[attribute] as Attribute<any, any>).render(this, entity);
           }
 
           return undefined;

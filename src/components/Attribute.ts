@@ -1,6 +1,13 @@
 import BaseInput from '../dynamic_input/BaseInput';
+import Entity from '../Entity';
 
-type ElementConstructor<T, S> = new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S;
+type ElementConstructor<T, S> = new (
+  scene: Phaser.Scene,
+  attr: Settable<T>,
+  value: T,
+  label: string,
+  entity: Entity,
+) => S;
 
 export default class Attribute<T, S extends BaseInput<T>> implements Settable<T> {
   private value: T;
@@ -48,9 +55,13 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
     }
   }
 
-  public render(scene: Phaser.Scene): S {
-    this.el = new this.Element(scene, this, this.value, this.label);
+  public render(scene: Phaser.Scene, entity: Entity): S {
+    this.el = new this.Element(scene, this, this.value, this.label, entity);
 
     return this.el;
+  }
+
+  public renderedAs(type: any): boolean {
+    return this.Element === type;
   }
 }

@@ -13,15 +13,15 @@
   width: 100px;
   height: 100px;
   display: block;
-  background-color: burlywood;
-  border: 1px black solid;
+  background-color: white;
+  border: 2px black solid;
 }
 
 .position-indicator {
   display: block;
   width: 10px;
   height: 10px;
-  background-color: white;
+  background-color: lightblue;
   border-radius: 10px;
   border: 2px black solid;
 }

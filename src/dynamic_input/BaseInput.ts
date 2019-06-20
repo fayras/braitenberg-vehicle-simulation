@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { throttle } from 'lodash-es';
+import Entity from '../Entity';
 
 export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement {
   protected m_value: T;
@@ -8,7 +9,7 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
 
   private updateValue: () => void;
 
-  public constructor(scene: Phaser.Scene, attribute: Settable<T>, value: T, label: string) {
+  public constructor(scene: Phaser.Scene, attribute: Settable<T>, value: T, label: string, entity: Entity) {
     super(scene, 0, 0);
 
     this.m_value = value;
@@ -20,7 +21,7 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     const labelEl = document.createElement('span');
     labelEl.innerText = label;
     labelEl.style.display = 'block';
-    const el = this.create();
+    const el = this.create(entity);
 
     root.appendChild(labelEl);
     root.appendChild(el);
@@ -30,7 +31,7 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     scene.add.existing(this);
   }
 
-  protected abstract create(): Element;
+  protected abstract create(entity: Entity): Element;
 
   protected abstract onUpdate(): void;
 
