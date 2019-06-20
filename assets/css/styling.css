@@ -1,4 +1,5 @@
 .deleteButton {
   background-color: red;
-  float: right;
+  float: left;
+  align-content: flex-end;
 }

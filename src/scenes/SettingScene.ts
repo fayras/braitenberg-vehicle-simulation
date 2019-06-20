@@ -24,6 +24,15 @@ export default class SettingScene extends SidebarScene {
         // SettingScene.bindValues(element, component);
         const title = this.add.dom(0, 0, 'h3', '', component.name);
         const deleteButton = this.add.dom(0, 0, 'button', '', '✖').setClassName('deleteButton');
+        deleteButton.addListener('click');
+        deleteButton.on('click', () => {
+          console.log('Löschbutton gedrueckt');
+
+          // Component Type des Entitys finden und die jeweilige Componente löschen
+          // Zusammenhang Component und Component Type
+          //const component = typ ;
+          //entity.removeComponent(typ);
+        });
 
         const attributes = Object.keys(component).map(attribute => {
           if (component[attribute] instanceof Attribute) {
