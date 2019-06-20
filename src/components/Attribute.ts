@@ -1,19 +1,17 @@
 import BaseInput from '../dynamic_input/BaseInput';
 
+type ElementConstructor<T, S> = new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S;
+
 export default class Attribute<T, S extends BaseInput<T>> implements Settable<T> {
   private value: T;
 
   private label: string;
 
-  private Element: new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S;
+  private Element: ElementConstructor<T, S>;
 
   private el: S | null = null;
 
-  public constructor(
-    value: T,
-    label: string,
-    renderAs: new (scene: Phaser.Scene, attr: Settable<T>, value: T, label: string) => S,
-  ) {
+  public constructor(value: T, label: string, renderAs: ElementConstructor<T, S>) {
     this.value = value;
     this.label = label;
     this.Element = renderAs;
