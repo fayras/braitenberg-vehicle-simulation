@@ -38,6 +38,7 @@
   "dependencies": {
     "@tensorflow/tfjs-core": "^1.2.1",
     "@types/lodash-es": "^4.17.3",
+    "interactjs": "^1.4.11",
     "lodash-es": "^4.17.11",
     "mathjs": "^5.10.3",
     "phaser": "^3.18.1"
