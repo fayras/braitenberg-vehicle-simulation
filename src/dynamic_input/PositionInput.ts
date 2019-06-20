@@ -4,6 +4,7 @@ import Entity from '../Entity';
 import { ComponentType } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import { calculateAspectRatioFit } from '../utils/size';
+import { parseDOM, getNode } from '../utils/dom';
 
 export default class PositionInput extends BaseInput<Vector2D> {
   protected position: Vector2D = { x: 0, y: 0 };
@@ -24,8 +25,8 @@ export default class PositionInput extends BaseInput<Vector2D> {
         <div class="draggable position-indicator"></div>
       </div>
     `;
-    const nodes = new DOMParser().parseFromString(html.trim(), 'text/html');
-    const dragEl = nodes.querySelector('.position-indicator') as HTMLDivElement;
+    const nodes = parseDOM(html);
+    const dragEl = getNode<HTMLDivElement>(nodes, '.position-indicator');
     dragEl.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
 
     interact(dragEl).draggable({
@@ -41,11 +42,12 @@ export default class PositionInput extends BaseInput<Vector2D> {
       modifiers: [
         interact.modifiers.restrict({
           restriction: 'parent',
+          elementRect: { left: 0.25, right: 0.75, top: 0.25, bottom: 0.75 },
         }),
         interact.modifiers.snap({
           targets: [interact.snappers.grid({ x: 10, y: 10 })],
           relativePoints: [{ x: 0.5, y: 0.5 }],
-          offset: { x: 0, y: 0 },
+          offset: 'parent',
         }),
       ],
     });
