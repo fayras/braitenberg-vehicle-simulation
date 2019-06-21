@@ -14,9 +14,7 @@ export default class NumberInput extends BaseInput<number> {
       this.value = (input.value as unknown) as number;
     });
 
-    setTimeout(() => {
-      this.inputElement = input;
-    }, 0);
+    this.inputElement = input;
 
     return input;
   }

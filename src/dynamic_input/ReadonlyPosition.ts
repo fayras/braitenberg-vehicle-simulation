@@ -17,10 +17,8 @@ export default class ReadonlyPosition extends BaseInput<Vector2D> {
     const x = getNode<HTMLSpanElement>(nodes, 'span[name="pos-x"]');
     const y = getNode<HTMLSpanElement>(nodes, 'span[name="pos-y"]');
 
-    setTimeout(() => {
-      this.spanX = x;
-      this.spanY = y;
-    }, 0);
+    this.spanX = x;
+    this.spanY = y;
 
     return nodes.body.childNodes[0] as Element;
   }

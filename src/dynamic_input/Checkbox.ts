@@ -12,9 +12,7 @@ export default class Checkbox extends BaseInput<boolean> {
       this.value = input.checked;
     });
 
-    setTimeout(() => {
-      this.inputElement = input;
-    }, 0);
+    this.inputElement = input;
 
     return input;
   }
