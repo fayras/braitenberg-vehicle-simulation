@@ -57,6 +57,7 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
 
   public render(scene: Phaser.Scene, entity: Entity): S {
     this.el = new this.Element(scene, this, this.value, this.label, entity);
+    this.el.init();
 
     return this.el;
   }
