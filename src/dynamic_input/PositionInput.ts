@@ -39,7 +39,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
         modifiers: [
           interact.modifiers.restrict({
             restriction: 'parent',
-            elementRect: { left: 0.5, right: 0.5, top: 0.5, bottom: 0.5 },
+            elementRect: { left: 0.4, right: 0.6, top: 0.4, bottom: 0.6 },
           }),
         ],
       })
@@ -48,8 +48,8 @@ export default class PositionInput extends BaseInput<Vector2D> {
         this.position.x += dx;
         this.position.y += dy;
 
-        const newX = Math.round(this.position.x / 10) * 10;
-        const newY = Math.round(this.position.y / 10) * 10;
+        const newX = Math.round(this.position.x / snappingSize) * snappingSize;
+        const newY = Math.round(this.position.y / snappingSize) * snappingSize;
 
         console.log(newX, newY);
 
@@ -59,8 +59,8 @@ export default class PositionInput extends BaseInput<Vector2D> {
         let x = Math.round(this.position.x - rect.width / 2 + indicatorSize);
         let y = Math.round(this.position.y - rect.height / 2 + indicatorSize);
 
-        x = Math.round(x / 10) * 10;
-        y = Math.round(y / 10) * 10;
+        x = Math.round(x / snappingSize) * snappingSize;
+        y = Math.round(y / snappingSize) * snappingSize;
 
         console.log(x, y);
 
