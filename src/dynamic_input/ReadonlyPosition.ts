@@ -8,7 +8,7 @@ export default class ReadonlyPosition extends BaseInput<Vector2D> {
 
   protected create(): Element {
     const html = `
-      <div style="display:block;width: 100px;height: 20px">
+      <div>
         X: <span name="pos-x">${this.value.x}</span>, Y: <span name="pos-y">${this.value.y}</span>
       </div>
     `;

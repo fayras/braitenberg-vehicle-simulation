@@ -1,21 +1,21 @@
 export enum BodyShape {
-  RECTANGLE = 'R',
-  CIRCLE = 'C',
+  RECTANGLE = 'Rechteck',
+  CIRCLE = 'Kreis',
 }
 
 export enum ComponentType {
-  SOLID_BODY = 'BODY',
-  SENSOR = 'SENSOR',
-  RENDER = 'RENDER',
-  MOTOR = 'MOTOR',
-  SOURCE = 'SOURCE',
-  TRANSFORMABLE = 'TRANSFORMABLE',
-  CONNECTION = 'CONNECTION',
+  SOLID_BODY = 'Körper',
+  SENSOR = 'Sensor',
+  RENDER = 'Rendering',
+  MOTOR = 'Motor',
+  SOURCE = 'Quelle',
+  TRANSFORMABLE = 'Transform',
+  CONNECTION = 'Verbindung',
 }
 
 export enum SubstanceType {
-  LIGHT = 'LIGHT',
-  BARRIER = 'BARRIER',
+  LIGHT = 'Licht',
+  BARRIER = 'Hindernis',
 }
 
 export enum EmissionType {

@@ -12,10 +12,10 @@ export default class SelectInput<T> extends BaseInput<T> {
       }
     });
 
-    Object.entries(type).forEach(([key, value]) => {
+    Object.values(type).forEach(value => {
       const option = document.createElement('option');
-      option.value = value as string;
-      option.innerHTML = key;
+      option.value = value;
+      option.innerHTML = value;
       input.appendChild(option);
     });
 
