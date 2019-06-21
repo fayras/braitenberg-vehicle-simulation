@@ -18,7 +18,12 @@ export default class PositionInput extends BaseInput<Vector2D> {
       rect = calculateAspectRatioFit(size.get().width, size.get().height, 100, 100);
     }
 
-    this.position = { x: this.value.x, y: this.value.y };
+    // Die Hälfte der Breite/Höhe des Indikators. Der Wert wird über CSS gesetzt:
+    // 10px Breite + je 2px Kante auf beiden Seiten = 14px Breite
+    const indicatorSize = 7;
+    const snappingSize = 10;
+    this.position.x = this.value.x + rect.width / 2 - indicatorSize;
+    this.position.y = this.value.y + rect.height / 2 - indicatorSize;
 
     const html = `
       <div class="position-background" style="width:${rect.width}px;height:${rect.height}px;">
@@ -34,25 +39,30 @@ export default class PositionInput extends BaseInput<Vector2D> {
         modifiers: [
           interact.modifiers.restrict({
             restriction: 'parent',
-            elementRect: { left: 0, right: 1, top: 0, bottom: 1 },
-          }),
-          interact.modifiers.snap({
-            targets: [interact.snappers.grid({ x: 10, y: 10 })],
-            relativePoints: [{ x: 0.5, y: 0.5 }],
-            offset: { x: 50, y: 50 },
+            elementRect: { left: 0.5, right: 0.5, top: 0.5, bottom: 0.5 },
           }),
         ],
       })
       .on('dragmove', event => {
-        const { target } = event;
-        this.position.x += event.dx;
-        this.position.y += event.dy;
+        const { target, dx, dy } = event;
+        this.position.x += dx;
+        this.position.y += dy;
 
-        target.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
+        const newX = Math.round(this.position.x / 10) * 10;
+        const newY = Math.round(this.position.y / 10) * 10;
+
+        console.log(newX, newY);
+
+        target.style.transform = `translate(${newX}px, ${newY}px)`;
       })
       .on('dragend', () => {
-        const x = Math.round(this.position.x - rect.width / 2);
-        const y = Math.round(this.position.y - rect.height / 2);
+        let x = Math.round(this.position.x - rect.width / 2 + indicatorSize);
+        let y = Math.round(this.position.y - rect.height / 2 + indicatorSize);
+
+        x = Math.round(x / 10) * 10;
+        y = Math.round(y / 10) * 10;
+
+        console.log(x, y);
 
         this.value = { x, y };
       });
