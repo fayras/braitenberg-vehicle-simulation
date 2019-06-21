@@ -24,8 +24,8 @@ export enum EmissionType {
 }
 
 export enum SensorActivation {
-  LINEAR = 'LINEAR',
-  QUADRATIC = 'QUADRATIC',
+  EXCITATORY = 'EXCITATORY',
+  INHIBITORY = 'INHIBITORY',
 }
 
 export enum EventType {

@@ -9,6 +9,12 @@
   user-select: none;
 }
 
+.base-input-container {
+  display: block;
+  width: 224px;
+  min-height: 20px;
+}
+
 .position-background {
   width: 100px;
   height: 100px;

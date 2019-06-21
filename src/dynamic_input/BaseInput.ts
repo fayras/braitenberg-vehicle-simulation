@@ -18,6 +18,8 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     this.updateValue = throttle(this.onUpdate, 60);
 
     const root = document.createElement('div');
+    root.className = 'base-input-container';
+
     const labelEl = document.createElement('span');
     labelEl.innerText = label;
     labelEl.style.display = 'block';
