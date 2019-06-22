@@ -41,8 +41,10 @@ export default class ReactionSystem extends System {
       const currentAngle = mod(transform.angle.get(), Math.PI * 2);
 
       const closestAngle = availableAngles.reduce((prev, curr) => {
-        return Math.abs(curr - currentAngle) < Math.abs(prev - transform.angle.get()) ? curr : prev;
+        return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
       });
+
+      console.log(transform.angle.get(), currentAngle, closestAngle);
 
       const sensorComponent = sensor.userData.belongsTo.component;
       const sourceComponent = source.userData.belongsTo.component;
