@@ -108,29 +108,29 @@ export default class SensorSystem extends System {
     // window.open(offScreenCanvas.toDataURL(), '_blank');
     // window.open(offScreenCanvasDown.toDataURL(), '_blank');
 
-    const up = tf.tensor4d(valuesUp, [height, width, 1, 1]);
-    const right = tf.tensor4d(valuesRight, [height, width, 1, 1]);
-    const down = tf.tensor4d(valuesDown, [height, width, 1, 1]);
-    const left = tf.tensor4d(valuesLeft, [height, width, 1, 1]);
+    const up = tf.tensor4d(valuesDown, [height, width, 1, 1]);
+    const right = tf.tensor4d(valuesLeft, [height, width, 1, 1]);
+    const down = tf.tensor4d(valuesUp, [height, width, 1, 1]);
+    const left = tf.tensor4d(valuesRight, [height, width, 1, 1]);
 
     body.label = ComponentType.SENSOR;
     body.userData = {
       kernel: f,
       tensors: [
         {
-          angle: 0,
+          angle: Math.PI,
           tensor: up,
         },
         {
-          angle: Math.PI / 2,
+          angle: Math.PI + Math.PI / 2,
           tensor: right,
         },
         {
-          angle: Math.PI,
+          angle: 0,
           tensor: down,
         },
         {
-          angle: Math.PI + Math.PI / 2,
+          angle: Math.PI / 2,
           tensor: left,
         },
       ],
