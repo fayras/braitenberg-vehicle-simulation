@@ -24,6 +24,13 @@ declare namespace EventMessages {
     height: number;
   }
 
+  interface NewSensorInfo {
+    id: number;
+    values: { [angle: number]: Float32Array };
+    width: number;
+    height: number;
+  }
+
   type Reaction = CollisionBodies;
 }
 
@@ -88,12 +95,14 @@ type EventMessage =
   | EventMessages.SensorActive
   | EventMessages.Reaction
   | import('../src/Entity').default
-  | EventMessages.NewSourceInfo;
+  | EventMessages.NewSourceInfo
+  | EventMessages.NewSensorInfo;
 type EventHandler =
   | ((event: EventMessages.ApplyForce) => void)
   | ((event: EventMessages.SensorActive) => void)
   | ((event: EventMessages.Reaction) => void)
   | ((event: import('../src/Entity').default) => void)
+  | ((event: EventMessages.NewSensorInfo) => void)
   | ((event: EventMessages.NewSourceInfo) => void);
 
 interface Dimensions {
