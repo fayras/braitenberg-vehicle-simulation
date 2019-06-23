@@ -83,12 +83,13 @@ export default class MainScene extends Phaser.Scene {
     entity.addComponent(new RenderComponent('vehicle_icon', 100));
     const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4));
-    const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4));
-    const sensor3 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4, SubstanceType.BARRIER));
-    const sensor4 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4, SubstanceType.BARRIER));
+    // const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4));
+    // const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4));
+    // const sensor3 = entity.addComponent(new SensorComponent({ x: -50, y: 55 }, 80, 0.4, SubstanceType.BARRIER));
+    const sensor4 = entity.addComponent(new SensorComponent({ x: 50, y: 55 }, 80, 0.4, SubstanceType.LIGHT));
     entity.addComponent(
-      new ConnectionComponent([sensor1, sensor2, sensor3, sensor4], [motor1, motor2], [[0, 1], [1, 0], [1, 0], [0, 1]]),
+      // new ConnectionComponent([sensor1, sensor2, sensor3, sensor4], [motor1, motor2], [[0, 1], [1, 0], [1, 0], [0, 1]]),
+      new ConnectionComponent([sensor4], [motor1, motor2], [[0, 1]]),
     );
     EntityManager.addExistingEntity(entity);
 
