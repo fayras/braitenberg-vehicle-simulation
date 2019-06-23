@@ -18,7 +18,7 @@ export default class ReactionSystem extends System {
   public constructor(scene: Phaser.Scene) {
     super(scene);
 
-    EventBus.subscribe(EventType.REACTION, this.handleReaction.bind(this));
+    // EventBus.subscribe(EventType.REACTION, this.handleReaction.bind(this));
   }
 
   public update(): void {}
@@ -44,7 +44,7 @@ export default class ReactionSystem extends System {
         return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
       });
 
-      console.log(transform.angle.get(), currentAngle, closestAngle);
+      // console.log(transform.angle.get(), currentAngle, closestAngle);
 
       const sensorComponent = sensor.userData.belongsTo.component;
       const sourceComponent = source.userData.belongsTo.component;
