@@ -23,6 +23,7 @@ export default class SourceSystem extends System {
     sources.forEach(source => {
       this.addSourceObject(entity, source);
     });
+    this.entities.push(entity);
   }
 
   protected onEntityDestroyed(entity: Entity): void {
@@ -31,6 +32,11 @@ export default class SourceSystem extends System {
       this.textures[source.id].destroy();
       delete this.textures[source.id];
     });
+
+    const found = this.entities.findIndex(e => e === entity);
+    if (found) {
+      this.entities.splice(found, 1);
+    }
   }
 
   private addSourceObject(entity: Entity, source: SourceComponent): void {
