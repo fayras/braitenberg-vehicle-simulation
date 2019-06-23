@@ -44,3 +44,15 @@ export function flatRect(topLeft: VectorLike, width: number, height: number): Ke
     return 0;
   };
 }
+
+function getAvailableAngles(): number[] {
+  const angleDelta = Math.PI / 2; // 45 Grad
+  const angles = [];
+  for (let a = 0; a < Math.PI * 2; a += angleDelta) {
+    angles.push(a);
+  }
+
+  return angles;
+}
+
+export const AVAILABLE_ANGLES = getAvailableAngles();

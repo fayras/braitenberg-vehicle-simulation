@@ -18,6 +18,12 @@ export default class ReactionSystem extends System {
 
   private correlations: { [sensorAnglePair: string]: number[][] } = {};
 
+  private sourcesCombined: Float32Array = new Float32Array();
+
+  private width: number = 0;
+
+  private height: number = 0;
+
   // private compute: (values: Float32Array, type: SubstanceType) => void;
 
   public constructor(scene: Phaser.Scene) {
@@ -29,13 +35,10 @@ export default class ReactionSystem extends System {
 
   public update(): void {}
 
-  private computeCorrelation(values: Float32Array, type: SubstanceType, width: number, height: number): void {
+  private computeCorrelation(type: SubstanceType): void {
     const sensors = Object.values(this.sensors).filter(s => s.type === type);
-    const angleDelta = Math.PI / 2; // 45 Grad
-    const angles = [];
-    for (let a = 0; a < Math.PI * 2; a += angleDelta) {
-      angles.push(a);
-    }
+
+    const { width, height } = this;
 
     console.log('computeCorrelation', sensors, type);
     sensors.forEach(sensor => {
@@ -45,7 +48,7 @@ export default class ReactionSystem extends System {
         tidy(() => {
           console.log('tidy', angle);
           const sensorTensor = tensor4d(angleValues, [sensor.height, sensor.width, 1, 1]);
-          const sourcesTensor = tensor4d(values, [1, height, width, 1]);
+          const sourcesTensor = tensor4d(this.sourcesCombined, [1, height, width, 1]);
 
           const conv = squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same'));
           conv.array().then(res => {
@@ -85,12 +88,18 @@ export default class ReactionSystem extends System {
       combined[i] = sum;
     }
 
-    this.computeCorrelation(combined, payload.type, payload.width, payload.height);
+    this.sourcesCombined = combined;
+    this.width = payload.width;
+    this.height = payload.height;
+    console.log('compute from source');
+    this.computeCorrelation(payload.type);
   }
 
   private onSensorCreated(payload: EventMessages.NewSensorInfo): void {
     console.log('onSensorCreated');
     this.sensors[payload.id] = payload;
+    console.log('compute from sensor');
+    this.computeCorrelation(payload.type);
   }
 
   private handleReaction(payload: EventMessages.Reaction): void {

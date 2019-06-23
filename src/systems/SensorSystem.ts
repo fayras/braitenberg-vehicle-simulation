@@ -6,7 +6,7 @@ import SensorComponent from '../components/SensorComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
-import { gaussian } from '../utils/reactions';
+import { gaussian, AVAILABLE_ANGLES } from '../utils/reactions';
 
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
@@ -45,11 +45,7 @@ export default class SensorSystem extends System {
     const width = halfWidth * 2;
     const height = halfHeight * 2;
 
-    const angleDelta = Math.PI / 2; // 45 Grad
-    const angles = [];
-    for (let a = 0; a < Math.PI * 2; a += angleDelta) {
-      angles.push(a);
-    }
+    const angles = AVAILABLE_ANGLES;
 
     const gauss = gaussian({ x: 0, y: 0 }, { x: sensor.angle.get(), y: sensor.range.get() });
     const f = (x: number, y: number, rotation: number = 0): number => {
@@ -93,7 +89,7 @@ export default class SensorSystem extends System {
       const image = this.scene.add.image(x, y, `sensor_texture_${sensor.id}_${angle}`);
       image.setScale(CORRELATION_SCALE);
       image.setBlendMode(Phaser.BlendModes.SCREEN);
-      image.setVisible(false);
+      // image.setVisible(false);
 
       textures[angle] = image;
       values[angle] = angleValues;
