@@ -17,6 +17,13 @@ declare namespace EventMessages {
     activation: number;
   }
 
+  interface NewSourceInfo {
+    id: number;
+    values: Float32Array;
+    width: number;
+    height: number;
+  }
+
   type Reaction = CollisionBodies;
 }
 
@@ -44,8 +51,6 @@ type SensorPhysicsObject = ComponentPhysicsBody & {
 
 type SourcePhysicsObject = ComponentPhysicsBody & {
   userData: {
-    kernel: (x: number, y: number) => number;
-    tensor: import('@tensorflow/tfjs-core').Tensor3D;
     belongsTo: {
       component: import('../src/components/SourceComponent').default;
     };
@@ -82,12 +87,14 @@ type EventMessage =
   | EventMessages.ApplyForce
   | EventMessages.SensorActive
   | EventMessages.Reaction
-  | import('../src/Entity').default;
+  | import('../src/Entity').default
+  | EventMessages.NewSourceInfo;
 type EventHandler =
   | ((event: EventMessages.ApplyForce) => void)
   | ((event: EventMessages.SensorActive) => void)
   | ((event: EventMessages.Reaction) => void)
-  | ((event: import('../src/Entity').default) => void);
+  | ((event: import('../src/Entity').default) => void)
+  | ((event: EventMessages.NewSourceInfo) => void);
 
 interface Dimensions {
   width: number;
