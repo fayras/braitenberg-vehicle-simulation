@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { debounce } from 'lodash-es';
-import { conv2d, squeeze, tidy, Tensor2D, tensor4d } from '@tensorflow/tfjs-core';
+import { conv2d, squeeze, tidy, Tensor2D, tensor4d, keep } from '@tensorflow/tfjs-core';
 import System from './System';
 import { ComponentType, EventType, SubstanceType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
@@ -82,22 +82,24 @@ export default class ReactionSystem extends System {
           const sensorTensor = tensor4d(angleValues, [sensor.height, sensor.width, 1, 1]);
           const sourcesTensor = tensor4d(this.sourcesCombined, [1, height, width, 1]);
 
-          const conv = squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same'));
-          conv.array().then(res => {
-            console.log('gotResult');
-            this.correlations[lookUpKey] = res;
+          const conv = keep(squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same')));
+
+          // conv.array().then(res => {
+          //   console.log('gotResult');
+          //   this.correlations[lookUpKey] = res;
+          // });
+          const maxTensor = conv.max();
+          maxTensor.data().then(value => {
+            tidy(() => {
+              const max = value[0];
+              const result = conv.div<Tensor2D>(max);
+              result.array().then(res => {
+                console.log('gotResult');
+                this.correlations[lookUpKey] = res;
+                conv.dispose();
+              });
+            });
           });
-          // conv
-          //   .max()
-          //   .data()
-          //   .then(value => {
-          //     const max = value[0];
-          //     const result = conv.div<Tensor2D>(max);
-          //     result.array().then(res => {
-          //       console.log('gotResult');
-          //       this.correlations[lookUpKey] = res;
-          //     });
-          //   });
         });
       });
     });
