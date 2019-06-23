@@ -14,19 +14,25 @@ export default abstract class System {
     EventBus.subscribe(EventType.ENTITY_CREATED, (entity: Entity) => {
       if (entity.hasComponents(...this.expectedComponents)) {
         this.onEntityCreated(entity);
+        this.entities.push(entity);
       }
     });
 
     EventBus.subscribe(EventType.ENTITY_DESTROYED, (entity: Entity) => {
       if (entity.hasComponents(...this.expectedComponents)) {
         this.onEntityDestroyed(entity);
+
+        const found = this.entities.findIndex(e => e.id === entity.id);
+        if (found) {
+          this.entities.splice(found, 1);
+        }
       }
     });
   }
 
   public abstract update(delta: number): void;
 
-  protected abstract onEntityCreated(entity: Entity): void;
+  protected onEntityCreated(entity: Entity): void {}
 
-  protected abstract onEntityDestroyed(entity: Entity): void;
+  protected onEntityDestroyed(entity: Entity): void {}
 }

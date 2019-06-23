@@ -32,15 +32,4 @@ export default class EngineSystem extends System {
       });
     });
   }
-
-  protected onEntityCreated(entity: Entity): void {
-    this.entities.push(entity);
-  }
-
-  protected onEntityDestroyed(entity: Entity): void {
-    const index = this.entities.findIndex(e => e.id === entity.id);
-    if (index > -1) {
-      this.entities.splice(index, 1);
-    }
-  }
 }

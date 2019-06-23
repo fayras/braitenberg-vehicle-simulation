@@ -24,7 +24,6 @@ export default class SensorSystem extends System {
     sensors.forEach(sensor => {
       this.addSensorObject(entity, sensor);
     });
-    this.entities.push(entity);
   }
 
   protected onEntityDestroyed(entity: Entity): void {
@@ -36,11 +35,6 @@ export default class SensorSystem extends System {
       });
       delete this.textures[sensor.id];
     });
-
-    const found = this.entities.findIndex(e => e === entity);
-    if (found) {
-      this.entities.splice(found, 1);
-    }
   }
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): void {
