@@ -6,6 +6,8 @@ import { ComponentType, EventType, SubstanceType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
 import EventBus from '../EventBus';
 import TransformableComponent from '../components/TransformableComponent';
+import SensorComponent from '../components/SensorComponent';
+import { AVAILABLE_ANGLES } from '../utils/reactions';
 
 const mod = (x: number, n: number): number => ((x % n) + n) % n;
 
@@ -24,7 +26,7 @@ export default class ReactionSystem extends System {
 
   private height: number = 0;
 
-  // private compute: (values: Float32Array, type: SubstanceType) => void;
+  // private compute: (type: SubstanceType) => void;
 
   public constructor(scene: Phaser.Scene) {
     super(scene);
@@ -33,7 +35,37 @@ export default class ReactionSystem extends System {
     EventBus.subscribe(EventType.SOURCE_CREATED, this.onSourceCreated.bind(this));
   }
 
-  public update(): void {}
+  public update(): void {
+    this.entities.forEach(entity => {
+      const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+      const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+
+      const currentAngle = mod(transform.angle.get(), Math.PI * 2);
+      const closestAngle = AVAILABLE_ANGLES.reduce((prev, curr) => {
+        return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
+      });
+
+      sensors.forEach(sensor => {
+        const lookUpKey = `${sensor.id}:${closestAngle}`;
+
+        if (!this.correlations[lookUpKey]) {
+          return;
+        }
+
+        const bodyPosition = transform.position.get();
+        const sensorOffset = sensor.position.get();
+        const x = Math.floor((bodyPosition.x + sensorOffset.x) / CORRELATION_SCALE);
+        const y = Math.floor((bodyPosition.y + sensorOffset.y) / CORRELATION_SCALE);
+
+        if (!this.correlations[lookUpKey][y] || !this.correlations[lookUpKey][y][x]) {
+          return;
+        }
+
+        const value = this.correlations[lookUpKey][y][x];
+        sensor.activation.set(value);
+      });
+    });
+  }
 
   private computeCorrelation(type: SubstanceType): void {
     const sensors = Object.values(this.sensors).filter(s => s.type === type);
