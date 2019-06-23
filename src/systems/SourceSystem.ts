@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
 import { ComponentType, EmissionType, EventType, SubstanceType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
@@ -8,47 +7,36 @@ import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
 import { gaussian, flatRect } from '../utils/reactions';
 import SolidBodyComponent from '../components/SolidBodyComponent';
-import { getCanvas, getContext } from '../utils/canvas';
 import EventBus from '../EventBus';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
 
-  private physicsObjects: {
-    [componentId: number]: {
-      body: SourcePhysicsObject;
-      eventBeforeUpdate: Function;
-    };
+  private textures: {
+    [componentId: number]: Phaser.GameObjects.Image;
   } = {};
 
   public update(): void {}
 
   protected onEntityCreated(entity: Entity): void {
-    const source = entity.getComponent(ComponentType.SOURCE) as SourceComponent;
-    this.addSourceObject(entity, source);
+    const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
+    sources.forEach(source => {
+      this.addSourceObject(entity, source);
+    });
   }
 
   protected onEntityDestroyed(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
     sources.forEach(source => {
-      const { body, eventBeforeUpdate } = this.physicsObjects[source.id];
-
-      this.scene.matter.world.off('beforeupdate', eventBeforeUpdate);
-      this.scene.matter.world.remove(body, false);
-
-      delete this.physicsObjects[entity.id];
+      this.textures[source.id].destroy();
+      delete this.textures[source.id];
     });
   }
 
-  private addSourceObject(entity: Entity, source: SourceComponent): SourcePhysicsObject {
+  private addSourceObject(entity: Entity, source: SourceComponent): void {
     const isGaussian = source.emissionType.get() === EmissionType.GAUSSIAN;
     const solidBody = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent | undefined;
 
-    const body = isGaussian
-      ? SourceSystem.createCircleShape(source.range.get() * 3)
-      : SourceSystem.createRectShape(solidBody, source.range.get());
-
-    const emitter = this.attachSynchronization(body, entity);
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
     // const { width, height } = this.scene.cameras.main;
@@ -105,57 +93,5 @@ export default class SourceSystem extends System {
       width,
       height,
     });
-
-    body.label = ComponentType.SOURCE;
-    body.userData = {
-      belongsTo: {
-        entity,
-        component: source,
-      },
-    };
-    this.scene.matter.world.add(body);
-    this.physicsObjects[source.id] = {
-      body,
-      eventBeforeUpdate: emitter,
-    };
-
-    return body;
-  }
-
-  private static createRectShape(solidBody: SolidBodyComponent | undefined, range: number): SourcePhysicsObject {
-    if (solidBody === undefined) {
-      return Phaser.Physics.Matter.Matter.Bodies.rectangle(0, 0, range, range, {
-        isSensor: true,
-      }) as SourcePhysicsObject;
-    }
-
-    return Phaser.Physics.Matter.Matter.Bodies.rectangle(
-      0,
-      0,
-      solidBody.size.get().width + 20,
-      solidBody.size.get().height + 20,
-      {
-        isSensor: true,
-      },
-    ) as SourcePhysicsObject;
-  }
-
-  private static createCircleShape(range: number): SourcePhysicsObject {
-    return Phaser.Physics.Matter.Matter.Bodies.circle(0, 0, range, {
-      isSensor: true,
-    }) as SourcePhysicsObject;
-  }
-
-  private attachSynchronization(body: Phaser.Physics.Matter.Matter.Body, entity: Entity): Function {
-    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-    const onBefore = (): void => {
-      Phaser.Physics.Matter.Matter.Body.setPosition(body, {
-        x: transform.position.get().x,
-        y: transform.position.get().y,
-      });
-    };
-    this.scene.matter.world.on('beforeupdate', onBefore);
-
-    return onBefore;
   }
 }
