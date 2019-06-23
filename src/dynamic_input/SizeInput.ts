@@ -6,9 +6,9 @@ export default class SizeInput extends BaseInput<Dimensions> {
     const input = document.createElement('input');
 
     input.type = 'number';
-    input.value = (this.value as unknown) as string;
+    input.value = (this.value.width as unknown) as string;
     input.addEventListener('change', () => {
-      this.value = (input.value as unknown) as Dimensions;
+      this.value = { width: Number(input.value), height: this.value.height };
     });
 
     root.appendChild(input);

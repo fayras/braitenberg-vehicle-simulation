@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
