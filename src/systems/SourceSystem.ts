@@ -89,6 +89,7 @@ export default class SourceSystem extends System {
     image.setOrigin(0);
     image.setScale(CORRELATION_SCALE);
     image.setBlendMode(Phaser.BlendModes.SCREEN);
+    image.setDepth(99);
     this.scene.children.bringToTop(image);
 
     // window.open(offScreenCanvas.toDataURL(), '_blank');
