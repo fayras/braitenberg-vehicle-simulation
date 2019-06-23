@@ -20,6 +20,7 @@ declare namespace EventMessages {
   interface NewSourceInfo {
     id: number;
     values: Float32Array;
+    type: import('../src/enums').SubstanceType;
     width: number;
     height: number;
   }
@@ -27,6 +28,7 @@ declare namespace EventMessages {
   interface NewSensorInfo {
     id: number;
     values: { [angle: number]: Float32Array };
+    type: import('../src/enums').SubstanceType;
     width: number;
     height: number;
   }

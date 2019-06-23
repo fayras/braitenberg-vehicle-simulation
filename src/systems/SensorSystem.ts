@@ -103,6 +103,7 @@ export default class SensorSystem extends System {
 
     EventBus.publish(EventType.SENSOR_CREATED, {
       id: sensor.id,
+      type: sensor.reactsTo.get(),
       values,
       width,
       height,

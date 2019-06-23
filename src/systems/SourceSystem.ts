@@ -91,6 +91,7 @@ export default class SourceSystem extends System {
     EventBus.publish(EventType.SOURCE_CREATED, {
       id: source.id,
       values,
+      type: source.substance.get(),
       width,
       height,
     });
