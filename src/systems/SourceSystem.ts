@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
 import * as tf from '@tensorflow/tfjs-core';
 import Entity from '../Entity';
-import { ComponentType, EmissionType } from '../enums';
+import { ComponentType, EmissionType, EventType, SubstanceType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
 import System from './System';
 import TransformableComponent from '../components/TransformableComponent';
 import SourceComponent from '../components/SourceComponent';
 import { gaussian, flatRect } from '../utils/reactions';
 import SolidBodyComponent from '../components/SolidBodyComponent';
+import { getCanvas, getContext } from '../utils/canvas';
+import EventBus from '../EventBus';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
@@ -33,7 +35,6 @@ export default class SourceSystem extends System {
 
       this.scene.matter.world.off('beforeupdate', eventBeforeUpdate);
       this.scene.matter.world.remove(body, false);
-      body.userData.tensor.dispose();
 
       delete this.physicsObjects[entity.id];
     });
@@ -54,10 +55,10 @@ export default class SourceSystem extends System {
     const width = Math.ceil(this.scene.cameras.main.width / CORRELATION_SCALE);
     const height = Math.ceil(this.scene.cameras.main.height / CORRELATION_SCALE);
 
-    const offScreenCanvas = document.createElement('canvas');
-    offScreenCanvas.width = width;
-    offScreenCanvas.height = height;
-    const context = offScreenCanvas.getContext('2d') as CanvasRenderingContext2D;
+    // const offScreenCanvas = getCanvas(width, height);
+    // const context = getContext(offScreenCanvas);
+    const texture = this.scene.textures.createCanvas(`source_texture_${source.id}`, width, height);
+    const context = texture.getContext();
 
     // Das Ganze ggf in einem/mehreren Worker Thread(s) machen?
     const values = new Float32Array(width * height);
@@ -72,31 +73,41 @@ export default class SourceSystem extends System {
           solidBody ? solidBody.size.get().height : source.range.get(),
         );
 
-    let max = 0;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         let v = f(x * CORRELATION_SCALE, y * CORRELATION_SCALE);
         values[y * width + x] = v;
 
-        if (v > max) max = v;
-
-        v = Math.round(v * 255);
-        context.fillStyle = `rgb(${v}, ${v}, ${v})`;
-        context.fillRect(x, y, 1, 1);
+        if (source.substance.get() === SubstanceType.BARRIER) {
+          v = Math.round(v * 255);
+          context.fillStyle = `rgb(${0}, ${0}, ${v})`;
+          context.fillRect(x, y, 1, 1);
+        } else if (source.substance.get() === SubstanceType.LIGHT) {
+          v = Math.round(v * 255);
+          context.fillStyle = `rgb(${v}, ${v}, ${0})`;
+          context.fillRect(x, y, 1, 1);
+        }
       }
     }
 
-    console.log(max);
+    texture.refresh();
+    const image = this.scene.add.image(0, 0, `source_texture_${source.id}`);
+    image.setOrigin(0);
+    image.setScale(CORRELATION_SCALE);
+    image.setBlendMode(Phaser.BlendModes.SCREEN);
+    this.scene.children.bringToTop(image);
 
     // window.open(offScreenCanvas.toDataURL(), '_blank');
 
-    const input = tf.tensor3d(values, [height, width, 1]);
-    window.tf = tf;
+    EventBus.publish(EventType.SOURCE_CREATED, {
+      id: source.id,
+      values,
+      width,
+      height,
+    });
 
     body.label = ComponentType.SOURCE;
     body.userData = {
-      kernel: f,
-      tensor: input,
       belongsTo: {
         entity,
         component: source,
