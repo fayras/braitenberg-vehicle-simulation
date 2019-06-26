@@ -46,9 +46,9 @@ export function flatRect(topLeft: VectorLike, width: number, height: number): Ke
 }
 
 function getAvailableAngles(): number[] {
-  const angleDelta = Math.PI / 2; // 45 Grad
+  const angleDelta = Math.PI / 4; // 45 Grad
   const angles = [];
-  for (let a = 0; a < Math.PI * 2; a += angleDelta) {
+  for (let a = 0; a <= Math.PI * 2; a += angleDelta) {
     angles.push(a);
   }
 

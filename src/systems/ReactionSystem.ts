@@ -53,7 +53,7 @@ export default class ReactionSystem extends System {
         }
 
         const bodyPosition = transform.position.get();
-        const sensorOffset = sensor.position.get();
+        const sensorOffset = Phaser.Physics.Matter.Matter.Vector.rotate(sensor.position.get(), transform.angle.get());
         const x = Math.floor((bodyPosition.x + sensorOffset.x) / CORRELATION_SCALE);
         const y = Math.floor((bodyPosition.y + sensorOffset.y) / CORRELATION_SCALE);
 
@@ -96,6 +96,17 @@ export default class ReactionSystem extends System {
               result.array().then(res => {
                 console.log('gotResult');
                 this.correlations[lookUpKey] = res;
+                // const id = Date.now();
+                // const texture = this.scene.textures.createCanvas(`test${id}`, res[0].length, res.length);
+                // const ctx = texture.context;
+                // for (let y = 0; y < res.length; y += 1) {
+                //   for (let x = 0; x < res[0].length; x += 1) {
+                //     const v = res[y][x] * 255;
+                //     ctx.fillStyle = `rgb(${0}, ${v}, ${0})`;
+                //     ctx.fillRect(x, y, 1, 1);
+                //   }
+                // }
+                // window.open(texture.canvas.toDataURL(), '_blank');
                 conv.dispose();
               });
             });
