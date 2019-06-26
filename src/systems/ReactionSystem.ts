@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { debounce } from 'lodash-es';
-import { conv2d, squeeze, tidy, Tensor2D, tensor4d, keep } from '@tensorflow/tfjs-core';
+import { conv2d, squeeze, tidy, Tensor2D, tensor4d, keep, memory } from '@tensorflow/tfjs-core';
 import System from './System';
 import { ComponentType, EventType, SubstanceType } from '../enums';
 import { CORRELATION_SCALE } from '../constants';
@@ -20,16 +20,23 @@ export default class ReactionSystem extends System {
 
   private correlations: { [sensorAnglePair: string]: number[][] } = {};
 
-  private sourcesCombined: Float32Array = new Float32Array();
+  private sourcesCombined: { [type: string]: Float32Array } = {};
 
   private width: number = 0;
 
   private height: number = 0;
 
-  // private compute: (type: SubstanceType) => void;
+  private maxValue: number = 0;
+
+  private compute: () => void;
 
   public constructor(scene: Phaser.Scene) {
     super(scene);
+
+    this.compute = debounce(() => {
+      this.maxValue = 0;
+      Object.values(SubstanceType).forEach(type => this.computeCorrelation(type));
+    }, 100);
 
     EventBus.subscribe(EventType.SENSOR_CREATED, this.onSensorCreated.bind(this));
     EventBus.subscribe(EventType.SOURCE_CREATED, this.onSourceCreated.bind(this));
@@ -57,58 +64,40 @@ export default class ReactionSystem extends System {
         const x = Math.floor((bodyPosition.x + sensorOffset.x) / CORRELATION_SCALE);
         const y = Math.floor((bodyPosition.y + sensorOffset.y) / CORRELATION_SCALE);
 
-        if (!this.correlations[lookUpKey][y] || !this.correlations[lookUpKey][y][x]) {
+        if (!this.correlations[lookUpKey][y] || Number.isNaN(this.correlations[lookUpKey][y][x])) {
           return;
         }
 
-        const value = this.correlations[lookUpKey][y][x];
+        const value = this.correlations[lookUpKey][y][x] / this.maxValue;
         sensor.activation.set(value);
       });
     });
   }
 
-  private computeCorrelation(type: SubstanceType): void {
-    const sensors = Object.values(this.sensors).filter(s => s.type === type);
+  private computeCorrelation(type: SubstanceType): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sensors = Object.values(this.sensors).filter(s => s.type === type);
 
-    const { width, height } = this;
+      const { width, height } = this;
 
-    console.log('computeCorrelation', sensors, type);
-    sensors.forEach(sensor => {
-      Object.entries(sensor.values).forEach(([angle, angleValues]) => {
-        const lookUpKey = `${sensor.id}:${angle}`;
+      sensors.forEach(sensor => {
+        Object.entries(sensor.values).forEach(([angle, angleValues]) => {
+          const lookUpKey = `${sensor.id}:${angle}`;
 
-        tidy(() => {
-          console.log('tidy', angle);
-          const sensorTensor = tensor4d(angleValues, [sensor.height, sensor.width, 1, 1]);
-          const sourcesTensor = tensor4d(this.sourcesCombined, [1, height, width, 1]);
+          tidy(() => {
+            const sensorTensor = tensor4d(angleValues, [sensor.height, sensor.width, 1, 1]);
+            const sourcesTensor = tensor4d(this.sourcesCombined[type], [1, height, width, 1]);
 
-          const conv = keep(squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same')));
+            const conv = squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same'));
 
-          // conv.array().then(res => {
-          //   console.log('gotResult');
-          //   this.correlations[lookUpKey] = res;
-          // });
-          const maxTensor = conv.max();
-          maxTensor.data().then(value => {
-            tidy(() => {
+            conv.array().then(res => {
+              this.correlations[lookUpKey] = res;
+            });
+            const maxTensor = conv.max();
+            maxTensor.data().then(value => {
               const max = value[0];
-              const result = conv.div<Tensor2D>(max);
-              result.array().then(res => {
-                console.log('gotResult');
-                this.correlations[lookUpKey] = res;
-                // const id = Date.now();
-                // const texture = this.scene.textures.createCanvas(`test${id}`, res[0].length, res.length);
-                // const ctx = texture.context;
-                // for (let y = 0; y < res.length; y += 1) {
-                //   for (let x = 0; x < res[0].length; x += 1) {
-                //     const v = res[y][x] * 255;
-                //     ctx.fillStyle = `rgb(${0}, ${v}, ${0})`;
-                //     ctx.fillRect(x, y, 1, 1);
-                //   }
-                // }
-                // window.open(texture.canvas.toDataURL(), '_blank');
-                conv.dispose();
-              });
+              this.maxValue = max;
+              resolve();
             });
           });
         });
@@ -133,18 +122,17 @@ export default class ReactionSystem extends System {
       combined[i] = sum;
     }
 
-    this.sourcesCombined = combined;
+    this.sourcesCombined[payload.type] = combined;
     this.width = payload.width;
     this.height = payload.height;
-    console.log('compute from source');
-    this.computeCorrelation(payload.type);
+    this.compute();
+    // this.computeCorrelation(payload.type);
   }
 
   private onSensorCreated(payload: EventMessages.NewSensorInfo): void {
-    console.log('onSensorCreated');
     this.sensors[payload.id] = payload;
-    console.log('compute from sensor');
-    this.computeCorrelation(payload.type);
+    this.compute();
+    // this.computeCorrelation(payload.type);
   }
 
   private handleReaction(payload: EventMessages.Reaction): void {
