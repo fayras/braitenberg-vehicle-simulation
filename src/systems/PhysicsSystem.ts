@@ -124,10 +124,6 @@ export default class PhysicsSystem extends System {
 
     // console.log(body.torque, t);
 
-    Phaser.Physics.Matter.Matter.Body.applyForce(
-      body,
-      { x: body.position.x + offset.x, y: body.position.y + offset.y },
-      force,
-    );
+    Phaser.Physics.Matter.Matter.Body.applyForce(body, { x: body.position.x, y: body.position.y }, force);
   }
 }
