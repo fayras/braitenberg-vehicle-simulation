@@ -1,7 +1,6 @@
 .deleteButton {
   background-color: red;
-  float: left;
-  align-content: flex-end;
+  margin-left: 90px;
 }
 
 .draggable {
