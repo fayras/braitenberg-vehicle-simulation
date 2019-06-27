@@ -17,8 +17,8 @@ export default class EngineSystem extends System {
       motors.forEach(motor => {
         // Wir müssen die neue "Position des Motors" am Vehikel berechnen
         const offset = Phaser.Physics.Matter.Matter.Vector.rotate(motor.position.get(), transform.angle.get());
-        const slope = motor.maxSpeed.get() - motor.defaultSpeed.get();
-        const thrust = motor.defaultSpeed.get() + motor.throttle.get() * slope;
+        const throttle = Math.min(motor.throttle.get(), 1);
+        const thrust = Math.max(motor.defaultSpeed.get(), throttle * motor.maxSpeed.get());
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.

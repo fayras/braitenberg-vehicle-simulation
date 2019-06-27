@@ -8,6 +8,8 @@ import System from './System';
 import EventBus from '../EventBus';
 import { gaussian, AVAILABLE_ANGLES } from '../utils/reactions';
 
+const mod = (x: number, n: number): number => ((x % n) + n) % n;
+
 export default class SensorSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SENSOR, ComponentType.TRANSFORMABLE];
 
@@ -17,7 +19,39 @@ export default class SensorSystem extends System {
     };
   } = {};
 
-  public update(): void {}
+  public update(): void {
+    this.entities.forEach(entity => {
+      const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+      const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+
+      const currentAngle = mod(transform.angle.get(), Math.PI * 2);
+      const closestAngle = AVAILABLE_ANGLES.reduce((prev, curr) => {
+        return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
+      });
+
+      sensors.forEach(sensor => {
+        if (!this.textures[sensor.id]) {
+          return;
+        }
+
+        Object.entries(this.textures[sensor.id]).forEach(([angle, image]) => {
+          if (angle === String(closestAngle)) {
+            const bodyPosition = transform.position.get();
+            const sensorOffset = Phaser.Physics.Matter.Matter.Vector.rotate(
+              sensor.position.get(),
+              transform.angle.get(),
+            );
+            const x = bodyPosition.x + sensorOffset.x;
+            const y = bodyPosition.y + sensorOffset.y;
+            image.setPosition(x, y);
+            image.setVisible(true);
+          } else {
+            image.setVisible(false);
+          }
+        });
+      });
+    });
+  }
 
   protected onEntityCreated(entity: Entity): void {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
@@ -94,6 +128,8 @@ export default class SensorSystem extends System {
       textures[angle] = image;
       values[angle] = angleValues;
     });
+
+    this.textures[sensor.id] = textures;
 
     // window.open(offScreenCanvas.toDataURL(), '_blank');
 

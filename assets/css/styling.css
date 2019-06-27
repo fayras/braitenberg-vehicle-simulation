@@ -1,3 +1,7 @@
+body > div:first-of-type {
+  overflow-y: auto !important;
+}
+
 .deleteButton {
   background-color: red;
   margin-left: 90px;

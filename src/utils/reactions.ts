@@ -27,7 +27,7 @@ export function flatCircle(center: VectorLike, radius: number): KernelFunction {
   const r2 = radius ** 2;
 
   return (x: number, y: number) => {
-    return (x - x0) ** 2 + (y - y0) ** 2 <= r2 ? 1 : 0;
+    return (x - x0) ** 2 + (y - y0) ** 2 <= r2 ? 3 : 0;
   };
 }
 
@@ -38,7 +38,7 @@ export function flatRect(topLeft: VectorLike, width: number, height: number): Ke
 
   return (x: number, y: number) => {
     if (rect.contains(x, y)) {
-      return 1;
+      return 3;
     }
 
     return 0;
@@ -46,9 +46,9 @@ export function flatRect(topLeft: VectorLike, width: number, height: number): Ke
 }
 
 function getAvailableAngles(): number[] {
-  const angleDelta = Math.PI / 2; // 45 Grad
+  const angleDelta = Math.PI / 8; // 45 Grad
   const angles = [];
-  for (let a = 0; a < Math.PI * 2; a += angleDelta) {
+  for (let a = 0; a <= Math.PI * 2; a += angleDelta) {
     angles.push(a);
   }
 

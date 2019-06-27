@@ -4,7 +4,7 @@ import Button from '../gui/Button';
 export default abstract class SidebarScene extends Phaser.Scene {
   protected container: Phaser.GameObjects.Container | null = null;
 
-  protected background: Phaser.GameObjects.Graphics | null = null;
+  protected background: Phaser.GameObjects.Rectangle | null = null;
 
   protected key: string;
 
@@ -23,17 +23,18 @@ export default abstract class SidebarScene extends Phaser.Scene {
     const handler = this.handleResize.bind(this);
     this.scale.on('resize', handler);
 
+    this.background = this.add.rectangle(0, 0, SidebarScene.getWidth(), this.cameras.main.displayHeight, 0xf8f8f8);
+    this.background.setOrigin(0);
+    this.background.setPosition(this.cameras.main.displayWidth, 0);
+    this.background.setDepth(0);
+
     const container = this.add.container(this.cameras.main.displayWidth, 0);
     this.container = container;
-
-    this.background = this.add.graphics({ fillStyle: { color: 0xf8f8f8 } });
-    this.fillBackground();
-
-    container.add(this.background);
+    this.container.setDepth(1);
 
     const close = new Button(this, -35, 35, 0, () => {
       this.tweens.add({
-        targets: this.container,
+        targets: [this.container, this.background],
         x: `+=${SidebarScene.getWidth()}`,
         y: 0,
         duration: 100,
@@ -49,7 +50,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.onCreate(container, ...args);
 
     this.tweens.add({
-      targets: this.container,
+      targets: [this.container, this.background],
       x: `-=${SidebarScene.getWidth()}`,
       y: 0,
       duration: 200,
@@ -64,9 +65,10 @@ export default abstract class SidebarScene extends Phaser.Scene {
       | Phaser.GameObjects.DOMElement
       | Phaser.GameObjects.Text
       | undefined)[],
+    usePadding: boolean = true,
   ): void {
     if (this.container) {
-      const padding = 15;
+      const padding = usePadding ? 15 : 0;
       for (let i = 0; i < objects.length; i += 1) {
         const object = objects[i];
 
@@ -88,19 +90,13 @@ export default abstract class SidebarScene extends Phaser.Scene {
     }
   }
 
-  private fillBackground(): void {
-    if (this.background) {
-      const rect = new Phaser.Geom.Rectangle(0, 0, SidebarScene.getWidth(), this.cameras.main.displayHeight);
-      this.background.fillRectShape(rect);
-      this.background.lineStyle(1, 0xe0e0e0);
-      this.background.strokeLineShape(new Phaser.Geom.Line(0, 0, 0, this.cameras.main.displayHeight));
-    }
-  }
-
   private handleResize(gameSize: Phaser.Structs.Size): void {
     if (this.container) {
       this.container.setPosition(gameSize.width - SidebarScene.getWidth(), 0);
     }
-    this.fillBackground();
+    if (this.background) {
+      this.background.setPosition(gameSize.width - SidebarScene.getWidth(), 0);
+      this.background.setSize(SidebarScene.getWidth(), gameSize.height);
+    }
   }
 }
