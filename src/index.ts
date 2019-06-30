@@ -5,7 +5,7 @@ import LoadingScene from './scenes/LoadingScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  backgroundColor: '#EFEFEF',
+  backgroundColor: '#EAEAEA',
   parent: 'body',
   scale: {
     mode: Phaser.Scale.RESIZE,
