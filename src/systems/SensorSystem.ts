@@ -74,8 +74,8 @@ export default class SensorSystem extends System {
   private addSensorObject(entity: Entity, sensor: SensorComponent): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
-    const halfWidth = Math.ceil((sensor.range.get() * 2) / CORRELATION_SCALE);
-    const halfHeight = Math.ceil((sensor.range.get() * 2) / CORRELATION_SCALE);
+    const halfWidth = Math.ceil((sensor.range.get() * 3) / CORRELATION_SCALE);
+    const halfHeight = Math.ceil((sensor.range.get() * 3) / CORRELATION_SCALE);
     const width = halfWidth * 2;
     const height = halfHeight * 2;
 
@@ -103,12 +103,11 @@ export default class SensorSystem extends System {
 
       for (let y = 0; y < height; y += 1) {
         for (let x = 0; x < width; x += 1) {
-          let v = f((x - halfWidth) * CORRELATION_SCALE, (y - halfHeight) * CORRELATION_SCALE, angle);
+          const v = f((x - halfWidth) * CORRELATION_SCALE, (y - halfHeight) * CORRELATION_SCALE, angle);
 
           angleValues[y * width + x] = v;
 
-          v = Math.round(v * 255);
-          context.fillStyle = `rgb(${v}, ${0}, ${0})`;
+          context.fillStyle = `rgba(50, 50, 100, ${v * 0.6})`;
           context.fillRect(x, y, 1, 1);
         }
       }
@@ -122,7 +121,7 @@ export default class SensorSystem extends System {
       const y = transform.position.get().y + sensor.position.get().y;
       const image = this.scene.add.image(x, y, `sensor_texture_${sensor.id}_${angle}`);
       image.setScale(CORRELATION_SCALE);
-      image.setBlendMode(Phaser.BlendModes.SCREEN);
+      // image.setBlendMode(Phaser.BlendModes.SCREEN);
       // image.setVisible(false);
 
       textures[angle] = image;
