@@ -32,7 +32,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.container = container;
     this.container.setDepth(1);
 
-    const close = new Button(this, -35, 35, 0, () => {
+    const close = new Button(this, -35, 35, 19, () => {
       this.tweens.add({
         targets: [this.container, this.background],
         x: `+=${SidebarScene.getWidth()}`,

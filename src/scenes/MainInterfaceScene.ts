@@ -14,27 +14,27 @@ export default class MainInterfaceScene extends Phaser.Scene {
     this.scale.on('resize', this.handleResize.bind(this));
     const mainScene = this.scene.get('MainScene') as MainScene;
 
-    const start = new ToggleButton(this, 35, 35, 5, 8, () => {
+    const start = new ToggleButton(this, 35, 35, 6, 9, () => {
       mainScene.pause(!mainScene.isRunning());
     });
 
-    const reset = new Button(this, 45 + start.getWidth(), 35, 11, () => {
+    const reset = new Button(this, 45 + start.getWidth(), 35, 1, () => {
       MainScene.loadSnapshot();
     });
 
-    const save = new Button(this, 110 + start.getWidth(), 35, 10, () => {
+    const save = new Button(this, 110 + start.getWidth(), 35, 18, () => {
       MainScene.createSnapshot();
     });
 
-    const showEditor = new Button(this, this.cameras.main.displayWidth - 35, 35, 1, () => {
+    const showEditor = new Button(this, this.cameras.main.displayWidth - 35, 35, 17, () => {
       this.scene.launch('EditorScene');
     });
 
-    const importButton = new Button(this, 175 + start.getWidth(), 35, 7, () => {
+    const importButton = new Button(this, 175 + start.getWidth(), 35, 4, () => {
       // this.scene.launch('EditorScene');
     });
 
-    const exportButton = new Button(this, 240 + start.getWidth(), 35, 3, () => {
+    const exportButton = new Button(this, 240 + start.getWidth(), 35, 0, () => {
       // this.scene.launch('EditorScene');
     });
 
