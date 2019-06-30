@@ -68,7 +68,7 @@ export default class SourceSystem extends System {
 
         if (source.substance.get() === SubstanceType.BARRIER) {
           v = Math.round(v * 255);
-          context.fillStyle = `rgb(${0}, ${0}, ${v})`;
+          context.fillStyle = `rgb(${0}, ${0}, ${0})`;
           context.fillRect(x, y, 1, 1);
         } else if (source.substance.get() === SubstanceType.LIGHT) {
           v = Math.round(v * 255);
