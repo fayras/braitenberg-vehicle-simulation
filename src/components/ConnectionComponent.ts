@@ -1,27 +1,31 @@
 import { ComponentType } from '../enums';
 import Component from './Component';
+import Attribute from './Attribute';
+import ConnectionNetwork from '../dynamic_input/ConnectionNetwork';
 
 export default class ConnectionComponent extends Component {
   public name: ComponentType = ComponentType.CONNECTION;
 
-  public weights: number[][];
-
-  public inputIds: number[];
-
-  public outputIds: number[];
+  public network: Attribute<ConnectionNetworkData, ConnectionNetwork>;
 
   public constructor(inputIds: number[], outputIds: number[], weights: number[][]) {
     super();
-    this.inputIds = inputIds;
-    this.outputIds = outputIds;
-    this.weights = weights;
+    this.network = new Attribute(
+      {
+        inputs: inputIds,
+        outputs: outputIds,
+        weights,
+      },
+      'Verbindungen',
+      ConnectionNetwork,
+    );
   }
 
   public serializeAttributes(): object {
     return {
-      inputIds: this.inputIds,
-      outputIds: this.outputIds,
-      weights: this.weights,
+      inputIds: this.network.get().inputs,
+      outputIds: this.network.get().outputs,
+      weights: this.network.get().weights,
     };
   }
 }

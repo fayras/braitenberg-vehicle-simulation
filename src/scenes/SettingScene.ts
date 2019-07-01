@@ -13,37 +13,27 @@ export default class SettingScene extends SidebarScene {
 
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
     const uiElements = entity.getAllComponents().map((component): Phaser.GameObjects.DOMElement[] => {
-      if (
-        component.name === ComponentType.TRANSFORMABLE ||
-        component.name === ComponentType.MOTOR ||
-        component.name === ComponentType.SENSOR ||
-        component.name === ComponentType.SOURCE ||
-        component.name === ComponentType.SOLID_BODY
-      ) {
-        const title = this.add.dom(0, 0, 'h3', '', component.name).setClassName('componentTitle');
-        const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
-        deleteButton.setData('ignoreHeight', true);
-        deleteButton.addListener('click');
-        deleteButton.on('click', () => {
-          entity.removeComponent(component);
-          // alle Componenten der Enittät neu laden
-          container.removeAll(true);
-          container.height = 0;
-          this.onCreate(container, entity);
-        });
+      const title = this.add.dom(0, 0, 'h3', '', component.name).setClassName('componentTitle');
+      const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
+      deleteButton.setData('ignoreHeight', true);
+      deleteButton.addListener('click');
+      deleteButton.on('click', () => {
+        entity.removeComponent(component);
+        // alle Componenten der Enittät neu laden
+        container.removeAll(true);
+        container.height = 0;
+        this.onCreate(container, entity);
+      });
 
-        const attributes = Object.keys(component).map(attribute => {
-          if (component[attribute] instanceof Attribute) {
-            return (component[attribute] as Attribute<any, any>).render(this, entity);
-          }
+      const attributes = Object.keys(component).map(attribute => {
+        if (component[attribute] instanceof Attribute) {
+          return (component[attribute] as Attribute<any, any>).render(this, entity);
+        }
 
-          return undefined;
-        });
+        return undefined;
+      });
 
-        return [title, deleteButton, ...attributes];
-      }
-
-      return [];
+      return [title, deleteButton, ...attributes];
     });
 
     this.pack(uiElements.flat());

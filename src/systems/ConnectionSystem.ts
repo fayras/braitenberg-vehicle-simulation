@@ -15,14 +15,14 @@ export default class ConnectionSystem extends System {
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
 
-      const inputs = connection.inputIds.map(id => {
+      const inputs = connection.network.get().inputs.map(id => {
         const sensor = sensors.find(s => s.id === id);
         return sensor ? sensor.activation.get() : 0;
       });
 
-      const outputs = multiply(inputs, connection.weights);
+      const outputs = multiply(inputs, connection.network.get().weights);
 
-      connection.outputIds.forEach((id, index) => {
+      connection.network.get().outputs.forEach((id, index) => {
         const motor = motors.find(m => m.id === id);
         if (motor) {
           motor.throttle.set(outputs[index]);

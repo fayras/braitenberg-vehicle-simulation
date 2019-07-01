@@ -44,11 +44,17 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     root.appendChild(el);
 
     this.setElement(root);
+
+    this.onAfterAppend(root);
   }
 
   protected abstract create(entity: Entity): Element;
 
-  protected abstract onUpdate(): void;
+  // eslint-disable-next-line
+  protected onUpdate(): void {}
+
+  // eslint-disable-next-line
+  protected onAfterAppend(root: HTMLDivElement): void {}
 
   public set value(value: T) {
     const old = this.m_value;

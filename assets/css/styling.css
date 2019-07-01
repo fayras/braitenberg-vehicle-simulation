@@ -56,3 +56,46 @@ body {
   border-radius: 10px;
   border: 2px black solid;
 }
+
+.connection-network-background {
+  width: 100%;
+}
+
+.connection-input-indicator,
+.connection-output-indicator {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  border-radius: 10px;
+  background-color: white;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.connection-input-indicator {
+  margin: 20px 0px 40px 0px;
+}
+
+.connection-output-indicator {
+  margin: 40px 0px 20px 0px;
+}
+
+.connection-inputs,
+.connection-outputs {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+div.connection-line {
+  transform-origin: 0 100%;
+  height: 4px;
+  background: #000;
+  position: absolute;
+  cursor: pointer;
+  transform-origin: 0% 50%;
+}
+
+div.connection-line:hover {
+  box-shadow: 0px 0px 2px black;
+}

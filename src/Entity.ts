@@ -28,8 +28,8 @@ export default class Entity {
     return undefined;
   }
 
-  public getComponent(name: ComponentType): Component | undefined {
-    return this.components.find(c => c.name === name);
+  public getComponent<T extends Component>(name: ComponentType): T | undefined {
+    return this.components.find(c => c.name === name) as T;
   }
 
   public getMultipleComponents(name: ComponentType): Component[] {

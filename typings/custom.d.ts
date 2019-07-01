@@ -87,6 +87,12 @@ interface Settable<T> {
   public set(value: T): void;
 }
 
+interface ConnectionNetworkData {
+  inputs: number[];
+  outputs: number[];
+  weights: number[][];
+}
+
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };
