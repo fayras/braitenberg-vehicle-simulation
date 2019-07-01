@@ -1,20 +1,29 @@
 import BaseInput from './BaseInput';
+import { parseDOM, getNode } from '../utils/dom';
 
 export default class Checkbox extends BaseInput<boolean> {
   private inputElement: HTMLInputElement | null = null;
 
-  protected create(): Element {
-    const input = document.createElement('input');
+  protected showDefaultLabel = false;
 
-    input.type = 'checkbox';
-    input.checked = this.value;
-    input.addEventListener('change', () => {
-      this.value = input.checked;
+  protected create(): Element {
+    const html = `
+      <label>
+        <input type="checkbox">
+        <span class="checkable">${this.label}</span>
+      </label>
+    `;
+
+    const nodes = parseDOM(html);
+    const inp = getNode<HTMLInputElement>(nodes, 'input');
+    inp.checked = this.value;
+    inp.addEventListener('change', () => {
+      this.value = inp.checked;
     });
 
-    this.inputElement = input;
+    this.inputElement = inp;
 
-    return input;
+    return nodes.body.childNodes[0] as Element;
   }
 
   protected onUpdate(): void {

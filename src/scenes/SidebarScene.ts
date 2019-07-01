@@ -8,6 +8,8 @@ export default abstract class SidebarScene extends Phaser.Scene {
 
   protected key: string;
 
+  private scrollFix: Phaser.GameObjects.DOMElement | null = null;
+
   public constructor(key: string) {
     super({ key });
     this.key = key;
@@ -47,6 +49,11 @@ export default abstract class SidebarScene extends Phaser.Scene {
     });
     container.add(close);
 
+    this.scrollFix = this.add.dom(0, 0, 'div', '');
+    this.scrollFix.setOrigin(0);
+    this.scrollFix.transformOnly = true;
+    this.scrollFix.setClassName('scroll-fix');
+
     this.onCreate(container, ...args);
 
     this.tweens.add({
@@ -69,6 +76,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
   ): void {
     if (this.container) {
       const padding = usePadding ? 15 : 0;
+      let lastAddedHeight = 0;
       for (let i = 0; i < objects.length; i += 1) {
         const object = objects[i];
 
@@ -81,11 +89,23 @@ export default abstract class SidebarScene extends Phaser.Scene {
               .setFontSize(23)
               .setColor('black')
               .setFontFamily('Calibri');
-            object.setPosition(SidebarScene.getWidth() / 2 - 60, this.container.height + objectHeight / 2 + padding);
+            object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
           }
+
           this.container.add(object);
-          this.container.height += objectHeight + padding;
+          if (object.getData('ignoreHeight')) {
+            object.setPosition(
+              SidebarScene.getWidth() / 2,
+              this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
+            );
+          } else {
+            this.container.height += objectHeight + padding;
+            lastAddedHeight = objectHeight;
+          }
         }
+      }
+      if (this.scrollFix) {
+        (this.scrollFix.node as HTMLDivElement).style.height = `${this.container.height + padding}px`;
       }
     }
   }

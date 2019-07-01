@@ -13,17 +13,21 @@ export default class PositionInput extends BaseInput<Vector2D> {
     const solidBody = entity.getComponent(ComponentType.SOLID_BODY);
 
     let rect = { width: 100, height: 100 };
+    let widthRatio = 1;
+    let heightRatio = 1;
     if (solidBody) {
       const { shape, size } = solidBody as SolidBodyComponent;
       rect = calculateAspectRatioFit(size.get().width, size.get().height, 100, 100);
+      widthRatio = rect.width / size.get().width;
+      heightRatio = rect.height / size.get().height;
     }
 
     // Die Hälfte der Breite/Höhe des Indikators. Der Wert wird über CSS gesetzt:
     // 10px Breite + je 2px Kante auf beiden Seiten = 14px Breite
     const indicatorSize = 7;
     const snappingSize = 10;
-    this.position.x = this.value.x + rect.width / 2 - indicatorSize;
-    this.position.y = this.value.y + rect.height / 2 - indicatorSize;
+    this.position.x = this.value.x * widthRatio + rect.width / 2 - indicatorSize;
+    this.position.y = this.value.y * heightRatio + rect.height / 2 - indicatorSize;
 
     const html = `
       <div class="position-background" style="width:${rect.width}px;height:${rect.height}px;">

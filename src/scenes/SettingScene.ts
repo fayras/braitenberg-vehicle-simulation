@@ -20,14 +20,16 @@ export default class SettingScene extends SidebarScene {
         component.name === ComponentType.SOURCE ||
         component.name === ComponentType.SOLID_BODY
       ) {
-        const title = this.add.dom(0, 0, 'h3', '', component.name);
-        const deleteButton = this.add.dom(0, 0, 'button', '', '✖').setClassName('deleteButton');
+        const title = this.add.dom(0, 0, 'h3', '', component.name).setClassName('componentTitle');
+        const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
+        deleteButton.setData('ignoreHeight', true);
         deleteButton.addListener('click');
         deleteButton.on('click', () => {
           entity.removeComponent(component);
           // alle Componenten der Enittät neu laden
           container.removeAll(true);
-          // his.onCreate
+          container.height = 0;
+          this.onCreate(container, entity);
         });
 
         const attributes = Object.keys(component).map(attribute => {

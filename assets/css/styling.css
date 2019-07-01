@@ -6,11 +6,19 @@ body {
   font-family: Calibri;
 }
 
+.scroll-fix {
+  width: 256px;
+  right: 0px;
+  top: 0 !important;
+  position: fixed !important;
+  pointer-events: all;
+  transform: none !important;
+}
+
 .deleteButton {
   background-color: transparent;
   margin-left: 90px;
   border: none;
-  margin-top: -16px;
   cursor: pointer;
 }
 
@@ -21,8 +29,12 @@ body {
 
 .base-input-container {
   display: block;
-  width: 224px;
+  width: 208px;
   min-height: 20px;
+}
+
+.componentTitle {
+  width: 208px;
 }
 
 .position-background {
