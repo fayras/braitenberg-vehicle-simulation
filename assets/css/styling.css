@@ -2,10 +2,16 @@ body > div:first-of-type {
   overflow-y: auto !important;
 }
 
+body {
+  font-family: Calibri;
+}
+
 .deleteButton {
   background-color: transparent;
   margin-left: 90px;
   border: none;
+  margin-top: -16px;
+  cursor: pointer;
 }
 
 .draggable {
