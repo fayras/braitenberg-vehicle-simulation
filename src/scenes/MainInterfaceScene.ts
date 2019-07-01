@@ -31,11 +31,11 @@ export default class MainInterfaceScene extends Phaser.Scene {
     });
 
     const importButton = new Button(this, 175 + start.getWidth(), 35, 4, () => {
-      // this.scene.launch('EditorScene');
+      MainScene.importJson();
     });
 
     const exportButton = new Button(this, 240 + start.getWidth(), 35, 0, () => {
-      // this.scene.launch('EditorScene');
+      MainScene.exportJson();
     });
 
     this.buttons.push(start, reset, showEditor, save, importButton);

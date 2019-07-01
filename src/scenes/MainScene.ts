@@ -160,6 +160,40 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
+  public static exportJson(): void {
+    //const entities = EntityManager.getEntities();
+    //const snapshot = entities.map(entity => entity.serialize());
+    //const dataStr = JSON.stringify(snapshot);
+    //const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(this.dataStr);
+
+    const snapshot = localStorage.getItem('snapshot');
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(snapshot);
+
+    // const aktuelleSzene = JSON.parse(snapshot) as SerializedEntity[];
+
+    const exportfkt = document.createElement('a');
+    exportfkt.setAttribute('href', dataUri);
+    exportfkt.setAttribute('download', 'data.json');
+    document.body.append(exportfkt);
+    exportfkt.click();
+    exportfkt.remove();
+  }
+
+  public static importJson(): void {
+    const entities = EntityManager.getEntities();
+    // hier Local Storage durch eingabe ersetzen
+    const snapshot = localStorage.getItem('snapshot');
+
+    let aktuellerStatus;
+    if (snapshot) {
+      aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
+      entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+      EntityManager.loadEntities(aktuellerStatus);
+    } else {
+      alert('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.');
+    }
+  }
+
   private handleResize(): void {
     this.matter.world.setBounds();
   }
