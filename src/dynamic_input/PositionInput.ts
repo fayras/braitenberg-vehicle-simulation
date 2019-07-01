@@ -52,19 +52,19 @@ export default class PositionInput extends BaseInput<Vector2D> {
         this.position.x += dx;
         this.position.y += dy;
 
-        const newX = Math.round(this.position.x / snappingSize) * snappingSize;
-        const newY = Math.round(this.position.y / snappingSize) * snappingSize;
+        const newX = Math.round(this.position.x / (snappingSize * widthRatio)) * snappingSize * widthRatio;
+        const newY = Math.round(this.position.y / (snappingSize * heightRatio)) * snappingSize * heightRatio;
 
         console.log(newX, newY);
 
         target.style.transform = `translate(${newX}px, ${newY}px)`;
       })
       .on('dragend', () => {
-        let x = Math.round(this.position.x - rect.width / 2 + indicatorSize);
-        let y = Math.round(this.position.y - rect.height / 2 + indicatorSize);
+        let x = Math.round((this.position.x - rect.width / 2 + indicatorSize) / widthRatio);
+        let y = Math.round((this.position.y - rect.height / 2 + indicatorSize) / heightRatio);
 
-        x = Math.round(x / snappingSize) * snappingSize;
-        y = Math.round(y / snappingSize) * snappingSize;
+        x = Math.round(x / (snappingSize * widthRatio)) * snappingSize * widthRatio;
+        y = Math.round(y / (snappingSize * heightRatio)) * snappingSize * heightRatio;
 
         console.log(x, y);
 
