@@ -161,15 +161,10 @@ export default class MainScene extends Phaser.Scene {
   }
 
   public static exportJson(): void {
-    //const entities = EntityManager.getEntities();
-    //const snapshot = entities.map(entity => entity.serialize());
-    //const dataStr = JSON.stringify(snapshot);
-    //const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(this.dataStr);
-
-    const snapshot = localStorage.getItem('snapshot');
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(snapshot);
-
-    // const aktuelleSzene = JSON.parse(snapshot) as SerializedEntity[];
+    const entities = EntityManager.getEntities();
+    const snapshot = entities.map(entity => entity.serialize());
+    const dataStr = JSON.stringify(snapshot);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
     const exportfkt = document.createElement('a');
     exportfkt.setAttribute('href', dataUri);
@@ -181,17 +176,28 @@ export default class MainScene extends Phaser.Scene {
 
   public static importJson(): void {
     const entities = EntityManager.getEntities();
-    // hier Local Storage durch eingabe ersetzen
-    const snapshot = localStorage.getItem('snapshot');
+    const importEl = document.createElement('input');
+    importEl.type = 'file';
+    importEl.accept = 'application/json';
 
-    let aktuellerStatus;
-    if (snapshot) {
-      aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
-      entities.forEach(entity => EntityManager.destroyEntity(entity.id));
-      EntityManager.loadEntities(aktuellerStatus);
-    } else {
-      alert('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.');
-    }
+    importEl.addEventListener('change', () => {
+      const files = importEl.files || [];
+
+      if (files.length <= 0) {
+        console.log('Es wurde keine korrete Datei ausgewählt.');
+      }
+      const fr = new FileReader();
+      fr.onload = function(e) {
+        console.log(e);
+        const result = JSON.parse(e.target.result) as SerializedEntity[];
+        entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+        EntityManager.loadEntities(result);
+      };
+      console.log(files.item(0));
+      fr.readAsText(files.item(0));
+    });
+
+    importEl.click();
   }
 
   private handleResize(): void {
