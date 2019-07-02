@@ -34,7 +34,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.container = container;
     this.container.setDepth(1);
 
-    const close = new Button(this, -35, 35, 19, () => {
+    const close = new Button(this, this.cameras.main.displayWidth - SidebarScene.getWidth() - 35, 35, 19, () => {
       this.tweens.add({
         targets: [this.container, this.background],
         x: `+=${SidebarScene.getWidth()}`,
@@ -47,7 +47,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
         },
       });
     });
-    container.add(close);
+    this.add.existing(close);
 
     this.scrollFix = this.add.dom(0, 0, 'div', '');
     this.scrollFix.setOrigin(0);

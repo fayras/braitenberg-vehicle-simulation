@@ -1,2 +1,2 @@
 export const TEST = 0;
-export const CORRELATION_SCALE = 6;
+export const CORRELATION_SCALE = 10;
