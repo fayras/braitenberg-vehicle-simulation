@@ -1,18 +1,5 @@
-body > div:first-of-type {
-  overflow-y: auto !important;
-}
-
 body {
   font-family: Calibri;
-}
-
-.scroll-fix {
-  width: 256px;
-  right: 0px;
-  top: 0 !important;
-  position: fixed !important;
-  pointer-events: all;
-  transform: none !important;
 }
 
 .deleteButton {

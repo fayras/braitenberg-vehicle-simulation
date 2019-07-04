@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Button from '../gui/Button';
+import ScrollableContainer from '../gui/ScrollableContainer';
 
 export default abstract class SidebarScene extends Phaser.Scene {
   protected container: Phaser.GameObjects.Container | null = null;
@@ -7,8 +8,6 @@ export default abstract class SidebarScene extends Phaser.Scene {
   protected background: Phaser.GameObjects.Rectangle | null = null;
 
   protected key: string;
-
-  private scrollFix: Phaser.GameObjects.DOMElement | null = null;
 
   public constructor(key: string) {
     super({ key });
@@ -30,7 +29,8 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.background.setPosition(this.cameras.main.displayWidth, 0);
     this.background.setDepth(0);
 
-    const container = this.add.container(this.cameras.main.displayWidth, 0);
+    const container = new ScrollableContainer(this, SidebarScene.getWidth(), this.cameras.main.displayHeight);
+    container.setPosition(this.cameras.main.displayWidth, 0);
     this.container = container;
     this.container.setDepth(1);
 
@@ -49,11 +49,6 @@ export default abstract class SidebarScene extends Phaser.Scene {
     });
     this.add.existing(close);
 
-    this.scrollFix = this.add.dom(0, 0, 'div', '');
-    this.scrollFix.setOrigin(0);
-    this.scrollFix.transformOnly = true;
-    this.scrollFix.setClassName('scroll-fix');
-
     this.onCreate(container, ...args);
 
     this.tweens.add({
@@ -62,6 +57,10 @@ export default abstract class SidebarScene extends Phaser.Scene {
       y: 0,
       duration: 200,
       ease: 'Expo.easeInOut',
+      onComplete: () => {
+        // Hier muss die Position noch mal gesetzt werden, damit die Scrollbar auch auftaucht.
+        container.setPosition(container.x, container.y);
+      },
     });
   }
 
