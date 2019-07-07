@@ -18,45 +18,33 @@ export default class EditorScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container): void {
-    const prefab = this.add.image(0, 0, 'vehicle_icon');
-    const vehicle = this.add.image(0, 0, 'vehicle_icon');
-    const source = this.add.image(0, 0, 'source_icon');
-    const motor = this.add.image(0, 0, 'motor_icon');
-    const sensor = this.add.image(0, 0, 'sensor_icon');
+    const prefabBlank = this.add.image(0, 0, 'prefab-blank');
+    const prefab2a = this.add.image(0, 0, 'prefab-2a');
+    const prefab2b = this.add.image(0, 0, 'prefab-2b');
+    const prefab3a = this.add.image(0, 0, 'prefab-3a');
+    const prefab3b = this.add.image(0, 0, 'prefab-3b');
+    const prefabSource = this.add.image(0, 0, 'prefab-source');
 
-    const vorlagen = this.add.dom(0, 0, 'h3', '', 'Vorlagen:').setClassName('componentTitle');
-    const grundformen = this.add.dom(0, 0, 'h3', '', 'Grundformen:').setClassName('componentTitle');
-
-    this.makeInteractable(prefab, position => {
+    this.makeInteractable(prefabBlank, position => {
       const entity = new Entity();
       entity.addComponent(new TransformableComponent(position));
-      entity.addComponent(new SolidBodyComponent(100));
-      entity.addComponent(new RenderComponent('vehicle_icon', 100));
-      const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
-      const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-      const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
-      entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
+      entity.addComponent(new RenderComponent('prefab-blank', 100));
       EntityManager.addExistingEntity(entity);
     });
 
-    this.makeInteractable(vehicle, position => {
-      EntityManager.createEntity(
-        new TransformableComponent(position),
-        new RenderComponent('logo', 100),
-        new SolidBodyComponent(100),
-      );
-    });
-    this.makeInteractable(source, position => {
-      EntityManager.createEntity(
-        new TransformableComponent(position),
-        new RenderComponent('source_icon', 100),
-        new SourceComponent(100),
-      );
-    });
-    this.makeInteractable(motor, position => {});
-    this.makeInteractable(sensor, position => {});
+    // this.makeInteractable(prefab, position => {
+    //   const entity = new Entity();
+    //   entity.addComponent(new TransformableComponent(position));
+    //   entity.addComponent(new SolidBodyComponent(100));
+    //   entity.addComponent(new RenderComponent('vehicle_icon', 100));
+    //   const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
+    //   const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
+    //   const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
+    //   entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
+    //   EntityManager.addExistingEntity(entity);
+    // });
 
-    this.pack([vorlagen, prefab, grundformen, vehicle, source, motor, sensor]);
+    this.pack([prefabBlank, prefabSource, prefab2a, prefab2b, prefab3a, prefab3b]);
   }
 
   private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {
@@ -78,7 +66,6 @@ export default class EditorScene extends SidebarScene {
         onDrop(position);
       }
 
-      console.log(x, y, image.x, image.y, dropped);
       image.setPosition(image.input.dragStartX, image.input.dragStartY);
     });
   }
