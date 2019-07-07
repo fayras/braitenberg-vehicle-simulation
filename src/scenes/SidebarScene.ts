@@ -100,8 +100,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
             object.setPosition(
               SidebarScene.getWidth() / 2,
 
-              this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
-              this.container.height - padding / 2 + padding,
+              this.container.height - lastAddedHeight / 2,
             );
           } else {
             this.container.height += objectHeight + padding;
