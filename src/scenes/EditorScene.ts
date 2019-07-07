@@ -24,8 +24,8 @@ export default class EditorScene extends SidebarScene {
     const motor = this.add.image(0, 0, 'motor_icon');
     const sensor = this.add.image(0, 0, 'sensor_icon');
 
-    const vorlagen = this.add.text(0, 0, 'Vorlagen:');
-    const grundformen = this.add.text(0, 0, 'Grundformen:');
+    const vorlagen = this.add.dom(0, 0, 'h3', '', 'Vorlagen:').setClassName('componentTitle');
+    const grundformen = this.add.dom(0, 0, 'h3', '', 'Grundformen:').setClassName('componentTitle');
 
     this.makeInteractable(prefab, position => {
       const entity = new Entity();
