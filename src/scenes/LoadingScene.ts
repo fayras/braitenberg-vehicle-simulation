@@ -1,12 +1,9 @@
 import Phaser from 'phaser';
-import tankImg from '../../assets/tank.png';
-import logoImg from '../../assets/logo.png';
 
 import vehicleIcon from '../../assets/vehicle.png';
 import sensorIcon from '../../assets/sensor.png';
 import motorIcon from '../../assets/motor.png';
 import sourceIcon from '../../assets/source_icon.png';
-import obstacleIcon from '../../assets/Mauer.png';
 import buttonSpriteSheet from '../../assets/gui_buttons.png';
 
 import vehicle2a from '../../assets/prefabs/2a.png';
@@ -23,13 +20,10 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
   public preload(): void {
     this.createProgress();
-    this.load.image('logo', logoImg);
-    this.load.image('tank', tankImg);
     this.load.image('vehicle_icon', vehicleIcon);
     this.load.image('sensor_icon', sensorIcon);
     this.load.image('motor_icon', motorIcon);
     this.load.image('source_icon', sourceIcon);
-    this.load.image('obstacle_Icon', obstacleIcon);
 
     this.load.image('prefab-2a', vehicle2a);
     this.load.image('prefab-2b', vehicle2b);
