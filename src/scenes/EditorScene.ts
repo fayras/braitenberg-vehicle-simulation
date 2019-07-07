@@ -36,7 +36,7 @@ export default class EditorScene extends SidebarScene {
     //   const entity = new Entity();
     //   entity.addComponent(new TransformableComponent(position));
     //   entity.addComponent(new SolidBodyComponent(100));
-    //   entity.addComponent(new RenderComponent('vehicle_icon', 100));
+    //   entity.addComponent(new RenderComponent('vehicle', 100));
     //   const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
     //   const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
     //   const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
