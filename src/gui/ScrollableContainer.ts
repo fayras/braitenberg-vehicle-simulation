@@ -9,16 +9,26 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
 
   private visibleHeight: number;
 
+  private mouseOver: boolean = false;
+
+  private handlers: (() => void)[] = [];
+
   public constructor(scene: Phaser.Scene, visibleWidth: number, visibleHeight: number) {
     super(scene);
 
     this.visibleWidth = visibleWidth;
     this.visibleHeight = visibleHeight;
 
-    // this.setInteractive(new Phaser.Geom.Rectangle(0, 0, visibleWidth, visibleHeight), () => {});
-    // this.on('wheel', (p: Phaser.Input.Pointer, dx: number, dy: number) => {
-    //   console.log('wheel');
-    //   this.scroll(dy);
+    this.setInteractive(new Phaser.Geom.Rectangle(0, 0, visibleWidth, visibleHeight), Phaser.Geom.Rectangle.Contains);
+
+    this.on('wheel', (p: Phaser.Input.Pointer, dx: number, dy: number) => {
+      this.scroll(dy * 20);
+    });
+
+    // window.addEventListener();
+
+    // this.on('pointerout', () => {
+    //   console.log('pointerout!');
     // });
 
     this.scrollbar = scene.add.rectangle(0, 0, 10, 100, 0xd8d8d8);
@@ -28,6 +38,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
       const delta = y - this.scrollbar.y;
       this.scroll(delta);
     });
+    this.scrollbar.setDepth(999);
 
     scene.add.existing(this);
     scene.children.bringToTop(this);
