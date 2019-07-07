@@ -15,6 +15,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
   }
 
   public static getWidth(): number {
+    // wäre es nicht noch besser dies relativ statt absolut zu setzen ...?
     return 256;
   }
 
@@ -95,7 +96,9 @@ export default abstract class SidebarScene extends Phaser.Scene {
           if (object.getData('ignoreHeight')) {
             object.setPosition(
               SidebarScene.getWidth() / 2,
-              this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
+              // warum erst - und dann + last Added Height ?
+              //this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
+              this.container.height - padding / 2 + padding,
             );
           } else {
             this.container.height += objectHeight + padding;
@@ -104,6 +107,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
         }
       }
       if (this.scrollFix) {
+        // ist das nicht JQuery ? Als Technologie im Technologie Teil erwähnen oder unterschlagen/ignorieren?
         (this.scrollFix.node as HTMLDivElement).style.height = `${this.container.height + padding}px`;
       }
     }
