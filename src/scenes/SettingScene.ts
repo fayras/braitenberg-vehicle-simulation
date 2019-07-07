@@ -5,6 +5,7 @@ import { ComponentType, SubstanceType } from '../enums';
 import SidebarScene from './SidebarScene';
 import Component from '../components/Component';
 import Attribute from '../components/Attribute';
+import EntityManager from '../EntityManager';
 
 export default class SettingScene extends SidebarScene {
   public constructor() {
@@ -12,6 +13,22 @@ export default class SettingScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
+    const addComponent = this.add.dom(0, 0, 'button', '', 'Hinzufügen');
+    const deleteEntity = this.add.dom(0, 0, 'button', '', 'Löschen');
+    addComponent.addListener('click');
+    deleteEntity.addListener('click');
+    addComponent.on('click', () => {
+      entity.removeComponent(component);
+      // alle Componenten der Enittät neu laden
+      container.removeAll(true);
+      container.height = 0;
+      this.onCreate(container, entity);
+    });
+    deleteEntity.on('click', () => {
+      EntityManager.destroyEntity(entity.id);
+      this.close();
+    });
+
     const uiElements = entity.getAllComponents().map((component): Phaser.GameObjects.DOMElement[] => {
       const title = this.add.dom(0, 0, 'h3', '', component.name).setClassName('componentTitle');
       const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
@@ -36,27 +53,6 @@ export default class SettingScene extends SidebarScene {
       return [title, deleteButton, ...attributes];
     });
 
-    this.pack(uiElements.flat());
-  }
-
-  private static bindValues(element: Phaser.GameObjects.DOMElement, component: Component): void {
-    const children = element.node.querySelectorAll('*');
-    children.forEach(child => {
-      const bind = child.getAttribute('component-bind');
-      if (bind) {
-        const el = child as HTMLInputElement;
-        el.value = get(component, bind);
-      }
-    });
-
-    element.addListener('change');
-    element.on('change', (event: { target: HTMLInputElement }) => {
-      console.log('change', event);
-      const t = event.target;
-      const bind = t.getAttribute('component-bind');
-      if (bind) {
-        set(component, bind, t.value);
-      }
-    });
+    this.pack([addComponent, deleteEntity, ...uiElements.flat()]);
   }
 }

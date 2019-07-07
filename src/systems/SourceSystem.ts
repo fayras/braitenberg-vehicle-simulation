@@ -28,6 +28,13 @@ export default class SourceSystem extends System {
   protected onEntityDestroyed(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
     sources.forEach(source => {
+      EventBus.publish(EventType.SOURCE_DESTROYED, {
+        id: source.id,
+        type: source.substance.get(),
+      });
+
+      if (!this.textures[source.id]) return;
+
       this.textures[source.id].destroy();
       delete this.textures[source.id];
     });
@@ -86,7 +93,7 @@ export default class SourceSystem extends System {
     image.setDepth(99);
     this.scene.children.bringToTop(image);
 
-    // window.open(offScreenCanvas.toDataURL(), '_blank');
+    this.textures[source.id] = image;
 
     EventBus.publish(EventType.SOURCE_CREATED, {
       id: source.id,

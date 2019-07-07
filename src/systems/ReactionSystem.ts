@@ -40,6 +40,9 @@ export default class ReactionSystem extends System {
 
     EventBus.subscribe(EventType.SENSOR_CREATED, this.onSensorCreated.bind(this));
     EventBus.subscribe(EventType.SOURCE_CREATED, this.onSourceCreated.bind(this));
+
+    EventBus.subscribe(EventType.SENSOR_DESTROYED, this.onSensorDestroyed.bind(this));
+    EventBus.subscribe(EventType.SOURCE_DESTROYED, this.onSourceDestroyed.bind(this));
   }
 
   public update(): void {
@@ -105,13 +108,11 @@ export default class ReactionSystem extends System {
     });
   }
 
-  private onSourceCreated(payload: EventMessages.NewSourceInfo): void {
-    this.sources[payload.id] = payload;
+  private computeCombinedSources(type: SubstanceType): void {
+    const combined = new Float32Array(this.width * this.height);
+    const sources = Object.values(this.sources).filter(s => s.type === type);
 
-    const combined = new Float32Array(payload.width * payload.height);
-    const sources = Object.values(this.sources).filter(s => s.type === payload.type);
-
-    for (let i = 0; i < payload.values.length; i += 1) {
+    for (let i = 0; i < combined.length; i += 1) {
       const sum = sources.reduce((acc, source) => {
         if (source.values[i] !== undefined) {
           return Math.max(acc, source.values[i]);
@@ -122,78 +123,31 @@ export default class ReactionSystem extends System {
       combined[i] = sum;
     }
 
-    this.sourcesCombined[payload.type] = combined;
+    this.sourcesCombined[type] = combined;
+  }
+
+  private onSourceCreated(payload: EventMessages.NewSourceInfo): void {
+    this.sources[payload.id] = payload;
     this.width = payload.width;
     this.height = payload.height;
+
+    this.computeCombinedSources(payload.type);
     this.compute();
-    // this.computeCorrelation(payload.type);
   }
 
   private onSensorCreated(payload: EventMessages.NewSensorInfo): void {
     this.sensors[payload.id] = payload;
     this.compute();
-    // this.computeCorrelation(payload.type);
   }
 
-  private handleReaction(payload: EventMessages.Reaction): void {
-    if (payload.other.label === ComponentType.SOURCE) {
-      const source = payload.other as SourcePhysicsObject;
-      const { sensor } = payload;
-      if (!ReactionSystem.reactTogether(sensor, source)) return;
-
-      const transform = sensor.userData.belongsTo.entity.getComponent(
-        ComponentType.TRANSFORMABLE,
-      ) as TransformableComponent;
-
-      const availableAngles = sensor.userData.tensors.map(t => t.angle);
-      const currentAngle = mod(transform.angle.get(), Math.PI * 2);
-
-      const closestAngle = availableAngles.reduce((prev, curr) => {
-        return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
-      });
-
-      // console.log(transform.angle.get(), currentAngle, closestAngle);
-
-      const sensorComponent = sensor.userData.belongsTo.component;
-      const sourceComponent = source.userData.belongsTo.component;
-      const lookUpKey = `${sensorComponent.id}:${sourceComponent.id}:${closestAngle}`;
-
-      if (!this.correlations[lookUpKey] && !this.computing[lookUpKey]) {
-        this.computing[lookUpKey] = true;
-        tidy(() => {
-          const sensorTensor = sensor.userData.tensors.find(t => t.angle === closestAngle);
-
-          if (!sensorTensor) {
-            console.warn(`could not find kernel for angle ${closestAngle}`);
-            return;
-          }
-
-          const conv = squeeze<Tensor2D>(conv2d(source.userData.tensor, sensorTensor.tensor, 1, 'same'));
-          const maxValue = conv.max().dataSync()[0];
-          const result = conv.div<Tensor2D>(maxValue);
-          result.array().then(value => {
-            this.correlations[lookUpKey] = value;
-            this.computing[lookUpKey] = false;
-          });
-        });
-      }
-
-      if (this.correlations[lookUpKey]) {
-        const y = Math.floor(sensor.position.y / CORRELATION_SCALE);
-        const x = Math.floor(sensor.position.x / CORRELATION_SCALE);
-
-        if (!this.correlations[lookUpKey][y] || !this.correlations[lookUpKey][y][x]) {
-          // sensorComponent.activation = sensorComponent.activation;
-          return;
-        }
-
-        const value = this.correlations[lookUpKey][y][x];
-        sensorComponent.activation.set(Math.max(value, sensorComponent.activation.get()));
-      }
-    }
+  private onSourceDestroyed(payload: EventMessages.SourceOrSensorDestroyedInfo): void {
+    delete this.sources[payload.id];
+    this.computeCombinedSources(payload.type);
+    this.compute();
   }
 
-  private static reactTogether(sensor: SensorPhysicsObject, source: SourcePhysicsObject): boolean {
-    return sensor.userData.belongsTo.component.reactsTo.get() === source.userData.belongsTo.component.substance.get();
+  private onSensorDestroyed(payload: EventMessages.SourceOrSensorDestroyedInfo): void {
+    delete this.sensors[payload.id];
+    this.compute();
   }
 }

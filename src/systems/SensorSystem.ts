@@ -68,6 +68,11 @@ export default class SensorSystem extends System {
         angleTextures[key].destroy();
       });
       delete this.textures[sensor.id];
+
+      EventBus.publish(EventType.SENSOR_DESTROYED, {
+        id: sensor.id,
+        type: sensor.reactsTo.get(),
+      });
     });
   }
 

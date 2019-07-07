@@ -23,7 +23,7 @@ export default abstract class System {
         this.onEntityDestroyed(entity);
 
         const found = this.entities.findIndex(e => e.id === entity.id);
-        if (found) {
+        if (found > -1) {
           this.entities.splice(found, 1);
         }
       }
