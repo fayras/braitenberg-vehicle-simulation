@@ -1,16 +1,14 @@
 import Phaser from 'phaser';
-import tankImg from '../../assets/tank.png';
-import logoImg from '../../assets/logo.png';
-import grundformen from '../../assets/grundformen.png';
-import vorlage from '../../assets/vorlagen.png';
 
-import vehicleIcon from '../../assets/vehicle.png';
-import sensorIcon from '../../assets/sensor.png';
-import motorIcon from '../../assets/motor.png';
-import sourceIcon from '../../assets/source_icon.png';
-import obstacleIcon from '../../assets/Mauer.png';
-import redX from '../../assets/x.png';
 import buttonSpriteSheet from '../../assets/gui_buttons.png';
+
+import vehicle from '../../assets/vehicleV2.png';
+import vehicle2a from '../../assets/prefabs/2a.png';
+import vehicle2b from '../../assets/prefabs/2b.png';
+import vehicle3a from '../../assets/prefabs/3a.png';
+import vehicle3b from '../../assets/prefabs/3b.png';
+import source from '../../assets/prefabs/source.png';
+import blank from '../../assets/prefabs/blank.png';
 
 export default class MainInterfaceScene extends Phaser.Scene {
   public constructor() {
@@ -19,17 +17,15 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
   public preload(): void {
     this.createProgress();
-    this.load.image('logo', logoImg);
-    this.load.image('vorlage', vorlage);
-    this.load.image('grundformen', grundformen);
-    this.load.image('vorlagen', vorlage);
-    this.load.image('tank', tankImg);
-    this.load.image('vehicle_icon', vehicleIcon);
-    this.load.image('sensor_icon', sensorIcon);
-    this.load.image('motor_icon', motorIcon);
-    this.load.image('source_icon', sourceIcon);
-    this.load.image('obstacle_Icon', obstacleIcon);
-    this.load.image('redX', redX);
+    this.load.image('vehicle', vehicle);
+
+    this.load.image('prefab-2a', vehicle2a);
+    this.load.image('prefab-2b', vehicle2b);
+    this.load.image('prefab-3a', vehicle3a);
+    this.load.image('prefab-3b', vehicle3b);
+    this.load.image('prefab-source', source);
+    this.load.image('prefab-blank', blank);
+
     this.load.spritesheet('button', buttonSpriteSheet, { frameWidth: 50, frameHeight: 48 });
   }
 

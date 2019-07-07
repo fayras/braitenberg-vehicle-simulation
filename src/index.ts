@@ -15,6 +15,9 @@ const config: Phaser.Types.Core.GameConfig = {
   dom: {
     createContainer: true,
   },
+  input: {
+    windowEvents: false,
+  },
   scene: [LoadingScene, MainScene, MainInterfaceScene],
   physics: {
     default: 'matter',

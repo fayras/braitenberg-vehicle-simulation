@@ -1,23 +1,26 @@
 import BaseInput from './BaseInput';
 
 export default class TextInput extends BaseInput<string | number> {
+  private inputElement: HTMLInputElement | null = null;
+
   protected create(): Element {
-    const root = document.createElement('div');
     const input = document.createElement('input');
 
-    input.type = 'number';
     input.value = (this.value as unknown) as string;
     input.addEventListener('change', () => {
       this.value = (input.value as unknown) as string;
     });
 
-    root.appendChild(input);
+    this.inputElement = input;
 
-    return root;
+    return input;
   }
 
-  // eslint-disable-next-line
-  protected onUpdate(): void {}
+  protected onUpdate(): void {
+    if (this.inputElement) {
+      this.inputElement.value = this.value.toString();
+    }
+  }
 
   // preUpdate(time, delta) {
   //     super.preUpdate(time, delta);

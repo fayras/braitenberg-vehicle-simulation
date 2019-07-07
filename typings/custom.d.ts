@@ -33,6 +33,11 @@ declare namespace EventMessages {
     height: number;
   }
 
+  interface SourceOrSensorDestroyedInfo {
+    id: number;
+    type: import('../src/enums').SubstanceType;
+  }
+
   type Reaction = CollisionBodies;
 }
 
@@ -104,6 +109,7 @@ type EventMessage =
   | EventMessages.Reaction
   | import('../src/Entity').default
   | EventMessages.NewSourceInfo
+  | EventMessages.SourceOrSensorDestroyedInfo
   | EventMessages.NewSensorInfo;
 type EventHandler =
   | ((event: EventMessages.ApplyForce) => void)
@@ -111,6 +117,7 @@ type EventHandler =
   | ((event: EventMessages.Reaction) => void)
   | ((event: import('../src/Entity').default) => void)
   | ((event: EventMessages.NewSensorInfo) => void)
+  | ((event: EventMessages.SourceOrSensorDestroyedInfo) => void)
   | ((event: EventMessages.NewSourceInfo) => void);
 
 interface Dimensions {

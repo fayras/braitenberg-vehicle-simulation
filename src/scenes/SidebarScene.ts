@@ -9,21 +9,22 @@ export default abstract class SidebarScene extends Phaser.Scene {
 
   protected key: string;
 
+  private handler: (gameSize: Phaser.Structs.Size) => void;
+
   public constructor(key: string) {
     super({ key });
     this.key = key;
+    this.handler = this.handleResize.bind(this);
   }
 
   public static getWidth(): number {
-    // wäre es nicht noch besser dies relativ statt absolut zu setzen ...?
     return 256;
   }
 
   protected abstract onCreate(container: Phaser.GameObjects.Container, ...args: any): void;
 
   public create(...args: unknown[]): void {
-    const handler = this.handleResize.bind(this);
-    this.scale.on('resize', handler);
+    this.scale.on('resize', this.handler);
 
     this.background = this.add.rectangle(0, 0, SidebarScene.getWidth(), this.cameras.main.displayHeight, 0xf8f8f8);
     this.background.setOrigin(0);
@@ -42,10 +43,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
         y: 0,
         duration: 100,
         ease: 'Expo.easeInOut',
-        onComplete: () => {
-          this.scale.off('resize', handler);
-          this.scene.stop(this.key);
-        },
+        onComplete: () => this.close(),
       });
     });
     this.add.existing(close);
@@ -63,6 +61,11 @@ export default abstract class SidebarScene extends Phaser.Scene {
         container.setPosition(container.x, container.y);
       },
     });
+  }
+
+  protected close(): void {
+    this.scale.off('resize', this.handler);
+    this.scene.stop(this.key);
   }
 
   protected pack(
@@ -96,8 +99,8 @@ export default abstract class SidebarScene extends Phaser.Scene {
           if (object.getData('ignoreHeight')) {
             object.setPosition(
               SidebarScene.getWidth() / 2,
-              // warum erst - und dann + last Added Height ?
-              //this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
+
+              this.container.height - lastAddedHeight - padding + lastAddedHeight / 2 + padding,
               this.container.height - padding / 2 + padding,
             );
           } else {
@@ -105,10 +108,6 @@ export default abstract class SidebarScene extends Phaser.Scene {
             lastAddedHeight = objectHeight;
           }
         }
-      }
-      if (this.scrollFix) {
-        // ist das nicht JQuery ? Als Technologie im Technologie Teil erwähnen oder unterschlagen/ignorieren?
-        (this.scrollFix.node as HTMLDivElement).style.height = `${this.container.height + padding}px`;
       }
     }
   }
