@@ -25,7 +25,7 @@ export default class ConnectionSystem extends System {
       connection.network.get().outputs.forEach((id, index) => {
         const motor = motors.find(m => m.id === id);
         if (motor) {
-          motor.throttle.set(outputs[index]);
+          motor.throttle = outputs[index];
         }
       });
     });
