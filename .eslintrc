@@ -16,7 +16,7 @@
     "no-param-reassign": ["error", { "props": false }],
     "class-methods-use-this": ["error", { "exceptMethods": ["update", "onEntityCreated", "onEntityDestroyed"] }],
     "no-prototype-builtins": "off",
-    "@typescript-eslint/no-non-null-assertion": false,
+    "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
