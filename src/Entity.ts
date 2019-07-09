@@ -14,6 +14,12 @@ export default class Entity {
   }
 
   public addComponent(component: Component): number {
+    const currentAmount = this.getMultipleComponents(component.name).length;
+
+    if (currentAmount >= component.getMaxAmount()) {
+      return -1;
+    }
+
     this.components.push(component);
 
     return component.id;

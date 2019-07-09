@@ -15,6 +15,8 @@ export default class RenderComponent extends Component {
 
   public blendMode: Attribute<Phaser.BlendModes, SelectInput<Phaser.BlendModes>>;
 
+  protected maxAmount = 1;
+
   public constructor(asset: AssetKey | Color, width: number, blendMode: Phaser.BlendModes = Phaser.BlendModes.NORMAL) {
     super();
     this.asset = new Attribute(asset, 'Anzeige', TextInput);
