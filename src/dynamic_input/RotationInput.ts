@@ -1,9 +1,9 @@
 import BaseInput from './BaseInput';
 
 export default class RotationInput extends BaseInput<number> {
-  private inputElement: HTMLInputElement;
+  private inputElement: HTMLInputElement | null = null;
 
-  private canvasElement: HTMLCanvasElement;
+  private canvasElement: HTMLCanvasElement | null = null;
 
   private size: number = 50;
 
@@ -29,7 +29,7 @@ export default class RotationInput extends BaseInput<number> {
   }
 
   private draw(): void {
-    const ctx = this.canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const ctx = this.canvasElement!.getContext('2d') as CanvasRenderingContext2D;
     const { radius } = this;
     const { lineWidth } = ctx;
 
@@ -56,11 +56,9 @@ export default class RotationInput extends BaseInput<number> {
   }
 
   protected onUpdate(): void {
-    if (this.inputElement) {
-      // "+ 180", da 0 Grad nach oben zeigen sollten. In der Welt zeigt 0 Grad aber nach unten.
-      const degree = Math.round((this.value * 180) / Math.PI) + 180;
-      this.inputElement.value = degree.toFixed(2);
-    }
+    // "+ 180", da 0 Grad nach oben zeigen sollten. In der Welt zeigt 0 Grad aber nach unten.
+    const degree = Math.round((this.value * 180) / Math.PI) + 180;
+    this.inputElement!.value = degree.toFixed(2);
     this.draw();
   }
 
