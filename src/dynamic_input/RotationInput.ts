@@ -23,6 +23,8 @@ export default class RotationInput extends BaseInput<number> {
     input.value = (this.value as unknown) as string;
     this.inputElement = input;
 
+    this.onUpdate();
+
     root.append(canvas, input);
 
     return root;
