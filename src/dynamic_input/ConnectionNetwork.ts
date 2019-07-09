@@ -1,3 +1,5 @@
+import swal from 'sweetalert';
+
 import BaseInput from './BaseInput';
 import Entity from '../Entity';
 import { parseDOM, getNode } from '../utils/dom';
@@ -69,13 +71,32 @@ export default class ConnectionNetwork extends BaseInput<ConnectionNetworkData> 
       line.style.opacity = String(Math.max(this.value.weights[index1][index2], 0.1));
 
       line.addEventListener('click', (event: MouseEvent) => {
-        const value = prompt(`Trage hier das Gewicht zwischen 0 und 1 ein (${fromId} -> ${toId})`);
-
-        if (!value || Number(value) < 0 || Number(value) > 1) return;
-
-        this.value.weights[index1][index2] = Number(value);
-        line.style.opacity = String(Math.max(this.value.weights[index1][index2], 0.1));
+        this.promptForValue(
+          `Trage hier das Gewicht zwischen -1 und 1 ein (${fromId} -> ${toId})`,
+          line,
+          index1,
+          index2,
+        );
       });
+    });
+  }
+
+  private promptForValue(text: string, line: HTMLDivElement, index1: number, index2: number): void {
+    swal({
+      text,
+      content: {
+        element: 'input',
+      },
+    }).then((value: string) => {
+      if (!value || Number.isNaN(Number(value)) || Number(value) < -1 || Number(value) > 1) {
+        swal('Der Wert muss zwischen -1 und 1 liegen. ').then(() => {
+          this.promptForValue(text, line, index1, index2);
+        });
+        return;
+      }
+
+      this.value.weights[index1][index2] = Number(value);
+      line.style.opacity = String(Math.max(this.value.weights[index1][index2], 0.1));
     });
   }
 
