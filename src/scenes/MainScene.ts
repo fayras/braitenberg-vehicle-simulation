@@ -1,4 +1,6 @@
-import Phaser, { Scene } from 'phaser';
+import Phaser from 'phaser';
+import swal from 'sweetalert';
+
 import EditorScene from './EditorScene';
 import SettingScene from './SettingScene';
 
@@ -156,7 +158,9 @@ export default class MainScene extends Phaser.Scene {
       entities.forEach(entity => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
-      alert('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.');
+      swal({
+        text: 'Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.',
+      });
     }
   }
 

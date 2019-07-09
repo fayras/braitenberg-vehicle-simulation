@@ -41,6 +41,7 @@
     "interactjs": "^1.4.11",
     "lodash-es": "^4.17.11",
     "mathjs": "^5.10.3",
-    "phaser": "^3.18.1"
+    "phaser": "^3.18.1",
+    "sweetalert": "^2.1.2"
   }
 }
