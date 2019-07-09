@@ -1,3 +1,5 @@
+import { ones } from 'mathjs';
+
 import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './Attribute';
@@ -8,13 +10,24 @@ export default class ConnectionComponent extends Component {
 
   public network: Attribute<ConnectionNetworkData, ConnectionNetwork>;
 
-  public constructor(inputIds: number[], outputIds: number[], weights: number[][]) {
+  protected maxAmount: number = 1;
+
+  public constructor(inputIds: number[], outputIds: number[], weights: number[][] | undefined = undefined) {
     super();
+
+    let w;
+
+    if (weights === undefined) {
+      w = ones(inputIds.length, outputIds.length).toArray();
+    } else {
+      w = weights;
+    }
+
     this.network = new Attribute(
       {
         inputs: inputIds,
         outputs: outputIds,
-        weights,
+        weights: w,
       },
       'Verbindungen',
       ConnectionNetwork,
