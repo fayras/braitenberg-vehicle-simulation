@@ -87,6 +87,12 @@ div.connection-line:hover {
   box-shadow: 0px 0px 2px black;
 }
 
+.sidepar-seperator {
+  min-height: 0px !important;
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+
 button,
 .button,
 [type='submit'],
