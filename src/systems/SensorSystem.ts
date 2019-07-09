@@ -64,9 +64,12 @@ export default class SensorSystem extends System {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
     sensors.forEach(sensor => {
       const angleTextures = this.textures[sensor.id];
+
       Object.keys(angleTextures).forEach(key => {
         angleTextures[key].destroy();
+        this.scene.textures.remove(`sensor_texture_${sensor.id}_${key}`);
       });
+
       delete this.textures[sensor.id];
 
       EventBus.publish(EventType.SENSOR_DESTROYED, {

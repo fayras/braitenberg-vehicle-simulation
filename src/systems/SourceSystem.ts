@@ -36,6 +36,7 @@ export default class SourceSystem extends System {
       if (!this.textures[source.id]) return;
 
       this.textures[source.id].destroy();
+      this.scene.textures.remove(`source_texture_${source.id}`);
       delete this.textures[source.id];
     });
   }
