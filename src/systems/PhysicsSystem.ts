@@ -6,6 +6,7 @@ import { ComponentType, BodyShape, EventType } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
+import Component from '../components/Component';
 
 interface PhysicsObjectDictionary {
   [entityId: number]: {
@@ -50,6 +51,18 @@ export default class PhysicsSystem extends System {
     this.scene.matter.world.off('afterupdate', eventAfterUpdate);
     this.scene.matter.world.remove(body, false);
     delete this.physicsObjects[entity.id];
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOLID_BODY) return;
+
+    this.onEntityCreated(entity);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOLID_BODY) return;
+
+    this.onEntityDestroyed(entity);
   }
 
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {

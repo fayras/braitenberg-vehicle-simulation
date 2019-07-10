@@ -5,6 +5,7 @@ import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
 import SolidBodyComponent from '../components/SolidBodyComponent';
+import Component from '../components/Component';
 
 interface RenderObjectDictionary {
   [entityId: number]: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
@@ -78,5 +79,17 @@ export default class RenderSystem extends System {
 
     render.destroy();
     delete this.renderObjects[entity.id];
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.RENDER) return;
+
+    this.onEntityCreated(entity);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.RENDER) return;
+
+    this.onEntityDestroyed(entity);
   }
 }

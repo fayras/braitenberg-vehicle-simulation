@@ -17,6 +17,7 @@ export default class Entity {
     const currentAmount = this.getMultipleComponents(component.name).length;
 
     if (currentAmount >= component.getMaxAmount()) {
+      console.warn(`Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`);
       return -1;
     }
 

@@ -7,6 +7,7 @@ import TransformableComponent from '../components/TransformableComponent';
 import System from './System';
 import EventBus from '../EventBus';
 import { gaussian, AVAILABLE_ANGLES } from '../utils/reactions';
+import Component from '../components/Component';
 
 const mod = (x: number, n: number): number => ((x % n) + n) % n;
 
@@ -63,20 +64,20 @@ export default class SensorSystem extends System {
   protected onEntityDestroyed(entity: Entity): void {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
     sensors.forEach(sensor => {
-      const angleTextures = this.textures[sensor.id];
-
-      Object.keys(angleTextures).forEach(key => {
-        angleTextures[key].destroy();
-        this.scene.textures.remove(`sensor_texture_${sensor.id}_${key}`);
-      });
-
-      delete this.textures[sensor.id];
-
-      EventBus.publish(EventType.SENSOR_DESTROYED, {
-        id: sensor.id,
-        type: sensor.reactsTo.get(),
-      });
+      this.removeSensorObject(sensor);
     });
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SENSOR) return;
+
+    this.addSensorObject(entity, component as SensorComponent);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SENSOR) return;
+
+    this.removeSensorObject(component as SensorComponent);
   }
 
   private addSensorObject(entity: Entity, sensor: SensorComponent): void {
@@ -146,6 +147,22 @@ export default class SensorSystem extends System {
       values,
       width,
       height,
+    });
+  }
+
+  private removeSensorObject(sensor: SensorComponent): void {
+    const angleTextures = this.textures[sensor.id];
+
+    Object.keys(angleTextures).forEach(key => {
+      angleTextures[key].destroy();
+      this.scene.textures.remove(`sensor_texture_${sensor.id}_${key}`);
+    });
+
+    delete this.textures[sensor.id];
+
+    EventBus.publish(EventType.SENSOR_DESTROYED, {
+      id: sensor.id,
+      type: sensor.reactsTo.get(),
     });
   }
 }

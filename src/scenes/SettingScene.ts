@@ -42,22 +42,22 @@ export default class SettingScene extends SidebarScene {
 
       switch (name) {
         case MotorComponent.name:
-          entity.addComponent(new MotorComponent({ x: 0, y: 0 }, 50, 5));
+          EntityManager.addComponent(entity.id, new MotorComponent({ x: 0, y: 0 }, 50, 5));
           break;
         case SensorComponent.name:
-          entity.addComponent(new SensorComponent({ x: 0, y: 0 }, 20, 0.3));
+          EntityManager.addComponent(entity.id, new SensorComponent({ x: 0, y: 0 }, 20, 0.3));
           break;
         case SourceComponent.name:
-          entity.addComponent(new SourceComponent(100));
+          EntityManager.addComponent(entity.id, new SourceComponent(100));
           break;
         case SolidBodyComponent.name:
-          entity.addComponent(new SolidBodyComponent());
+          EntityManager.addComponent(entity.id, new SolidBodyComponent());
           break;
         case ConnectionComponent.name:
           {
             const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map(com => com.id);
             const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map(com => com.id);
-            entity.addComponent(new ConnectionComponent(inputs, outputs));
+            EntityManager.addComponent(entity.id, new ConnectionComponent(inputs, outputs));
           }
           break;
         default:
@@ -89,7 +89,7 @@ export default class SettingScene extends SidebarScene {
       deleteButton.setData('ignoreHeight', true);
       deleteButton.addListener('click');
       deleteButton.on('click', () => {
-        entity.removeComponent(component);
+        EntityManager.removeComponent(entity.id, component);
         // alle Componenten der Enittät neu laden
         container.removeAll(true);
         container.height = 0;
