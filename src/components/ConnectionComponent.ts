@@ -1,4 +1,4 @@
-import { ones } from 'mathjs';
+import { matrix, ones } from 'mathjs';
 
 import { ComponentType } from '../enums';
 import Component from './Component';
@@ -18,7 +18,13 @@ export default class ConnectionComponent extends Component {
     let w;
 
     if (weights === undefined) {
-      w = ones(inputIds.length, outputIds.length).toArray();
+      const m = matrix(ones(inputIds.length, outputIds.length).toArray());
+      const dim = m.size().length;
+      if (dim !== 2) {
+        w = [[]];
+      } else {
+        w = m.toArray();
+      }
     } else {
       w = weights;
     }

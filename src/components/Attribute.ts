@@ -9,6 +9,8 @@ type ElementConstructor<T, S> = new (
   entity: Entity,
 ) => S;
 
+type ChangeHandler<T> = (value: T, oldValue: T) => void;
+
 export default class Attribute<T, S extends BaseInput<T>> implements Settable<T> {
   private value: T;
 
@@ -18,7 +20,7 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
 
   private el: S | null = null;
 
-  private changeHanlers: ((value: T) => void)[] = [];
+  private changeHanlers: ChangeHandler<T>[] = [];
 
   public constructor(value: T, label: string, renderAs: ElementConstructor<T, S>) {
     this.value = value;
@@ -40,15 +42,15 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
     }
 
     if (value !== oldValue && !silent) {
-      this.changeHanlers.forEach(handler => handler(value));
+      this.changeHanlers.forEach(handler => handler(value, oldValue));
     }
   }
 
-  public onChange(handler: (value: T) => void): void {
+  public onChange(handler: ChangeHandler<T>): void {
     this.changeHanlers.push(handler);
   }
 
-  public removeHandler(handler: (value: T) => void): void {
+  public removeHandler(handler: ChangeHandler<T>): void {
     const found = this.changeHanlers.findIndex(h => h === handler);
     if (found) {
       this.changeHanlers.splice(found, 1);
