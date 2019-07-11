@@ -84,7 +84,9 @@ export default class SettingScene extends SidebarScene {
     const seperator = this.add.dom(0, 0, 'hr').setClassName('sidepar-seperator base-input-container');
 
     const uiElements = entity.getAllComponents().map((component): Phaser.GameObjects.DOMElement[] => {
-      const title = this.add.dom(0, 0, 'h3', '', component.name).setClassName('componentTitle');
+      const title = this.add
+        .dom(0, 0, 'h3', '', `${component.name} (ID: ${component.id})`)
+        .setClassName('componentTitle');
       const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
       deleteButton.setData('ignoreHeight', true);
       deleteButton.addListener('click');
