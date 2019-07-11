@@ -8,6 +8,7 @@ import EventBus from '../EventBus';
 import TransformableComponent from '../components/TransformableComponent';
 import SensorComponent from '../components/SensorComponent';
 import { AVAILABLE_ANGLES } from '../utils/reactions';
+import { gaussianRandom } from '../utils/math';
 
 const mod = (x: number, n: number): number => ((x % n) + n) % n;
 
@@ -72,8 +73,9 @@ export default class ReactionSystem extends System {
           return;
         }
 
-        const value = this.correlations[lookUpKey][y][x] / this.maxValue;
-        sensor.activation.set(value);
+        const value = this.correlations[lookUpKey][y][x]; // / this.maxValue;
+        const noise = gaussianRandom(-0.1, 0.1);
+        sensor.activation.set(value + noise);
       });
     });
   }
@@ -94,13 +96,15 @@ export default class ReactionSystem extends System {
 
             const conv = squeeze<Tensor2D>(conv2d(sourcesTensor, sensorTensor, 1, 'same'));
 
-            conv.array().then(res => {
-              this.correlations[lookUpKey] = res;
-            });
+            // conv.array().then(res => {
+            //   values = res;
+            // });
             const maxTensor = conv.max();
-            maxTensor.data().then(value => {
-              const max = value[0];
-              this.maxValue = max;
+            const result = conv.div<Tensor2D>(maxTensor);
+            result.array().then(value => {
+              this.correlations[lookUpKey] = value;
+              // console.log(lookUpKey, type, value);
+              // this.maxValue = max;
               resolve();
             });
           });
