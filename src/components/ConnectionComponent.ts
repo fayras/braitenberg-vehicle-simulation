@@ -1,3 +1,5 @@
+import { matrix, ones } from 'mathjs';
+
 import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './Attribute';
@@ -8,13 +10,30 @@ export default class ConnectionComponent extends Component {
 
   public network: Attribute<ConnectionNetworkData, ConnectionNetwork>;
 
-  public constructor(inputIds: number[], outputIds: number[], weights: number[][]) {
+  protected maxAmount: number = 1;
+
+  public constructor(inputIds: number[], outputIds: number[], weights: number[][] | undefined = undefined) {
     super();
+
+    let w;
+
+    if (weights === undefined) {
+      const m = matrix(ones(inputIds.length, outputIds.length).toArray());
+      const dim = m.size().length;
+      if (dim !== 2) {
+        w = [[]];
+      } else {
+        w = m.toArray();
+      }
+    } else {
+      w = weights;
+    }
+
     this.network = new Attribute(
       {
         inputs: inputIds,
         outputs: outputIds,
-        weights,
+        weights: w,
       },
       'Verbindungen',
       ConnectionNetwork,

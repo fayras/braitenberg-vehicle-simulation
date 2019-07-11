@@ -5,6 +5,7 @@ import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
 import SolidBodyComponent from '../components/SolidBodyComponent';
+import Component from '../components/Component';
 
 interface RenderObjectDictionary {
   [entityId: number]: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
@@ -26,11 +27,27 @@ export default class RenderSystem extends System {
   }
 
   protected onEntityCreated(entity: Entity): void {
-    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+
+    render.asset.onChange(value => {
+      this.onEntityDestroyed(entity);
+      this.createImage(entity, render);
+    });
+
+    render.size.onChange(value => {
+      const image = this.renderObjects[entity.id];
+      const scale = value / image.width;
+      image.setScale(scale);
+    });
+
+    this.createImage(entity, render);
+  }
+
+  protected createImage(entity: Entity, render: RenderComponent): void {
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const body = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
-    let image;
+    let image: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
     if (body && typeof render.asset.get() === 'number') {
       image = this.scene.add.rectangle(
         transform.position.get().x,
@@ -78,5 +95,17 @@ export default class RenderSystem extends System {
 
     render.destroy();
     delete this.renderObjects[entity.id];
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.RENDER) return;
+
+    this.onEntityCreated(entity);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.RENDER) return;
+
+    this.onEntityDestroyed(entity);
   }
 }

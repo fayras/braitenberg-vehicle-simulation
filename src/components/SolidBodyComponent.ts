@@ -14,6 +14,8 @@ export default class SolidBodyComponent extends Component {
 
   public isStatic: Attribute<boolean, Checkbox>;
 
+  protected maxAmount = 1;
+
   public constructor(
     size: Dimensions | number = 50,
     shape: BodyShape = BodyShape.RECTANGLE,

@@ -6,6 +6,7 @@ import { ComponentType, BodyShape, EventType } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
+import Component from '../components/Component';
 
 interface PhysicsObjectDictionary {
   [entityId: number]: {
@@ -30,7 +31,24 @@ export default class PhysicsSystem extends System {
 
   protected onEntityCreated(entity: Entity): void {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
+    component.shape.onChange(value => {
+      this.onEntityDestroyed(entity);
+      this.createBody(entity, component);
+    });
 
+    component.size.onChange((value, old) => {
+      const { body } = this.physicsObjects[entity.id];
+      Phaser.Physics.Matter.Matter.Body.scale(body, value.width / old.width, value.height / old.height);
+    });
+
+    component.isStatic.onChange(value => {
+      this.physicsObjects[entity.id].body.isStatic = value;
+    });
+
+    this.createBody(entity, component);
+  }
+
+  private createBody(entity: Entity, component: SolidBodyComponent): void {
     const body = PhysicsSystem.getBody(component);
 
     const emitters = this.attachSynchronization(body, entity);
@@ -50,6 +68,18 @@ export default class PhysicsSystem extends System {
     this.scene.matter.world.off('afterupdate', eventAfterUpdate);
     this.scene.matter.world.remove(body, false);
     delete this.physicsObjects[entity.id];
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOLID_BODY) return;
+
+    this.onEntityCreated(entity);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOLID_BODY) return;
+
+    this.onEntityDestroyed(entity);
   }
 
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
@@ -104,6 +134,8 @@ export default class PhysicsSystem extends System {
   }
 
   private applyForce(payload: EventMessages.ApplyForce): void {
+    if (!this.physicsObjects[payload.id]) return;
+
     const { body } = this.physicsObjects[payload.id];
 
     if (!body) return;

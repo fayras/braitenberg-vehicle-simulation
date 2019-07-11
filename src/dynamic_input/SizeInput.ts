@@ -1,25 +1,33 @@
 import BaseInput from './BaseInput';
+import { parseDOM, getNode } from '../utils/dom';
 
 export default class SizeInput extends BaseInput<Dimensions> {
-  protected create(): Element {
-    const root = document.createElement('div');
-    const input = document.createElement('input');
+  protected showDefaultLabel = false;
 
-    input.type = 'number';
-    input.value = (this.value.width as unknown) as string;
-    input.addEventListener('change', () => {
-      this.value = { width: Number(input.value), height: this.value.height };
+  protected create(): Element {
+    const html = `
+      <div>
+        <label>Breite</label>
+        <input name="width" type="number"></input>
+        <label>Höhe</label>
+        <input name="height" type="number"></input>
+      </div>
+    `;
+
+    const nodes = parseDOM(html);
+    const width = getNode<HTMLInputElement>(nodes, 'input[name="width"]');
+    const height = getNode<HTMLInputElement>(nodes, 'input[name="height"]');
+
+    width.value = String(this.value.width);
+    height.value = String(this.value.height);
+
+    width.addEventListener('change', () => {
+      this.value = { width: Number(width.value), height: Number(height.value) };
+    });
+    height.addEventListener('change', () => {
+      this.value = { width: Number(width.value), height: Number(height.value) };
     });
 
-    root.appendChild(input);
-
-    return root;
+    return nodes.body.childNodes[0] as Element;
   }
-
-  // eslint-disable-next-line
-  protected onUpdate(): void {}
-
-  // preUpdate(time, delta) {
-  //     super.preUpdate(time, delta);
-  // }
 }

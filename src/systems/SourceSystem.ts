@@ -8,6 +8,7 @@ import SourceComponent from '../components/SourceComponent';
 import { gaussian, flatRect } from '../utils/reactions';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import EventBus from '../EventBus';
+import Component from '../components/Component';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
@@ -28,16 +29,20 @@ export default class SourceSystem extends System {
   protected onEntityDestroyed(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
     sources.forEach(source => {
-      EventBus.publish(EventType.SOURCE_DESTROYED, {
-        id: source.id,
-        type: source.substance.get(),
-      });
-
-      if (!this.textures[source.id]) return;
-
-      this.textures[source.id].destroy();
-      delete this.textures[source.id];
+      this.removeSourceObject(source);
     });
+  }
+
+  protected onEntityComponentAdded(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOURCE) return;
+
+    this.addSourceObject(entity, component as SourceComponent);
+  }
+
+  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
+    if (component.name !== ComponentType.SOURCE) return;
+
+    this.removeSourceObject(component as SourceComponent);
   }
 
   private addSourceObject(entity: Entity, source: SourceComponent): void {
@@ -102,5 +107,18 @@ export default class SourceSystem extends System {
       width,
       height,
     });
+  }
+
+  private removeSourceObject(source: SourceComponent): void {
+    EventBus.publish(EventType.SOURCE_DESTROYED, {
+      id: source.id,
+      type: source.substance.get(),
+    });
+
+    if (!this.textures[source.id]) return;
+
+    this.textures[source.id].destroy();
+    this.scene.textures.remove(`source_texture_${source.id}`);
+    delete this.textures[source.id];
   }
 }

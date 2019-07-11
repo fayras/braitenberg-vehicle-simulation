@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import System from './System';
-import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
 import TransformableComponent from '../components/TransformableComponent';
 import MotorComponent from '../components/MotorComponent';

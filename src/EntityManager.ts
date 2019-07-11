@@ -39,6 +39,30 @@ class EntityManager {
     delete this.entities[id];
   }
 
+  public addComponent(entityId: number, component: Component): Entity | undefined {
+    const entity = this.entities[entityId];
+
+    if (!entity) {
+      console.warn(`Entität mit ID ${entityId} konnte nicht gefunden werden`);
+      return;
+    }
+
+    entity.addComponent(component);
+    EventBus.publish(EventType.ENTITY_COMPONENT_ADDED, { entity, component });
+  }
+
+  public removeComponent(entityId: number, component: Component): Entity | undefined {
+    const entity = this.entities[entityId];
+
+    if (!entity) {
+      console.warn(`Entität mit ID ${entityId} konnte nicht gefunden werden`);
+      return;
+    }
+
+    entity.removeComponent(component);
+    EventBus.publish(EventType.ENTITY_COMPONENT_REMOVED, { entity, component });
+  }
+
   public getEntities(): Entity[] {
     return Object.values(this.entities);
   }

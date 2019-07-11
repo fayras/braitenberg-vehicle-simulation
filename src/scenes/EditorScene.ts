@@ -29,6 +29,7 @@ export default class EditorScene extends SidebarScene {
       const entity = new Entity();
       entity.addComponent(new TransformableComponent(position));
       entity.addComponent(new RenderComponent('prefab-blank', 100));
+
       EntityManager.addExistingEntity(entity);
     });
 
