@@ -29,7 +29,7 @@ export default class SensorComponent extends Component {
     super();
     this.position = new Attribute(offsetPos, 'Position', PositionInput);
     this.range = new Attribute(range, 'Reichweite', NumberInput);
-    this.angle = new Attribute(angle, 'Winkel', NumberInput);
+    this.angle = new Attribute(angle, 'Öffnungswinkel', NumberInput);
     this.reactsTo = new Attribute(reactsTo, 'Reagiert auf', SelectInput);
     this.activation = new Attribute(0 as number, 'activation', NumberInput);
   }
