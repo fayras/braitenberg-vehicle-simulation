@@ -83,8 +83,8 @@ export default class MainScene extends Phaser.Scene {
     entity.addComponent(transform);
     entity.addComponent(new SolidBodyComponent({ width: 100, height: 150 }));
     entity.addComponent(new RenderComponent('vehicle', 100));
-    const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
-    const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
+    const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 30, 1));
+    const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 30, 1));
     const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 75 }, 20, 0.4));
     const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 75 }, 20, 0.4));
     const sensor3 = entity.addComponent(new SensorComponent({ x: -50, y: 75 }, 30, 0.4, SubstanceType.BARRIER));
