@@ -152,10 +152,14 @@ export default class PhysicsSystem extends System {
     // Die Potenz sorgt dafür, dass kleinere Drehungen mehr Drehmoment erzeugen und das
     // Vehikel sich dadurch eher dreht. Es ist wichtig eine ungerade Potenz zu nehmen,
     // damit entgegengesetztes Drehmoment die Rotatioin ausgleicht.
-    body.torque -= (t + Math.sign(t)) ** 3;
+    body.torque -= (t + Math.sign(t)) ** 5;
 
     // console.log(body.torque, t);
 
-    Phaser.Physics.Matter.Matter.Body.applyForce(body, { x: body.position.x, y: body.position.y }, force);
+    Phaser.Physics.Matter.Matter.Body.applyForce(
+      body,
+      { x: body.position.x + offset.x, y: body.position.y + offset.y },
+      force,
+    );
   }
 }
