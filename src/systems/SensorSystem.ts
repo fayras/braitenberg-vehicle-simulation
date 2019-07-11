@@ -58,6 +58,21 @@ export default class SensorSystem extends System {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
     sensors.forEach(sensor => {
       this.addSensorObject(entity, sensor);
+
+      sensor.angle.onChange(value => {
+        this.removeSensorObject(sensor);
+        this.addSensorObject(entity, sensor);
+      });
+
+      sensor.range.onChange(value => {
+        this.removeSensorObject(sensor);
+        this.addSensorObject(entity, sensor);
+      });
+
+      sensor.reactsTo.onChange(value => {
+        this.removeSensorObject(sensor);
+        this.addSensorObject(entity, sensor);
+      });
     });
   }
 
@@ -71,7 +86,23 @@ export default class SensorSystem extends System {
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SENSOR) return;
 
-    this.addSensorObject(entity, component as SensorComponent);
+    const sensor = component as SensorComponent;
+    this.addSensorObject(entity, sensor);
+
+    sensor.angle.onChange(value => {
+      this.removeSensorObject(sensor);
+      this.addSensorObject(entity, sensor);
+    });
+
+    sensor.range.onChange(value => {
+      this.removeSensorObject(sensor);
+      this.addSensorObject(entity, sensor);
+    });
+
+    sensor.reactsTo.onChange(value => {
+      this.removeSensorObject(sensor);
+      this.addSensorObject(entity, sensor);
+    });
   }
 
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
@@ -138,8 +169,6 @@ export default class SensorSystem extends System {
     });
 
     this.textures[sensor.id] = textures;
-
-    // window.open(offScreenCanvas.toDataURL(), '_blank');
 
     EventBus.publish(EventType.SENSOR_CREATED, {
       id: sensor.id,

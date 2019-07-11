@@ -23,6 +23,20 @@ export default class SourceSystem extends System {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
     sources.forEach(source => {
       this.addSourceObject(entity, source);
+
+      source.emissionType.onChange(() => {
+        this.removeSourceObject(source);
+        this.addSourceObject(entity, source);
+      });
+
+      source.range.onChange(() => {
+        this.removeSourceObject(source);
+        this.addSourceObject(entity, source);
+      });
+
+      // Theoretisch wäre es auch notwendig auf das "Change" Event der Tansformable Komponente
+      // zu hören und die Quelle entsprechend zu verschieben, aber das ist dann zu aufwändig,
+      // da sonst die ganzen Korrelationen neu berechnet werden müssen.
     });
   }
 
