@@ -87,13 +87,13 @@ export default abstract class SidebarScene extends Phaser.Scene {
           const objectHeight = object.height;
           object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
 
-          if (object instanceof Phaser.GameObjects.Text) {
-            object
-              .setFontSize(23)
-              .setColor('black')
-              .setFontFamily('Calibri');
-            object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
-          }
+          //if (object instanceof Phaser.GameObjects.Text) {
+          // object
+          //  .setFontSize(23)
+          // .setColor('black')
+          // .setFontFamily('Calibri');
+          //object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
+          //}
 
           this.container.add(object);
           if (object.getData('ignoreHeight')) {

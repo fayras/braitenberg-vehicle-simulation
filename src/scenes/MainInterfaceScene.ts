@@ -43,7 +43,6 @@ export default class MainInterfaceScene extends Phaser.Scene {
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
     const showEditor = this.buttons[2];
-
     showEditor.setPosition(gameSize.width - 35, 35);
   }
 }

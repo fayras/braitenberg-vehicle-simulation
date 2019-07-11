@@ -19,11 +19,11 @@ export default class EditorScene extends SidebarScene {
 
   public onCreate(container: Phaser.GameObjects.Container): void {
     const prefabBlank = this.add.image(0, 0, 'prefab-blank');
+    const prefabSource = this.add.image(0, 0, 'prefab-source');
     const prefab2a = this.add.image(0, 0, 'prefab-2a');
     const prefab2b = this.add.image(0, 0, 'prefab-2b');
     const prefab3a = this.add.image(0, 0, 'prefab-3a');
     const prefab3b = this.add.image(0, 0, 'prefab-3b');
-    const prefabSource = this.add.image(0, 0, 'prefab-source');
 
     this.makeInteractable(prefabBlank, position => {
       const entity = new Entity();
@@ -49,7 +49,6 @@ export default class EditorScene extends SidebarScene {
 
   private makeInteractable(image: Phaser.GameObjects.Image, onDrop: DropHandler): void {
     image.setInteractive({ draggable: true });
-
     image.on('dragstart', () => {
       this.children.bringToTop(image);
     });
@@ -62,10 +61,8 @@ export default class EditorScene extends SidebarScene {
       if (this.container) {
         const position = { x: 0, y: 0 };
         this.container.getWorldTransformMatrix().transformPoint(image.x, image.y, position);
-
         onDrop(position);
       }
-
       image.setPosition(image.input.dragStartX, image.input.dragStartY);
     });
   }
