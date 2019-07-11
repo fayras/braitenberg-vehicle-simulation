@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import Phaser from 'phaser';
 import Entity from '../Entity';
 import { ComponentType, EmissionType, EventType, SubstanceType } from '../enums';
@@ -21,6 +22,7 @@ export default class SourceSystem extends System {
 
   protected onEntityCreated(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     sources.forEach(source => {
       this.addSourceObject(entity, source);
 
@@ -37,6 +39,12 @@ export default class SourceSystem extends System {
       // Theoretisch wäre es auch notwendig auf das "Change" Event der Tansformable Komponente
       // zu hören und die Quelle entsprechend zu verschieben, aber das ist dann zu aufwändig,
       // da sonst die ganzen Korrelationen neu berechnet werden müssen.
+      transform.position.onChange(
+        debounce(() => {
+          this.removeSourceObject(source);
+          this.addSourceObject(entity, source);
+        }, 200),
+      );
     });
   }
 
@@ -50,7 +58,29 @@ export default class SourceSystem extends System {
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SOURCE) return;
 
-    this.addSourceObject(entity, component as SourceComponent);
+    const source = component as SourceComponent;
+    this.addSourceObject(entity, source);
+
+    source.emissionType.onChange(() => {
+      this.removeSourceObject(source);
+      this.addSourceObject(entity, source);
+    });
+
+    source.range.onChange(() => {
+      this.removeSourceObject(source);
+      this.addSourceObject(entity, source);
+    });
+
+    // Theoretisch wäre es auch notwendig auf das "Change" Event der Tansformable Komponente
+    // zu hören und die Quelle entsprechend zu verschieben, aber das ist dann zu aufwändig,
+    // da sonst die ganzen Korrelationen neu berechnet werden müssen.
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+    transform.position.onChange(
+      debounce(() => {
+        this.removeSourceObject(source);
+        this.addSourceObject(entity, source);
+      }, 200),
+    );
   }
 
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {

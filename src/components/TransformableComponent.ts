@@ -12,6 +12,8 @@ export default class TransformableComponent extends Component {
 
   public angle: Attribute<number, RotationInput>;
 
+  protected maxAmount = 1;
+
   public constructor(pos: Vector2D = { x: 0, y: 0 }) {
     super();
     this.position = new Attribute(pos, 'Position', ReadonlyPosition);
