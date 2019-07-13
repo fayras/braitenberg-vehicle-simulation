@@ -13,6 +13,8 @@ export default class Entity {
     Entity.numOfEntities += 1;
   }
 
+  // fügt die Übergebene Componente der Entität hinzu, wenn es nicht schon zu viele Componenten gibt
+  //  gibt die Id der neu hinzugefügten Componente zurück
   public addComponent(component: Component): number {
     const currentAmount = this.getMultipleComponents(component.name).length;
 
@@ -22,10 +24,11 @@ export default class Entity {
     }
 
     this.components.push(component);
-
     return component.id;
   }
 
+  // entfernt die übergebene Componente, falls vorhanden
+  // gibt entfernte Componente zurück
   public removeComponent(component: Component): Component | undefined {
     const index = this.components.indexOf(component);
     if (index >= 0) {
@@ -35,23 +38,28 @@ export default class Entity {
     return undefined;
   }
 
+  // gibt die erste Componente mit dem Übergebenen Component Typ zurück
   public getComponent<T extends Component>(name: ComponentType): T | undefined {
     return this.components.find(c => c.name === name) as T;
   }
 
+  // gibt alle Componenten mit dem übergebenen Component Type zurück
   public getMultipleComponents(name: ComponentType): Component[] {
     return this.components.filter(c => c.name === name);
   }
 
+  //
   public hasComponents(...components: ComponentType[]): boolean {
     const available = this.components.map(c => c.name);
     return components.every(name => available.includes(name));
   }
 
+  // gibt alle Componenten der Entität zurück
   public getAllComponents(): Component[] {
     return this.components;
   }
 
+  // Serialisierungsfunktion für die Umwandlung in JSON
   public serialize(): SerializedEntity {
     return {
       id: this.id,

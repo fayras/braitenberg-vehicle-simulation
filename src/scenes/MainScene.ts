@@ -45,8 +45,8 @@ export default class MainScene extends Phaser.Scene {
     this.createSystems();
     this.scene.launch('MainInterfaceScene');
 
+    // Anpassen der Szene an aktuelle Bildschirmgröße
     this.scale.on('resize', this.handleResize.bind(this));
-
     this.matter.world.setBounds();
 
     this.scene.add('editor', EditorScene, false);
@@ -64,14 +64,14 @@ export default class MainScene extends Phaser.Scene {
     );
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 450, y: 250 }),
+      new TransformableComponent({ x: 459, y: 250 }),
       new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
       new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
       new RenderComponent(0xcccccc, 110),
     );
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 450, y: 650 }),
+      new TransformableComponent({ x: 459, y: 650 }),
       new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
       new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
       new RenderComponent(0xcccccc, 110),
