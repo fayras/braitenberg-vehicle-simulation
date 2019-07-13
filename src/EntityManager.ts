@@ -16,11 +16,13 @@ import SourceComponent from './components/SourceComponent';
 class EntityManager {
   private entities: { [id: number]: Entity } = {};
 
+  // fügt eine neue, bereits erstellte Entität dem EntityManger hinzu
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
     EventBus.publish(EventType.ENTITY_CREATED, entity);
   }
 
+  // fügt eine neue, noch nicht erstelle Entität mit den übergebenen Komponenten hinzu
   public createEntity(...components: Component[]): Entity {
     const entity = new Entity();
     components.forEach(c => {
@@ -32,6 +34,7 @@ class EntityManager {
     return entity;
   }
 
+  // zerstört die Entität mit der übergebenen Id
   public destroyEntity(id: number): void {
     const entity = this.entities[id];
 
@@ -39,6 +42,8 @@ class EntityManager {
     delete this.entities[id];
   }
 
+  // fügt den übergebenen Komponenten der Entität mit der übergebenen Id hinzu
+  // Rückgabe:
   public addComponent(entityId: number, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 
@@ -51,6 +56,7 @@ class EntityManager {
     EventBus.publish(EventType.ENTITY_COMPONENT_ADDED, { entity, component });
   }
 
+  //löscht den übergebenen Komponenten der Entität mit der übergeben Id
   public removeComponent(entityId: number, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 
@@ -63,10 +69,12 @@ class EntityManager {
     EventBus.publish(EventType.ENTITY_COMPONENT_REMOVED, { entity, component });
   }
 
+  // gibt alle eingefügten Entitäten zurück
   public getEntities(): Entity[] {
     return Object.values(this.entities);
   }
 
+  // lädt aus einem Array alle Entitäten und Komponenten und fügt sie dem EntityManager hinzu
   public loadEntities(allEntities: SerializedEntity[]): void {
     allEntities.forEach(serializedEntity => {
       const entity = new Entity();
