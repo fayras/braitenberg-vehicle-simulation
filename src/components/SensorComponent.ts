@@ -20,6 +20,7 @@ export default class SensorComponent extends Component {
 
   public reactsTo: Attribute<SubstanceType, SelectInput<SubstanceType>>;
 
+  // Konstruktor der Klasse mit Erstellung von Attributen für alle Parameter
   public constructor(
     offsetPos: Phaser.Physics.Matter.Matter.Vector,
     range: number,
@@ -34,6 +35,7 @@ export default class SensorComponent extends Component {
     this.activation = new Attribute(0 as number, 'activation', NumberInput);
   }
 
+  //Serialisierungsfunktion zur Verarbeitung mit JSON
   public serializeAttributes(): object {
     return {
       position: this.position.get(),
