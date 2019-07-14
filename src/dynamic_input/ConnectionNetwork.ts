@@ -95,8 +95,10 @@ export default class ConnectionNetwork extends BaseInput<ConnectionNetworkData> 
         return;
       }
 
-      this.value.weights[index1][index2] = Number(value);
-      line.style.opacity = String(Math.max(this.value.weights[index1][index2], 0.1));
+      const v = Number(value);
+      this.value.weights[index1][index2] = v;
+      line.style.opacity = String(Math.max(Math.abs(v), 0.1));
+      line.style.backgroundColor = Math.sign(v) >= 0 ? 'black' : 'red';
     });
   }
 
