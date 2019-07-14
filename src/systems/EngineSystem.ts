@@ -21,7 +21,7 @@ export default class EngineSystem extends System {
 
         const base = Number(motor.defaultSpeed.get());
         const max = Number(motor.maxSpeed.get());
-        const thrust = base + (max - base) * motor.throttle;
+        const thrust = base + (max - base) * motor.throttle.get();
 
         motor.visualThrottle.set(thrust.toFixed(2));
 

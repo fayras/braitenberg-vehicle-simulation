@@ -56,7 +56,7 @@ class EntityManager {
     EventBus.publish(EventType.ENTITY_COMPONENT_ADDED, { entity, component });
   }
 
-  //löscht den übergebenen Komponenten der Entität mit der übergeben Id
+  // löscht den übergebenen Komponenten der Entität mit der übergeben Id
   public removeComponent(entityId: number, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 

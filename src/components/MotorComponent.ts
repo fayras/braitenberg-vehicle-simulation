@@ -4,6 +4,7 @@ import Attribute from './Attribute';
 import NumberInput from '../dynamic_input/NumberInput';
 import PositionInput from '../dynamic_input/PositionInput';
 import TextInput from '../dynamic_input/TextInput';
+import HiddenInput from '../dynamic_input/HiddenInput';
 
 export default class MotorComponent extends Component {
   public name: ComponentType = ComponentType.MOTOR;
@@ -14,7 +15,7 @@ export default class MotorComponent extends Component {
 
   public maxSpeed: Attribute<number, NumberInput>;
 
-  public throttle: number;
+  public throttle: Attribute<number, HiddenInput>;
 
   public visualThrottle: Attribute<string | number, TextInput>;
 
@@ -23,7 +24,7 @@ export default class MotorComponent extends Component {
     this.position = new Attribute(pos, 'Position', PositionInput);
     this.maxSpeed = new Attribute(speed, 'Maximalgeschwindigkeit', NumberInput);
     this.defaultSpeed = new Attribute(defaultSpeed, 'Mindestgeschwindigkeit', NumberInput);
-    this.throttle = 0;
+    this.throttle = new Attribute(0 as number, '', HiddenInput);
     this.visualThrottle = new Attribute<string | number, TextInput>('0', 'Aktuelle Geschwindigkeit', TextInput);
   }
 

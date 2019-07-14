@@ -17,7 +17,6 @@ body {
 .base-input-container {
   display: block;
   width: 208px;
-  min-height: 20px;
 }
 
 .componentTitle {
