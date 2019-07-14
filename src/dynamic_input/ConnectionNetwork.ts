@@ -63,12 +63,13 @@ export default class ConnectionNetwork extends BaseInput<ConnectionNetworkData> 
       const index2 = this.value.outputs.indexOf(Number(toId));
 
       const stats = ConnectionNetwork.line(from, to);
-
+      const value = this.value.weights[index1][index2];
       line.style.width = `${stats.width}px`;
       line.style.left = `${stats.offsetLeft}px`;
       line.style.top = `${stats.offsetTop}px`;
       line.style.transform = stats.transform;
-      line.style.opacity = String(Math.max(this.value.weights[index1][index2], 0.1));
+      line.style.opacity = String(Math.max(Math.abs(value), 0.1));
+      line.style.backgroundColor = Math.sign(value) >= 0 ? 'black' : 'red';
 
       line.addEventListener('click', (event: MouseEvent) => {
         this.promptForValue(
