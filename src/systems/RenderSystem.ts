@@ -51,7 +51,7 @@ export default class RenderSystem extends System {
   }
 
   private removeHighlight(): void {
-    if (this.selected) {
+    if (this.selected && this.scene.children.exists(this.selected)) {
       if (this.selected instanceof Phaser.GameObjects.Image) {
         this.selected.setTint(0xffffff);
       }
@@ -60,8 +60,8 @@ export default class RenderSystem extends System {
         this.selected.setFillStyle(color);
       }
       this.selected.setDepth(this.selected.getData('originalDepth') || 0);
-      this.selected = null;
     }
+    this.selected = null;
   }
 
   public update(): void {
