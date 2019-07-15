@@ -18,12 +18,12 @@ export default class EditorScene extends SidebarScene {
   }
 
   public onCreate(container: Phaser.GameObjects.Container): void {
-    const prefabBlank = this.add.image(0, 0, 'prefab-blank');
+    const prefabBlank = this.add.image(0, 0, 'prefab-blank').setFlipY(true);
     const prefabSource = this.add.image(0, 0, 'prefab-source');
-    const prefab2a = this.add.image(0, 0, 'prefab-2a');
-    const prefab2b = this.add.image(0, 0, 'prefab-2b');
-    const prefab3a = this.add.image(0, 0, 'prefab-3a');
-    const prefab3b = this.add.image(0, 0, 'prefab-3b');
+    const prefab2a = this.add.image(0, 0, 'prefab-2a').setFlipY(true);
+    const prefab2b = this.add.image(0, 0, 'prefab-2b').setFlipY(true);
+    const prefab3a = this.add.image(0, 0, 'prefab-3a').setFlipY(true);
+    const prefab3b = this.add.image(0, 0, 'prefab-3b').setFlipY(true);
 
     this.makeInteractable(prefabBlank, position => {
       const entity = new Entity();
