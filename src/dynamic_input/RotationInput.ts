@@ -19,8 +19,13 @@ export default class RotationInput extends BaseInput<number> {
     this.addEvents(canvas);
 
     const input = document.createElement('input');
-    input.readOnly = true;
     input.value = (this.value as unknown) as string;
+    input.addEventListener('change', () => {
+      const radians = (((Number(input.value) + 180) % 360) * Math.PI) / 180;
+      this.value = radians;
+      input.blur();
+    });
+
     this.inputElement = input;
 
     this.onUpdate();
@@ -58,9 +63,11 @@ export default class RotationInput extends BaseInput<number> {
   }
 
   protected onUpdate(): void {
-    // "+ 180", da 0 Grad nach oben zeigen sollten. In der Welt zeigt 0 Grad aber nach unten.
-    const degree = Math.round((this.value * 180) / Math.PI) + 180;
-    this.inputElement!.value = degree.toFixed(2);
+    if (document.activeElement !== this.inputElement) {
+      // "+ 180", da 0 Grad nach oben zeigen sollten. In der Welt zeigt 0 Grad aber nach unten.
+      const degree = (Math.round((this.value * 180) / Math.PI) + 180) % 360;
+      this.inputElement!.value = degree.toFixed(2);
+    }
     this.draw();
   }
 
