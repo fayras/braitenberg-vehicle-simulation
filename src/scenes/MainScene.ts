@@ -57,48 +57,142 @@ export default class MainScene extends Phaser.Scene {
     });
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 600, y: 450 }),
-      new SolidBodyComponent({ width: 20, height: 400 }, BodyShape.RECTANGLE, true),
-      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent(0xcccccc, 110),
+      new TransformableComponent({ position: { x: 600, y: 450 } }),
+      new SolidBodyComponent({
+        size: { width: 20, height: 400 },
+        shape: BodyShape.RECTANGLE,
+        isStatic: true,
+      }),
+      new SourceComponent({
+        range: 100,
+        substance: SubstanceType.BARRIER,
+        emissionType: EmissionType.FLAT,
+      }),
+      new RenderComponent({
+        asset: 0xcccccc,
+        size: 110,
+      }),
     );
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 459, y: 250 }),
-      new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
-      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent(0xcccccc, 110),
+      new TransformableComponent({
+        position: { x: 459, y: 250 },
+      }),
+      new SolidBodyComponent({
+        size: { width: 300, height: 25 },
+        shape: BodyShape.RECTANGLE,
+        isStatic: true,
+      }),
+      new SourceComponent({
+        range: 100,
+        substance: SubstanceType.BARRIER,
+        emissionType: EmissionType.FLAT,
+      }),
+      new RenderComponent({
+        asset: 0xcccccc,
+        size: 110,
+      }),
     );
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 459, y: 650 }),
-      new SolidBodyComponent({ width: 300, height: 25 }, BodyShape.RECTANGLE, true),
-      new SourceComponent(100, SubstanceType.BARRIER, EmissionType.FLAT),
-      new RenderComponent(0xcccccc, 110),
+      new TransformableComponent({
+        position: { x: 459, y: 650 },
+      }),
+      new SolidBodyComponent({
+        size: { width: 300, height: 25 },
+        shape: BodyShape.RECTANGLE,
+        isStatic: true,
+      }),
+      new SourceComponent({
+        range: 100,
+        substance: SubstanceType.BARRIER,
+        emissionType: EmissionType.FLAT,
+      }),
+      new RenderComponent({
+        asset: 0xcccccc,
+        size: 110,
+      }),
     );
 
     const entity = new Entity();
-    const transform = new TransformableComponent({ x: 100, y: 500 });
+    const transform = new TransformableComponent({
+      position: { x: 100, y: 500 },
+    });
     transform.angle.set(-Math.PI / 2);
     entity.addComponent(transform);
-    entity.addComponent(new SolidBodyComponent({ width: 100, height: 150 }));
-    entity.addComponent(new RenderComponent('vehicle', 100));
-    const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 30, 1));
-    const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 30, 1));
-    const sensor1 = entity.addComponent(new SensorComponent({ x: -50, y: 75 }, 20, 0.4));
-    const sensor2 = entity.addComponent(new SensorComponent({ x: 50, y: 75 }, 20, 0.4));
-    const sensor3 = entity.addComponent(new SensorComponent({ x: -50, y: 75 }, 30, 0.4, SubstanceType.BARRIER));
-    const sensor4 = entity.addComponent(new SensorComponent({ x: 50, y: 75 }, 30, 0.4, SubstanceType.BARRIER));
     entity.addComponent(
-      new ConnectionComponent([sensor1, sensor2, sensor3, sensor4], [motor1, motor2], [[0, 1], [1, 0], [1, 0], [0, 1]]),
-      // new ConnectionComponent([sensor4], [motor1, motor2], [[0, 1]]),
+      new SolidBodyComponent({
+        size: { width: 100, height: 150 },
+      }),
+    );
+    entity.addComponent(
+      new RenderComponent({
+        asset: 'vehicle',
+        size: 100,
+      }),
+    );
+    const motor1 = entity.addComponent(
+      new MotorComponent({
+        position: { x: -50, y: 0 },
+        maxSpeed: 30,
+        defaultSpeed: 1,
+      }),
+    );
+    const motor2 = entity.addComponent(
+      new MotorComponent({
+        position: { x: 50, y: 0 },
+        maxSpeed: 30,
+        defaultSpeed: 1,
+      }),
+    );
+    const sensor1 = entity.addComponent(
+      new SensorComponent({
+        position: { x: -50, y: 75 },
+        range: 20,
+        angle: 0.4,
+      }),
+    );
+    const sensor2 = entity.addComponent(
+      new SensorComponent({
+        position: { x: 50, y: 75 },
+        range: 20,
+        angle: 0.4,
+      }),
+    );
+    const sensor3 = entity.addComponent(
+      new SensorComponent({
+        position: { x: -50, y: 75 },
+        range: 30,
+        angle: 0.4,
+        reactsTo: SubstanceType.BARRIER,
+      }),
+    );
+    const sensor4 = entity.addComponent(
+      new SensorComponent({
+        position: { x: 50, y: 75 },
+        range: 30,
+        angle: 0.4,
+        reactsTo: SubstanceType.BARRIER,
+      }),
+    );
+    entity.addComponent(
+      new ConnectionComponent({
+        inputIds: [sensor1, sensor2, sensor3, sensor4],
+        outputIds: [motor1, motor2],
+        weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
+      }),
     );
     EntityManager.addExistingEntity(entity);
 
     EntityManager.createEntity(
-      new TransformableComponent({ x: 950, y: 350 }),
-      new RenderComponent('prefab-source', 100),
-      new SourceComponent(200),
+      new TransformableComponent({ position: { x: 950, y: 350 } }),
+      new RenderComponent({
+        asset: 'prefab-source',
+        size: 100,
+      }),
+      new SourceComponent({
+        range: 200,
+      }),
     );
 
     // EntityManager.createEntity(

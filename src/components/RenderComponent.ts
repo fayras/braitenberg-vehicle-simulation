@@ -6,6 +6,12 @@ import TextInput from '../dynamic_input/TextInput';
 import NumberInput from '../dynamic_input/NumberInput';
 import SelectInput from '../dynamic_input/SelectInput';
 
+interface RenderComponentData {
+  asset: AssetKey | Color;
+  size: number;
+  blendMode?: Phaser.BlendModes;
+}
+
 export default class RenderComponent extends Component {
   public name: ComponentType = ComponentType.RENDER;
 
@@ -17,18 +23,10 @@ export default class RenderComponent extends Component {
 
   protected maxAmount = 1;
 
-  public constructor(asset: AssetKey | Color, width: number, blendMode: Phaser.BlendModes = Phaser.BlendModes.NORMAL) {
+  public constructor(data: RenderComponentData) {
     super();
-    this.asset = new Attribute(asset, 'Anzeige', TextInput);
-    this.size = new Attribute(width, 'Größe', NumberInput);
-    this.blendMode = new Attribute(blendMode, 'Blend Mode', SelectInput);
-  }
-
-  public serializeAttributes(): object {
-    return {
-      asset: this.asset.get(),
-      size: this.size.get(),
-      blendMode: this.blendMode.get(),
-    };
+    this.asset = new Attribute(data.asset, 'Anzeige', TextInput);
+    this.size = new Attribute(data.size, 'Größe', NumberInput);
+    this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, 'Blend Mode', SelectInput);
   }
 }

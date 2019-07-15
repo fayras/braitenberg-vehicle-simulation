@@ -6,6 +6,12 @@ import PositionInput from '../dynamic_input/PositionInput';
 import TextInput from '../dynamic_input/TextInput';
 import HiddenInput from '../dynamic_input/HiddenInput';
 
+interface MotorComponentData {
+  position: Vector2D;
+  maxSpeed?: number;
+  defaultSpeed?: number;
+}
+
 export default class MotorComponent extends Component {
   public name: ComponentType = ComponentType.MOTOR;
 
@@ -19,20 +25,12 @@ export default class MotorComponent extends Component {
 
   public visualThrottle: Attribute<string | number, TextInput>;
 
-  public constructor(pos: Vector2D, speed: number = 50, defaultSpeed: number = 0) {
+  public constructor(data: MotorComponentData) {
     super();
-    this.position = new Attribute(pos, 'Position', PositionInput);
-    this.maxSpeed = new Attribute(speed, 'Maximalgeschwindigkeit', NumberInput);
-    this.defaultSpeed = new Attribute(defaultSpeed, 'Mindestgeschwindigkeit', NumberInput);
+    this.position = new Attribute(data.position, 'Position', PositionInput);
+    this.maxSpeed = new Attribute(data.maxSpeed || 50, 'Maximalgeschwindigkeit', NumberInput);
+    this.defaultSpeed = new Attribute(data.defaultSpeed || 0, 'Mindestgeschwindigkeit', NumberInput);
     this.throttle = new Attribute(0 as number, '', HiddenInput);
     this.visualThrottle = new Attribute<string | number, TextInput>('0', 'Aktuelle Geschwindigkeit', TextInput);
-  }
-
-  public serializeAttributes(): object {
-    return {
-      position: this.position.get(),
-      maxSpeed: this.maxSpeed.get(),
-      defaultSpeed: this.defaultSpeed.get(),
-    };
   }
 }

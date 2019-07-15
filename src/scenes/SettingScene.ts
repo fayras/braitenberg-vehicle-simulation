@@ -42,22 +42,47 @@ export default class SettingScene extends SidebarScene {
 
       switch (name) {
         case MotorComponent.name:
-          EntityManager.addComponent(entity.id, new MotorComponent({ x: 0, y: 0 }, 50, 5));
+          EntityManager.addComponent(
+            entity.id,
+            new MotorComponent({
+              position: { x: 0, y: 0 },
+              maxSpeed: 50,
+              defaultSpeed: 5,
+            }),
+          );
           break;
         case SensorComponent.name:
-          EntityManager.addComponent(entity.id, new SensorComponent({ x: 0, y: 0 }, 20, 0.3));
+          EntityManager.addComponent(
+            entity.id,
+            new SensorComponent({
+              position: { x: 0, y: 0 },
+              range: 20,
+              angle: 0.3,
+            }),
+          );
           break;
         case SourceComponent.name:
-          EntityManager.addComponent(entity.id, new SourceComponent(100));
+          EntityManager.addComponent(
+            entity.id,
+            new SourceComponent({
+              range: 100,
+            }),
+          );
           break;
         case SolidBodyComponent.name:
-          EntityManager.addComponent(entity.id, new SolidBodyComponent());
+          EntityManager.addComponent(entity.id, new SolidBodyComponent({}));
           break;
         case ConnectionComponent.name:
           {
             const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map(com => com.id);
             const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map(com => com.id);
-            EntityManager.addComponent(entity.id, new ConnectionComponent(inputs, outputs));
+            EntityManager.addComponent(
+              entity.id,
+              new ConnectionComponent({
+                inputIds: inputs,
+                outputIds: outputs,
+              }),
+            );
           }
           break;
         default:

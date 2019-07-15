@@ -5,6 +5,12 @@ import Component from './Component';
 import Attribute from './Attribute';
 import ConnectionNetwork from '../dynamic_input/ConnectionNetwork';
 
+interface ConnectionComponentData {
+  inputIds: number[];
+  outputIds: number[];
+  weights?: number[][];
+}
+
 export default class ConnectionComponent extends Component {
   public name: ComponentType = ComponentType.CONNECTION;
 
@@ -12,13 +18,13 @@ export default class ConnectionComponent extends Component {
 
   protected maxAmount: number = 1;
 
-  public constructor(inputIds: number[], outputIds: number[], weights: number[][] | undefined = undefined) {
+  public constructor(data: ConnectionComponentData) {
     super();
 
     let w;
 
-    if (weights === undefined) {
-      const m = matrix(ones(inputIds.length, outputIds.length).toArray());
+    if (data.weights === undefined) {
+      const m = matrix(ones(data.inputIds.length, data.outputIds.length).toArray());
       const dim = m.size().length;
       if (dim !== 2) {
         w = [[]];
@@ -26,13 +32,13 @@ export default class ConnectionComponent extends Component {
         w = m.toArray();
       }
     } else {
-      w = weights;
+      w = data.weights;
     }
 
     this.network = new Attribute(
       {
-        inputs: inputIds,
-        outputs: outputIds,
+        inputs: data.inputIds,
+        outputs: data.outputIds,
         weights: w,
       },
       'Verbindungen',
@@ -40,7 +46,7 @@ export default class ConnectionComponent extends Component {
     );
   }
 
-  public serializeAttributes(): object {
+  public serializeAttributes(): ConnectionComponentData {
     return {
       inputIds: this.network.get().inputs,
       outputIds: this.network.get().outputs,

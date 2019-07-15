@@ -5,6 +5,12 @@ import SelectInput from '../dynamic_input/SelectInput';
 import Checkbox from '../dynamic_input/Checkbox';
 import SizeInput from '../dynamic_input/SizeInput';
 
+interface SolidBodyComponentData {
+  size?: Dimensions | number;
+  shape?: BodyShape;
+  isStatic?: boolean;
+}
+
 export default class SolidBodyComponent extends Component {
   public name: ComponentType = ComponentType.SOLID_BODY;
 
@@ -16,26 +22,14 @@ export default class SolidBodyComponent extends Component {
 
   protected maxAmount = 1;
 
-  public constructor(
-    size: Dimensions | number = 50,
-    shape: BodyShape = BodyShape.RECTANGLE,
-    isStatic: boolean = false,
-  ) {
+  public constructor(data: SolidBodyComponentData) {
     super();
-    if (typeof size === 'number') {
-      this.size = new Attribute({ width: size, height: size }, 'Größe', SizeInput);
+    if (typeof data.size === 'number') {
+      this.size = new Attribute({ width: data.size, height: data.size }, 'Größe', SizeInput);
     } else {
-      this.size = new Attribute(size, 'Größe', SizeInput);
+      this.size = new Attribute(data.size || { width: 50, height: 50 }, 'Größe', SizeInput);
     }
-    this.shape = new Attribute(shape, 'Form', SelectInput);
-    this.isStatic = new Attribute(isStatic, 'Statisch', Checkbox);
-  }
-
-  public serializeAttributes(): object {
-    return {
-      size: this.size.get(),
-      shape: this.shape.get(),
-      isStatic: this.isStatic.get(),
-    };
+    this.shape = new Attribute(data.shape || BodyShape.RECTANGLE, 'Form', SelectInput);
+    this.isStatic = new Attribute(data.isStatic || false, 'Statisch', Checkbox);
   }
 }

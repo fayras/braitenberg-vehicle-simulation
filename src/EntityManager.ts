@@ -1,4 +1,3 @@
-import Phaser from 'phaser';
 import Entity from './Entity';
 import EventBus from './EventBus';
 
@@ -79,62 +78,9 @@ class EntityManager {
     allEntities.forEach(serializedEntity => {
       const entity = new Entity();
       serializedEntity.components.forEach(serializedComponent => {
-        const { name, id } = serializedComponent;
-        if (name === ComponentType.TRANSFORMABLE) {
-          const component = new TransformableComponent(serializedComponent.attributes.position);
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.SOURCE) {
-          const component = new SourceComponent(
-            serializedComponent.attributes.range,
-            serializedComponent.attributes.substance,
-          );
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.SOLID_BODY) {
-          const component = new SolidBodyComponent(
-            serializedComponent.attributes.size,
-            serializedComponent.attributes.shape,
-          );
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.RENDER) {
-          const component = new RenderComponent(
-            serializedComponent.attributes.asset,
-            serializedComponent.attributes.size,
-            serializedComponent.attributes.blendMode,
-          );
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.MOTOR) {
-          const component = new MotorComponent(
-            serializedComponent.attributes.position,
-            serializedComponent.attributes.maxSpeed,
-            serializedComponent.attributes.defaultSpeed,
-          );
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.SENSOR) {
-          const component = new SensorComponent(
-            serializedComponent.attributes.position,
-            serializedComponent.attributes.range,
-            serializedComponent.attributes.angle,
-            serializedComponent.attributes.reactsTo,
-          );
-          component.id = id;
-          entity.addComponent(component);
-        }
-        if (name === ComponentType.CONNECTION) {
-          const component = new ConnectionComponent(
-            serializedComponent.attributes.inputIds,
-            serializedComponent.attributes.outputIds,
-            serializedComponent.attributes.weights,
-          );
+        const { name, id, attributes } = serializedComponent;
+        const component = EntityManager.getComponent(name, attributes);
+        if (component) {
           component.id = id;
           entity.addComponent(component);
         }
@@ -142,6 +88,27 @@ class EntityManager {
 
       this.addExistingEntity(entity);
     });
+  }
+
+  private static getComponent(name: ComponentType, attributes: any): Component | undefined {
+    switch (name) {
+      case ComponentType.TRANSFORMABLE:
+        return new TransformableComponent(attributes);
+      case ComponentType.SOURCE:
+        return new SourceComponent(attributes);
+      case ComponentType.SOLID_BODY:
+        return new SolidBodyComponent(attributes);
+      case ComponentType.RENDER:
+        return new RenderComponent(attributes);
+      case ComponentType.MOTOR:
+        return new MotorComponent(attributes);
+      case ComponentType.SENSOR:
+        return new SensorComponent(attributes);
+      case ComponentType.CONNECTION:
+        return new ConnectionComponent(attributes);
+      default:
+        return undefined;
+    }
   }
 }
 

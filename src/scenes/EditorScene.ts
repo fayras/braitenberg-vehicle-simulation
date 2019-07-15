@@ -27,8 +27,17 @@ export default class EditorScene extends SidebarScene {
 
     this.makeInteractable(prefabBlank, position => {
       const entity = new Entity();
-      entity.addComponent(new TransformableComponent(position));
-      entity.addComponent(new RenderComponent('prefab-blank', 100));
+      entity.addComponent(
+        new TransformableComponent({
+          position,
+        }),
+      );
+      entity.addComponent(
+        new RenderComponent({
+          asset: 'prefab-blank',
+          size: 100,
+        }),
+      );
 
       EntityManager.addExistingEntity(entity);
     });

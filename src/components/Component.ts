@@ -1,6 +1,9 @@
 import { ComponentType } from '../enums';
+import Attribute from './Attribute';
 
 export default abstract class Component {
+  [key: string]: any;
+
   public abstract name: ComponentType;
 
   public id: number;
@@ -18,16 +21,16 @@ export default abstract class Component {
     return this.maxAmount;
   }
 
-  protected abstract serializeAttributes(): object;
+  protected serializeAttributes(): any {
+    const attrs: { [key: string]: any } = {};
+    Object.keys(this).forEach(attr => {
+      if (this[attr] instanceof Attribute) {
+        attrs[attr] = (this[attr] as Attribute<any, any>).get();
+      }
+    });
 
-  // protected serializeAttributes(): any {
-  //   const attrs: { [key: string]: any } = {};
-  //   Object.keys(this).forEach(attr => {
-  //     attrs[attr] = this[attr];
-  //   });
-
-  //   return attrs;
-  // }
+    return attrs;
+  }
 
   public serialize(): SerializedComponent {
     const attributes = this.serializeAttributes();
