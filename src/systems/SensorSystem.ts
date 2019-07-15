@@ -162,7 +162,9 @@ export default class SensorSystem extends System {
       const image = this.scene.add.image(x, y, `sensor_texture_${sensor.id}_${angle}`);
       image.setScale(CORRELATION_SCALE);
       // image.setBlendMode(Phaser.BlendModes.SCREEN);
-      // image.setVisible(false);
+      image.setVisible(false);
+      image.setDepth(99);
+      this.scene.children.bringToTop(image);
 
       textures[angle] = image;
       values[angle] = angleValues;

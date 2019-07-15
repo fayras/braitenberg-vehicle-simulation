@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import System from './System';
 import Entity from '../Entity';
 import { ComponentType, EventType } from '../enums';
@@ -15,6 +16,53 @@ export default class RenderSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.RENDER];
 
   private renderObjects: RenderObjectDictionary = {};
+
+  private selected: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle | null = null;
+
+  public constructor(scene: Phaser.Scene) {
+    super(scene);
+
+    EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
+      this.removeHighlight();
+      this.highlight(entity);
+    });
+
+    EventBus.subscribe(EventType.SIDEBAR_CLOSED, () => {
+      this.removeHighlight();
+    });
+  }
+
+  private highlight(entity: Entity): void {
+    const image = this.renderObjects[entity.id];
+    if (image) {
+      this.selected = image;
+      this.selected.setData('originalDepth', image.depth);
+      this.selected.setDepth(999);
+
+      if (image instanceof Phaser.GameObjects.Image) {
+        image.setTint(0xddddff);
+      }
+
+      if (image instanceof Phaser.GameObjects.Rectangle) {
+        this.selected.setData('originalColor', image.fillColor);
+        image.setFillStyle(0xddddff);
+      }
+    }
+  }
+
+  private removeHighlight(): void {
+    if (this.selected) {
+      if (this.selected instanceof Phaser.GameObjects.Image) {
+        this.selected.setTint(0xffffff);
+      }
+      if (this.selected instanceof Phaser.GameObjects.Rectangle) {
+        const color = this.selected.getData('originalColor') || 0xcccccc;
+        this.selected.setFillStyle(color);
+      }
+      this.selected.setDepth(this.selected.getData('originalDepth') || 0);
+      this.selected = null;
+    }
+  }
 
   public update(): void {
     this.entities.forEach(entity => {

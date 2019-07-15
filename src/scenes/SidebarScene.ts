@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import Button from '../gui/Button';
 import ScrollableContainer from '../gui/ScrollableContainer';
+import EventBus from '../EventBus';
+import { EventType } from '../enums';
 
 export default abstract class SidebarScene extends Phaser.Scene {
   protected container: Phaser.GameObjects.Container | null = null;
@@ -64,6 +66,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
   }
 
   protected close(): void {
+    EventBus.publish(EventType.SIDEBAR_CLOSED, null);
     this.scale.off('resize', this.handler);
     this.scene.stop(this.key);
   }
@@ -86,14 +89,6 @@ export default abstract class SidebarScene extends Phaser.Scene {
         if (object) {
           const objectHeight = object.height;
           object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
-
-          //if (object instanceof Phaser.GameObjects.Text) {
-          // object
-          //  .setFontSize(23)
-          // .setColor('black')
-          // .setFontFamily('Calibri');
-          //object.setPosition(SidebarScene.getWidth() / 2, this.container.height + objectHeight / 2 + padding);
-          //}
 
           this.container.add(object);
           if (object.getData('ignoreHeight')) {
