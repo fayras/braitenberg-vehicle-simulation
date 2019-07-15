@@ -252,9 +252,7 @@ export default class MainScene extends Phaser.Scene {
       entities.forEach(entity => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
-      swal({
-        text: 'Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Start/Stop Knopf.',
-      });
+      swal('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Speichern Knopf.');
     }
   }
 

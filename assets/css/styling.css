@@ -123,3 +123,7 @@ button,
 .swal-button:not([disabled]):hover {
   background-color: #bbcccc;
 }
+
+.swal-button--cancel {
+  background-color: #eeeeee;
+}
