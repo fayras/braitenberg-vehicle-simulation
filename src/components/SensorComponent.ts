@@ -32,6 +32,6 @@ export default class SensorComponent extends Component {
     this.range = new Attribute(data.range, 'Reichweite', NumberInput);
     this.angle = new Attribute(data.angle, 'Öffnungswinkel', NumberInput);
     this.reactsTo = new Attribute(data.reactsTo || SubstanceType.LIGHT, 'Reagiert auf', SelectInput);
-    this.activation = new Attribute(0 as number, 'activation', NumberInput);
+    this.activation = new Attribute(0 as number, 'Grad der Aktivierung', NumberInput);
   }
 }
