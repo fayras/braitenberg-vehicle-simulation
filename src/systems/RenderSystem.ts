@@ -127,11 +127,12 @@ export default class RenderSystem extends System {
     });
 
     image.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-      const dragThreshold = 3;
+      const dragThreshold = 1;
       if (pointer.getDistance() > dragThreshold) {
         return;
+        console.log(1);
       }
-
+      console.log(2);
       EventBus.publish(EventType.ENTITY_SELECTED, entity);
     });
 
@@ -145,12 +146,16 @@ export default class RenderSystem extends System {
     delete this.renderObjects[entity.id];
   }
 
+  // falls die neu hinzugefügte Komponente  nicht die Render Komponente ist
+  // wird in die Method onEntity Created aufgerufen um ein neues Entity zu erstellen
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.RENDER) return;
 
     this.onEntityCreated(entity);
   }
 
+  // falls die zu Entfernende nicht die Render Komponente ist
+  // wird in die Method onEntityDestroyed aufgerufen um das Entity zu zerstören
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.RENDER) return;
 
