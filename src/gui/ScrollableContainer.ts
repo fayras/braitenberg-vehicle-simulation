@@ -52,6 +52,8 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
   }
 
   public scroll(delta: number): void {
+    if (this.height <= this.visibleHeight) return;
+
     let d = delta;
 
     if (this.scrollOffset + d < 0) {
@@ -74,9 +76,14 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
   public setHeight(height: number): void {
     this.height = height;
 
-    const barHeight = (this.visibleHeight / height) * this.visibleHeight;
-    this.scrollbar.input.hitArea.setSize(this.scrollbar.width, barHeight);
-    this.scrollbar.height = barHeight;
+    if (height > this.visibleHeight) {
+      const barHeight = (this.visibleHeight / height) * this.visibleHeight;
+      this.scrollbar.input.hitArea.setSize(this.scrollbar.width, barHeight);
+      this.scrollbar.height = barHeight;
+      this.scrollbar.setVisible(true);
+    } else {
+      this.scrollbar.setVisible(false);
+    }
   }
 
   public getBounds(): Phaser.Geom.Rectangle {
