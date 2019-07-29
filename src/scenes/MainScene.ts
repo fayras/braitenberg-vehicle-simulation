@@ -74,46 +74,6 @@ export default class MainScene extends Phaser.Scene {
       }),
     );
 
-    EntityManager.createEntity(
-      new TransformableComponent({
-        position: { x: 459, y: 250 },
-      }),
-      new SolidBodyComponent({
-        size: { width: 300, height: 25 },
-        shape: BodyShape.RECTANGLE,
-        isStatic: true,
-      }),
-      new SourceComponent({
-        range: 100,
-        substance: SubstanceType.BARRIER,
-        emissionType: EmissionType.FLAT,
-      }),
-      new RenderComponent({
-        asset: 0xcccccc,
-        size: 110,
-      }),
-    );
-
-    EntityManager.createEntity(
-      new TransformableComponent({
-        position: { x: 459, y: 650 },
-      }),
-      new SolidBodyComponent({
-        size: { width: 300, height: 25 },
-        shape: BodyShape.RECTANGLE,
-        isStatic: true,
-      }),
-      new SourceComponent({
-        range: 100,
-        substance: SubstanceType.BARRIER,
-        emissionType: EmissionType.FLAT,
-      }),
-      new RenderComponent({
-        asset: 0xcccccc,
-        size: 110,
-      }),
-    );
-
     const entity = new Entity();
     const transform = new TransformableComponent({
       position: { x: 100, y: 500 },
