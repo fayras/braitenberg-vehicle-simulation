@@ -52,18 +52,22 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
   }
 
   public scroll(delta: number): void {
-    const overflow =
-      this.scrollOffset + delta < 0 || this.scrollOffset + this.scrollbar.height + delta > this.visibleHeight;
-    this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + delta, 0, this.visibleHeight);
+    let d = delta;
 
-    if (overflow) return;
+    if (this.scrollOffset + d < 0) {
+      d = -this.scrollOffset;
+    } else if (this.scrollOffset + this.scrollbar.height + d > this.visibleHeight) {
+      d = this.visibleHeight - this.scrollOffset - this.scrollbar.height;
+    }
+
+    this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + d, 0, this.visibleHeight);
 
     this.scrollbar.setPosition(
       this.scrollbar.x,
-      Phaser.Math.Clamp(this.scrollbar.y + delta, 0, this.visibleHeight - this.scrollbar.height),
+      Phaser.Math.Clamp(this.scrollbar.y + d, 0, this.visibleHeight - this.scrollbar.height),
     );
 
-    const newY = this.y - (delta / (this.visibleHeight - this.scrollbar.height)) * (this.height - this.visibleHeight);
+    const newY = this.y - (d / (this.visibleHeight - this.scrollbar.height)) * (this.height - this.visibleHeight);
     super.setPosition(this.x, newY);
   }
 
