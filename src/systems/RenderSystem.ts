@@ -121,7 +121,7 @@ export default class RenderSystem extends System {
     // Alles was man rendert, kann man auch verschieben. Macht es trotzdem
     // vielleicht Sinn eine eigene "DraggableComponent" zu erzeugen und
     // nur anhand dessen ein Objekt draggable zu machen oder nicht?
-    image.setInteractive({ draggable: true });
+    image.setInteractive({ draggable: true, useHandCursor: true });
     image.on('drag', (gameObject: unknown, x: number, y: number) => {
       transform.position.set({ x, y });
     });
