@@ -23,6 +23,8 @@ export default class RenderComponent extends Component {
 
   protected maxAmount = 1;
 
+  protected deletable: boolean = false;
+
   public constructor(data: RenderComponentData) {
     super();
     this.asset = new Attribute(data.asset, 'Anzeige', TextInput);
