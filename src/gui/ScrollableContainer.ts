@@ -86,6 +86,15 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
     }
   }
 
+  public reset(): void {
+    this.height = 0;
+    this.scrollbar.input.hitArea.setSize(this.scrollbar.width, 1);
+    this.scrollbar.height = 1;
+    this.scrollbar.setVisible(false);
+    this.scrollOffset = 0;
+    this.setPosition(this.x, 0);
+  }
+
   public getBounds(): Phaser.Geom.Rectangle {
     return new Phaser.Geom.Rectangle(this.x, this.y, this.visibleWidth, this.height);
   }

@@ -9,6 +9,7 @@ import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import SourceComponent from '../components/SourceComponent';
+import ScrollableContainer from '../gui/ScrollableContainer';
 
 export default class SettingScene extends SidebarScene {
   public constructor() {
@@ -94,7 +95,7 @@ export default class SettingScene extends SidebarScene {
     return [row, el];
   }
 
-  public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
+  public onCreate(container: ScrollableContainer, entity: Entity): void {
     const deleteEntity = this.add.dom(0, 0, 'button', '', 'Entität Löschen').setClassName('error base-input-container');
     deleteEntity.addListener('click');
     deleteEntity.on('click', () => {
@@ -120,7 +121,7 @@ export default class SettingScene extends SidebarScene {
           EntityManager.removeComponent(entity.id, component);
           // alle Componenten der Enittät neu laden
           container.removeAll(true);
-          container.height = 0;
+          container.reset();
           this.onCreate(container, entity);
         });
       }
