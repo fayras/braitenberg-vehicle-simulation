@@ -17,7 +17,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
     this.visibleWidth = visibleWidth;
     this.visibleHeight = visibleHeight;
 
-    this.scrollbar = scene.add.rectangle(0, 0, 10, 100, 0xd8d8d8);
+    this.scrollbar = scene.add.rectangle(0, 0, 10, 10, 0xd8d8d8);
     this.scrollbar.setInteractive({ draggable: true });
     this.scrollbar.setOrigin(1, 0);
     this.scrollbar.on('drag', (gameObject: unknown, x: number, y: number) => {
@@ -69,6 +69,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
 
   public setHeight(height: number): void {
     this.height = height;
+    this.scrollbar.height = (this.visibleHeight / height) * this.visibleHeight;
   }
 
   public getBounds(): Phaser.Geom.Rectangle {
