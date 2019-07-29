@@ -69,7 +69,10 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
 
   public setHeight(height: number): void {
     this.height = height;
-    this.scrollbar.height = (this.visibleHeight / height) * this.visibleHeight;
+
+    const barHeight = (this.visibleHeight / height) * this.visibleHeight;
+    this.scrollbar.input.hitArea.setSize(this.scrollbar.width, barHeight);
+    this.scrollbar.height = barHeight;
   }
 
   public getBounds(): Phaser.Geom.Rectangle {
