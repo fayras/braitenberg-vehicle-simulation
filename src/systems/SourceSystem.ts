@@ -45,6 +45,12 @@ export default class SourceSystem extends System {
           this.addSourceObject(entity, source);
         }, 200),
       );
+      transform.angle.onChange(
+        debounce(() => {
+          this.removeSourceObject(source);
+          this.addSourceObject(entity, source);
+        }, 200),
+      );
     });
   }
 
@@ -76,6 +82,12 @@ export default class SourceSystem extends System {
     // da sonst die ganzen Korrelationen neu berechnet werden müssen.
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     transform.position.onChange(
+      debounce(() => {
+        this.removeSourceObject(source);
+        this.addSourceObject(entity, source);
+      }, 200),
+    );
+    transform.angle.onChange(
       debounce(() => {
         this.removeSourceObject(source);
         this.addSourceObject(entity, source);
