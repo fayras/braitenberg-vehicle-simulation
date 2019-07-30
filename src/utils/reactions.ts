@@ -31,13 +31,19 @@ export function flatCircle(center: VectorLike, radius: number): KernelFunction {
   };
 }
 
-export function flatRect(topLeft: VectorLike, width: number, height: number): KernelFunction {
+export function flatRect(topLeft: VectorLike, width: number, height: number, angle: number = 0): KernelFunction {
   const x0 = topLeft.x || 0;
   const y0 = topLeft.y || 0;
   const rect = new Phaser.Geom.Rectangle(x0, y0, width, height);
+  const origin = { x: x0 + width / 2, y: y0 + height / 2 };
+  const s = Math.sin(-angle);
+  const c = Math.cos(-angle);
 
   return (x: number, y: number) => {
-    if (rect.contains(x, y)) {
+    const newPoint = { x: x - origin.x, y: y - origin.y };
+    const rotatedX = newPoint.x * c - newPoint.y * s;
+    const rotatedY = newPoint.x * s + newPoint.y * c;
+    if (rect.contains(rotatedX + origin.x, rotatedY + origin.y)) {
       return 3;
     }
 

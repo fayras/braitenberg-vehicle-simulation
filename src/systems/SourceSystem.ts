@@ -115,6 +115,7 @@ export default class SourceSystem extends System {
           }),
           solidBody ? solidBody.size.get().width : source.range.get(),
           solidBody ? solidBody.size.get().height : source.range.get(),
+          transform.angle.get(),
         );
 
     for (let y = 0; y < height; y += 1) {
@@ -124,7 +125,7 @@ export default class SourceSystem extends System {
 
         if (source.substance.get() === SubstanceType.BARRIER) {
           v = Math.round(v * 255);
-          context.fillStyle = `rgb(${0}, ${0}, ${0})`;
+          context.fillStyle = `rgb(${v}, ${0}, ${0})`;
           context.fillRect(x, y, 1, 1);
         } else if (source.substance.get() === SubstanceType.LIGHT) {
           v = Math.round(v * 255);
