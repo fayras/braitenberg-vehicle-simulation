@@ -4,7 +4,7 @@ import Component from './Component';
 import Attribute from './Attribute';
 import TextInput from '../dynamic_input/TextInput';
 import NumberInput from '../dynamic_input/NumberInput';
-import SelectInput from '../dynamic_input/SelectInput';
+import HiddenInput from '../dynamic_input/HiddenInput';
 
 interface RenderComponentData {
   asset: AssetKey | Color;
@@ -19,7 +19,7 @@ export default class RenderComponent extends Component {
 
   public size: Attribute<number, NumberInput>;
 
-  public blendMode: Attribute<Phaser.BlendModes, SelectInput<Phaser.BlendModes>>;
+  public blendMode: Attribute<Phaser.BlendModes, HiddenInput>;
 
   protected maxAmount = 1;
 
@@ -29,6 +29,6 @@ export default class RenderComponent extends Component {
     super();
     this.asset = new Attribute(data.asset, 'Anzeige', TextInput);
     this.size = new Attribute(data.size, 'Größe', NumberInput);
-    this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, 'Blend Mode', SelectInput);
+    this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, 'Blend Mode', HiddenInput);
   }
 }
