@@ -52,12 +52,15 @@ body {
 
 .position-background .direction-indicator {
   display: block;
-  width: 10px;
-  height: 10px;
   position: absolute;
-  background-color: red;
   left: 29px;
   top: 35px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+
+  border-bottom: 5px solid #999;
 }
 
 .position-indicator {
