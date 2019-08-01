@@ -1,14 +1,8 @@
 import Phaser from 'phaser';
 import EntityManager from '../EntityManager';
 import TransformableComponent from '../components/TransformableComponent';
-import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
 import SidebarScene from './SidebarScene';
-import SourceComponent from '../components/SourceComponent';
-import Entity from '../Entity';
-import MotorComponent from '../components/MotorComponent';
-import SensorComponent from '../components/SensorComponent';
-import ConnectionComponent from '../components/ConnectionComponent';
 
 type DropHandler = (position: { x: number; y: number }) => void;
 
@@ -26,20 +20,10 @@ export default class EditorScene extends SidebarScene {
     const prefab3b = this.add.image(0, 0, 'prefab-3b').setFlipY(true);
 
     this.makeInteractable(prefabBlank, position => {
-      const entity = new Entity();
-      entity.addComponent(
-        new TransformableComponent({
-          position,
-        }),
+      EntityManager.createEntity(
+        new TransformableComponent({ position }),
+        new RenderComponent({ asset: 'prefab-blank', size: 100 }),
       );
-      entity.addComponent(
-        new RenderComponent({
-          asset: 'prefab-blank',
-          size: 100,
-        }),
-      );
-
-      EntityManager.addExistingEntity(entity);
     });
 
     // this.makeInteractable(prefab, position => {

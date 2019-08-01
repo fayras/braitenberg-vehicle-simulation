@@ -48,18 +48,15 @@ export default abstract class System {
       const entity = payload.entity as Entity;
       const component = payload.component as Component;
 
-      const exists = this.entities.includes(entity);
       const hasComponents = entity.hasComponents(...this.expectedComponents);
 
-      if (!hasComponents && exists) {
-        const found = this.entities.findIndex(e => e.id === entity.id);
-        // Hier muss nicht überprüft werden, ob `found > -1`, da in der
-        // if-Abfrage wird sicher wissen, dass es die Entität gibt.
-        this.entities.splice(found, 1);
-      }
+      this.onEntityComponentRemoved(entity, component);
 
-      if (hasComponents) {
-        this.onEntityComponentRemoved(entity, component);
+      if (!hasComponents) {
+        const found = this.entities.findIndex(e => e.id === entity.id);
+        if (found > -1) {
+          this.entities.splice(found, 1);
+        }
       }
     });
   }

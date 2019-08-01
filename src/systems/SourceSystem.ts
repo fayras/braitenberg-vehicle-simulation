@@ -18,34 +18,51 @@ export default class SourceSystem extends System {
     [componentId: number]: Phaser.GameObjects.Image;
   } = {};
 
+  private handlers: {
+    [componentId: number]: (() => void)[];
+  } = {};
+
   public update(): void {}
+
+  private addHandler(componentId: number, handler: () => void): () => void {
+    if (!this.handlers[componentId]) {
+      this.handlers[componentId] = [];
+    }
+
+    this.handlers[componentId].push(handler);
+
+    return handler;
+  }
 
   protected onEntityCreated(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
-    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     sources.forEach(source => {
       this.addSourceObject(entity, source);
-
-      source.emissionType.onChange(() => {
-        this.removeSourceObject(source);
-        this.addSourceObject(entity, source);
-      });
-
-      source.range.onChange(() => {
-        this.removeSourceObject(source);
-        this.addSourceObject(entity, source);
-      });
-
-      // Theoretisch wäre es auch notwendig auf das "Change" Event der Tansformable Komponente
-      // zu hören und die Quelle entsprechend zu verschieben, aber das ist dann zu aufwändig,
-      // da sonst die ganzen Korrelationen neu berechnet werden müssen.
-      transform.position.onChange(
-        debounce(() => {
-          this.removeSourceObject(source);
-          this.addSourceObject(entity, source);
-        }, 200),
-      );
+      this.addHandlers(entity, source);
     });
+  }
+
+  private addHandlers(entity: Entity, source: SourceComponent): void {
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+
+    const handler = this.addHandler(source.id, () => {
+      this.removeSourceObject(source);
+      this.addSourceObject(entity, source);
+    });
+
+    source.emissionType.onChange(handler);
+    source.range.onChange(handler);
+
+    const handleTransform = this.addHandler(
+      source.id,
+      debounce(() => {
+        this.removeSourceObject(source);
+        this.addSourceObject(entity, source);
+      }, 200),
+    );
+
+    transform.position.onChange(handleTransform);
+    transform.angle.onChange(handleTransform);
   }
 
   protected onEntityDestroyed(entity: Entity): void {
@@ -60,33 +77,19 @@ export default class SourceSystem extends System {
 
     const source = component as SourceComponent;
     this.addSourceObject(entity, source);
-
-    source.emissionType.onChange(() => {
-      this.removeSourceObject(source);
-      this.addSourceObject(entity, source);
-    });
-
-    source.range.onChange(() => {
-      this.removeSourceObject(source);
-      this.addSourceObject(entity, source);
-    });
-
-    // Theoretisch wäre es auch notwendig auf das "Change" Event der Tansformable Komponente
-    // zu hören und die Quelle entsprechend zu verschieben, aber das ist dann zu aufwändig,
-    // da sonst die ganzen Korrelationen neu berechnet werden müssen.
-    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-    transform.position.onChange(
-      debounce(() => {
-        this.removeSourceObject(source);
-        this.addSourceObject(entity, source);
-      }, 200),
-    );
+    this.addHandlers(entity, source);
   }
 
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SOURCE) return;
 
     this.removeSourceObject(component as SourceComponent);
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+    const handlers = this.handlers[component.id] || [];
+    handlers.forEach(handler => {
+      transform.position.removeHandler(handler);
+      transform.angle.removeHandler(handler);
+    });
   }
 
   private addSourceObject(entity: Entity, source: SourceComponent): void {
@@ -115,6 +118,7 @@ export default class SourceSystem extends System {
           }),
           solidBody ? solidBody.size.get().width : source.range.get(),
           solidBody ? solidBody.size.get().height : source.range.get(),
+          transform.angle.get(),
         );
 
     for (let y = 0; y < height; y += 1) {
@@ -124,7 +128,7 @@ export default class SourceSystem extends System {
 
         if (source.substance.get() === SubstanceType.BARRIER) {
           v = Math.round(v * 255);
-          context.fillStyle = `rgb(${0}, ${0}, ${0})`;
+          context.fillStyle = `rgb(${v}, ${0}, ${0})`;
           context.fillRect(x, y, 1, 1);
         } else if (source.substance.get() === SubstanceType.LIGHT) {
           v = Math.round(v * 255);

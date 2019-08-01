@@ -1,9 +1,7 @@
 import Phaser from 'phaser';
-import { get, set } from 'lodash-es';
 import Entity from '../Entity';
-import { ComponentType, SubstanceType } from '../enums';
+import { ComponentType } from '../enums';
 import SidebarScene from './SidebarScene';
-import Component from '../components/Component';
 import Attribute from '../components/Attribute';
 import EntityManager from '../EntityManager';
 import ConnectionComponent from '../components/ConnectionComponent';
@@ -11,6 +9,7 @@ import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import SourceComponent from '../components/SourceComponent';
+import ScrollableContainer from '../gui/ScrollableContainer';
 
 export default class SettingScene extends SidebarScene {
   public constructor() {
@@ -20,11 +19,11 @@ export default class SettingScene extends SidebarScene {
   private createComponentSelect(entity: Entity): Phaser.GameObjects.DOMElement[] {
     const row = this.add.dom(0, 0).createFromHTML(`<div class="base-input-container">
       <select style="width: 85%" name="components">
-      <option value="${MotorComponent.name}">Motor</option>
-      <option value="${SensorComponent.name}">Sensor</option>
-      <option value="${SourceComponent.name}">Quelle</option>
-      <option value="${SolidBodyComponent.name}">Fester Körper</option>
-      <option value="${ConnectionComponent.name}">Verbindungsnetzwerk</option>
+      <option value="${ComponentType.MOTOR}">Motor</option>
+      <option value="${ComponentType.SENSOR}">Sensor</option>
+      <option value="${ComponentType.SOURCE}">Quelle</option>
+      <option value="${ComponentType.SOLID_BODY}">Fester Körper</option>
+      <option value="${ComponentType.CONNECTION}">Verbindungsnetzwerk</option>
       </select>
     </div>`);
 
@@ -41,7 +40,7 @@ export default class SettingScene extends SidebarScene {
       const name = (select as HTMLSelectElement).value;
 
       switch (name) {
-        case MotorComponent.name:
+        case ComponentType.MOTOR:
           EntityManager.addComponent(
             entity.id,
             new MotorComponent({
@@ -51,7 +50,7 @@ export default class SettingScene extends SidebarScene {
             }),
           );
           break;
-        case SensorComponent.name:
+        case ComponentType.SENSOR:
           EntityManager.addComponent(
             entity.id,
             new SensorComponent({
@@ -61,7 +60,7 @@ export default class SettingScene extends SidebarScene {
             }),
           );
           break;
-        case SourceComponent.name:
+        case ComponentType.SOURCE:
           EntityManager.addComponent(
             entity.id,
             new SourceComponent({
@@ -69,10 +68,10 @@ export default class SettingScene extends SidebarScene {
             }),
           );
           break;
-        case SolidBodyComponent.name:
+        case ComponentType.SOLID_BODY:
           EntityManager.addComponent(entity.id, new SolidBodyComponent({}));
           break;
-        case ConnectionComponent.name:
+        case ComponentType.CONNECTION:
           {
             const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map(com => com.id);
             const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map(com => com.id);
@@ -96,7 +95,7 @@ export default class SettingScene extends SidebarScene {
     return [row, el];
   }
 
-  public onCreate(container: Phaser.GameObjects.Container, entity: Entity): void {
+  public onCreate(container: ScrollableContainer, entity: Entity): void {
     const deleteEntity = this.add.dom(0, 0, 'button', '', 'Entität Löschen').setClassName('error base-input-container');
     deleteEntity.addListener('click');
     deleteEntity.on('click', () => {
@@ -112,16 +111,20 @@ export default class SettingScene extends SidebarScene {
       const title = this.add
         .dom(0, 0, 'h3', '', `${component.name} (ID: ${component.id})`)
         .setClassName('componentTitle');
-      const deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
-      deleteButton.setData('ignoreHeight', true);
-      deleteButton.addListener('click');
-      deleteButton.on('click', () => {
-        EntityManager.removeComponent(entity.id, component);
-        // alle Componenten der Enittät neu laden
-        container.removeAll(true);
-        container.height = 0;
-        this.onCreate(container, entity);
-      });
+
+      let deleteButton;
+      if (component.isDeletable()) {
+        deleteButton = this.add.dom(0, 0, 'div', '', '✖').setClassName('deleteButton');
+        deleteButton.setData('ignoreHeight', true);
+        deleteButton.addListener('click');
+        deleteButton.on('click', () => {
+          EntityManager.removeComponent(entity.id, component);
+          // alle Componenten der Enittät neu laden
+          container.removeAll(true);
+          container.reset();
+          this.onCreate(container, entity);
+        });
+      }
 
       const attributes = Object.keys(component).map(attribute => {
         if (component[attribute] instanceof Attribute) {

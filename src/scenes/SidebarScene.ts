@@ -5,7 +5,7 @@ import EventBus from '../EventBus';
 import { EventType } from '../enums';
 
 export default abstract class SidebarScene extends Phaser.Scene {
-  protected container: Phaser.GameObjects.Container | null = null;
+  protected container: ScrollableContainer | null = null;
 
   protected background: Phaser.GameObjects.Rectangle | null = null;
 
@@ -98,7 +98,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
               this.container.height - lastAddedHeight / 2,
             );
           } else {
-            this.container.height += objectHeight + padding;
+            this.container.setHeight(this.container.height + objectHeight + padding);
             lastAddedHeight = objectHeight;
           }
         }

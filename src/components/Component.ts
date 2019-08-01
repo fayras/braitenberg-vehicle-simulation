@@ -12,6 +12,8 @@ export default abstract class Component {
 
   protected maxAmount: number = Infinity;
 
+  protected deletable: boolean = true;
+
   public constructor() {
     this.id = Component.count;
     Component.count += 1;
@@ -19,6 +21,10 @@ export default abstract class Component {
 
   public getMaxAmount(): number {
     return this.maxAmount;
+  }
+
+  public isDeletable(): boolean {
+    return this.deletable;
   }
 
   protected serializeAttributes(): any {

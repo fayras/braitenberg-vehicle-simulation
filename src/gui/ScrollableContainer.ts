@@ -9,9 +9,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
 
   private visibleHeight: number;
 
-  private mouseOver: boolean = false;
-
-  private handlers: (() => void)[] = [];
+  private scrollHandler: (event: WheelEvent) => void;
 
   public constructor(scene: Phaser.Scene, visibleWidth: number, visibleHeight: number) {
     super(scene);
@@ -19,19 +17,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
     this.visibleWidth = visibleWidth;
     this.visibleHeight = visibleHeight;
 
-    this.setInteractive(new Phaser.Geom.Rectangle(0, 0, visibleWidth, visibleHeight), Phaser.Geom.Rectangle.Contains);
-
-    this.on('wheel', (p: Phaser.Input.Pointer, dx: number, dy: number) => {
-      this.scroll(dy * 20);
-    });
-
-    // window.addEventListener();
-
-    // this.on('pointerout', () => {
-    //   console.log('pointerout!');
-    // });
-
-    this.scrollbar = scene.add.rectangle(0, 0, 10, 100, 0xd8d8d8);
+    this.scrollbar = scene.add.rectangle(0, 0, 10, 10, 0xd8d8d8);
     this.scrollbar.setInteractive({ draggable: true });
     this.scrollbar.setOrigin(1, 0);
     this.scrollbar.on('drag', (gameObject: unknown, x: number, y: number) => {
@@ -43,26 +29,74 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     scene.children.bringToTop(this);
     scene.children.bringToTop(this.scrollbar);
+
+    let ticking = false;
+    let delta = 0;
+    this.scrollHandler = e => {
+      delta += e.deltaY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (this.getBounds().contains(e.x, e.y)) {
+            this.scroll(delta * 20);
+            delta = 0;
+          }
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('wheel', this.scrollHandler);
   }
 
   public scroll(delta: number): void {
-    const overflow =
-      this.scrollOffset + delta < 0 || this.scrollOffset + this.scrollbar.height + delta > this.visibleHeight;
-    this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + delta, 0, this.visibleHeight);
+    if (this.height <= this.visibleHeight) return;
 
-    if (overflow) return;
+    let d = delta;
+
+    if (this.scrollOffset + d < 0) {
+      d = -this.scrollOffset;
+    } else if (this.scrollOffset + this.scrollbar.height + d > this.visibleHeight) {
+      d = this.visibleHeight - this.scrollOffset - this.scrollbar.height;
+    }
+
+    this.scrollOffset = Phaser.Math.Clamp(this.scrollOffset + d, 0, this.visibleHeight);
 
     this.scrollbar.setPosition(
       this.scrollbar.x,
-      Phaser.Math.Clamp(this.scrollbar.y + delta, 0, this.visibleHeight - this.scrollbar.height),
+      Phaser.Math.Clamp(this.scrollbar.y + d, 0, this.visibleHeight - this.scrollbar.height),
     );
 
-    const newY = this.y - (delta / (this.visibleHeight - this.scrollbar.height)) * (this.height - this.visibleHeight);
+    const newY = this.y - (d / (this.visibleHeight - this.scrollbar.height)) * (this.height - this.visibleHeight);
     super.setPosition(this.x, newY);
   }
 
   public setHeight(height: number): void {
     this.height = height;
+
+    if (height > this.visibleHeight) {
+      const barHeight = (this.visibleHeight / height) * this.visibleHeight;
+      this.scrollbar.input.hitArea.setSize(this.scrollbar.width, barHeight);
+      this.scrollbar.height = barHeight;
+      this.scrollbar.setVisible(true);
+    } else {
+      this.scrollbar.setVisible(false);
+    }
+  }
+
+  public reset(): void {
+    this.height = 0;
+    this.scrollbar.input.hitArea.setSize(this.scrollbar.width, 1);
+    this.scrollbar.height = 1;
+    this.scrollbar.setVisible(false);
+    this.scrollOffset = 0;
+    this.setPosition(this.x, 0);
+  }
+
+  public getBounds(): Phaser.Geom.Rectangle {
+    return new Phaser.Geom.Rectangle(this.x, this.y, this.visibleWidth, this.height);
   }
 
   public setPosition(x: number, y: number): this {
@@ -75,6 +109,7 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
   }
 
   protected preDestroy(): void {
+    window.removeEventListener('wheel', this.scrollHandler);
     super.preDestroy();
     this.scrollbar.destroy();
   }

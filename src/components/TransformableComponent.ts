@@ -18,6 +18,8 @@ export default class TransformableComponent extends Component {
 
   protected maxAmount = 1;
 
+  protected deletable: boolean = false;
+
   public constructor(data: TransformableComponentData) {
     super();
     this.position = new Attribute(data.position || { x: 0, y: 0 }, 'Position', ReadonlyPosition);
