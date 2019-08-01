@@ -39,7 +39,6 @@ export default class ConnectionSystem extends System {
     const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
     const m = matrix(connection.network.get().weights);
     const size = m.size();
-    console.log(size, connection.network.get().weights);
     let { inputs, outputs } = connection.network.get();
     let weights;
 
@@ -72,29 +71,25 @@ export default class ConnectionSystem extends System {
     let { inputs, outputs, weights } = connection.network.get();
 
     if (component.name === ComponentType.MOTOR) {
-      const index = outputs.findIndex(id => component.id);
-      if (index - 1 <= 0) {
-        const subsetB = subset(m, matrixIndex(range(0, size[0]), range(index + 1, size[1])));
-        weights = subsetB;
-      } else if (index + 1 >= size[1]) {
-        const subsetA = subset(m, matrixIndex(range(0, size[0]), range(0, index - 1, 0)));
-        weights = subsetA;
-      } else {
-        const subsetA = subset(m, matrixIndex(range(0, size[0]), range(0, index - 1, 0)));
-        const subsetB = subset(m, matrixIndex(range(0, size[0]), range(index + 1, size[1])));
-        weights = concat(subsetA, subsetB);
-      }
+      const index = outputs.findIndex(id => id === component.id);
+      const rows = range(0, size[0]).toArray();
+      const cols = range(0, size[1]).toArray();
+
+      cols.splice(index, 1);
+      weights = subset(m, matrixIndex(rows, cols)).toArray();
 
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
       outputs = motors.map(motor => motor.id);
     }
 
     if (component.name === ComponentType.SENSOR) {
-      const index = inputs.findIndex(id => component.id);
-      const subsetA = subset(m, matrixIndex(range(0, index - 1), range(0, size[1])));
-      const subsetB = subset(m, matrixIndex(range(index + 1, size[0]), range(0, size[1])));
+      const index = inputs.findIndex(id => id === component.id);
+      const rows = range(0, size[0]).toArray();
+      const cols = range(0, size[1]).toArray();
 
-      weights = concat(subsetA, subsetB, 0);
+      rows.splice(index, 1);
+      weights = subset(m, matrixIndex(rows, cols)).toArray();
+
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
       inputs = sensors.map(sensor => sensor.id);
     }
