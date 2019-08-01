@@ -70,18 +70,24 @@ export default class PhysicsSystem extends System {
     delete this.physicsObjects[entity.id];
   }
 
+  // überprüft ob fälschlicherweise eine zweite Körper Komponente hinzugefügt wurde,
+  // falls nicht wird die onEntityCreated aufgerufen, um die Funktionen auch auf den
+  // neu hinzugefügten Komponenten anzuwenden
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SOLID_BODY) return;
 
     this.onEntityCreated(entity);
   }
 
+  // überprüft ob fälschlicherweise die Körper Komponente gelöscht wurde,
+  // falls nicht wird die onEntityDestroyed aufgerufen
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SOLID_BODY) return;
 
     this.onEntityDestroyed(entity);
   }
 
+  // liefert den festen Körper der Entität zurück
   private static getBody(component: SolidBodyComponent): Phaser.Physics.Matter.Matter.Body {
     switch (component.shape.get()) {
       case BodyShape.CIRCLE: {

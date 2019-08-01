@@ -10,6 +10,7 @@ import MotorComponent from '../components/MotorComponent';
 import SensorComponent from '../components/SensorComponent';
 import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
+import ConnectionComponent from '../components/ConnectionComponent';
 
 import Entity from '../Entity';
 
@@ -20,7 +21,6 @@ import RenderSystem from '../systems/RenderSystem';
 import EngineSystem from '../systems/EngineSystem';
 import SensorSystem from '../systems/SensorSystem';
 
-import ConnectionComponent from '../components/ConnectionComponent';
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
 import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
