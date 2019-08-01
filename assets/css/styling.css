@@ -50,6 +50,16 @@ body {
   -webkit-box-sizing: border-box;
 }
 
+.position-background .direction-indicator {
+  display: block;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background-color: red;
+  left: 29px;
+  top: 35px;
+}
+
 .position-indicator {
   display: block;
   width: 10px;

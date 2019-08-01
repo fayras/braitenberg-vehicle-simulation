@@ -31,6 +31,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
 
     const html = `
       <div class="position-background" style="width:${rect.width}px;height:${rect.height}px;">
+        <div class="direction-indicator" style="left:${rect.width / 2 - 5}px"></div>
         <div class="draggable position-indicator"></div>
       </div>
     `;
