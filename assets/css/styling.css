@@ -19,8 +19,24 @@ body {
   width: 208px;
 }
 
-.componentTitle {
+.component-title {
   width: 208px;
+}
+
+.component-title-info {
+  font-size: 16px;
+  font-weight: normal;
+  color: gray;
+}
+
+.component-title-info .tooltip-left::after {
+  width: 250px;
+  white-space: normal;
+  z-index: 9999;
+}
+
+.component-title .fa {
+  color: gray;
 }
 
 .position-background {

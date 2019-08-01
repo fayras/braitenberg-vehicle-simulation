@@ -14,6 +14,8 @@ export default abstract class Component {
 
   protected deletable: boolean = true;
 
+  protected infoTip: string = '';
+
   public constructor() {
     this.id = Component.count;
     Component.count += 1;
@@ -25,6 +27,10 @@ export default abstract class Component {
 
   public isDeletable(): boolean {
     return this.deletable;
+  }
+
+  public getInfo(): string {
+    return this.infoTip;
   }
 
   protected serializeAttributes(): any {
