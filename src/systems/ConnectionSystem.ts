@@ -76,7 +76,12 @@ export default class ConnectionSystem extends System {
       const cols = range(0, size[1]).toArray();
 
       cols.splice(index, 1);
-      weights = subset(m, matrixIndex(rows, cols)).toArray();
+
+      if (cols.length > 0) {
+        weights = subset(m, matrixIndex(rows, cols)).toArray();
+      } else {
+        weights = [[]];
+      }
 
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
       outputs = motors.map(motor => motor.id);
@@ -88,7 +93,12 @@ export default class ConnectionSystem extends System {
       const cols = range(0, size[1]).toArray();
 
       rows.splice(index, 1);
-      weights = subset(m, matrixIndex(rows, cols)).toArray();
+
+      if (rows.length > 0) {
+        weights = subset(m, matrixIndex(rows, cols)).toArray();
+      } else {
+        weights = [[]];
+      }
 
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
       inputs = sensors.map(sensor => sensor.id);
