@@ -1,4 +1,4 @@
-import { matrix, multiply, subset, index as matrixIndex, range, concat, resize } from 'mathjs';
+import { matrix, multiply, subset, index as matrixIndex, range, resize, zeros } from 'mathjs';
 import System from './System';
 import Entity from '../Entity';
 import { ComponentType } from '../enums';
@@ -37,22 +37,35 @@ export default class ConnectionSystem extends System {
     if (component.name !== ComponentType.MOTOR && component.name !== ComponentType.SENSOR) return;
 
     const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
+    const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
+    const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
+
     const m = matrix(connection.network.get().weights);
     const size = m.size();
     let { inputs, outputs } = connection.network.get();
     let weights;
 
     if (component.name === ComponentType.MOTOR) {
-      weights = resize(m, [size[0], size[1] + 1]).toArray();
-      const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
-      outputs = motors.map(motor => motor.id);
+      // `size[1]` ist die Größe des "inneren" Arrays, das heißt ist size == 0, dann wissen
+      // wir, dass keine Motoren davor verhanden waren, also müssen wir auch die Werte
+      // für die Inputs neu anlegen und somit die gesamte Gewichtsmatrix.
+      if (size[1] > 0) {
+        weights = resize(m, [size[0], size[1] + 1]).toArray();
+      } else {
+        weights = zeros(sensors.length, 1).toArray();
+      }
     }
 
     if (component.name === ComponentType.SENSOR) {
-      weights = resize(m, [size[0] + 1, size[1]]).toArray();
-      const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-      inputs = sensors.map(sensor => sensor.id);
+      if (size[1] > 0) {
+        weights = resize(m, [size[0] + 1, size[1]]).toArray();
+      } else {
+        weights = zeros(1, motors.length).toArray();
+      }
     }
+
+    inputs = sensors.map(sensor => sensor.id);
+    outputs = motors.map(motor => motor.id);
 
     connection.network.set({
       inputs,
