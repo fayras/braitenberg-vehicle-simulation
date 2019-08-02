@@ -108,7 +108,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
     if (this.container) {
-      this.container.setPosition(gameSize.width - SidebarScene.getWidth(), 0);
+      this.container.setPosition(gameSize.width - SidebarScene.getWidth(), this.container.y);
     }
     if (this.background) {
       this.background.setPosition(gameSize.width - SidebarScene.getWidth(), 0);

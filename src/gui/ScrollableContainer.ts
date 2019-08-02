@@ -100,9 +100,10 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
   }
 
   public setPosition(x: number, y: number): this {
+    const oldY = this.y;
     super.setPosition(x, y);
     if (this.scrollbar) {
-      this.scrollbar.setPosition(this.x + this.visibleWidth, this.y + this.scrollOffset);
+      this.scrollbar.setPosition(this.x + this.visibleWidth, this.scrollbar.y + y - oldY);
     }
 
     return this;
