@@ -34,10 +34,10 @@ export default abstract class System {
       const entity = payload.entity as Entity;
       const component = payload.component as Component;
 
-      if (!entity.hasComponents(...this.expectedComponents)) return;
-
+      const hasComponents = entity.hasComponents(...this.expectedComponents);
       const exists = this.entities.includes(entity);
-      if (!exists) {
+
+      if (hasComponents && !exists) {
         this.entities.push(entity);
       }
 
