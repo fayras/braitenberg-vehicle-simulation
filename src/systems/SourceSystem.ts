@@ -45,8 +45,9 @@ export default class SourceSystem extends System {
   private addHandlers(entity: Entity, source: SourceComponent): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
 
+    const currentType = source.substance.get();
     const handler = this.addHandler(source.id, () => {
-      this.removeSourceObject(source);
+      this.removeSourceObject(source, currentType);
       this.addSourceObject(entity, source);
     });
 
@@ -57,7 +58,7 @@ export default class SourceSystem extends System {
     const handleTransform = this.addHandler(
       source.id,
       debounce(() => {
-        this.removeSourceObject(source);
+        this.removeSourceObject(source, currentType);
         this.addSourceObject(entity, source);
       }, 200),
     );
@@ -69,7 +70,7 @@ export default class SourceSystem extends System {
   protected onEntityDestroyed(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
     sources.forEach(source => {
-      this.removeSourceObject(source);
+      this.removeSourceObject(source, source.substance.get());
     });
   }
 
@@ -84,7 +85,8 @@ export default class SourceSystem extends System {
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.SOURCE) return;
 
-    this.removeSourceObject(component as SourceComponent);
+    const source = component as SourceComponent;
+    this.removeSourceObject(source, source.substance.get());
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const handlers = this.handlers[component.id] || [];
     handlers.forEach(handler => {
@@ -158,10 +160,10 @@ export default class SourceSystem extends System {
     });
   }
 
-  private removeSourceObject(source: SourceComponent): void {
+  private removeSourceObject(source: SourceComponent, type: SubstanceType): void {
     EventBus.publish(EventType.SOURCE_DESTROYED, {
       id: source.id,
-      type: source.substance.get(),
+      type,
     });
 
     if (!this.textures[source.id]) return;
