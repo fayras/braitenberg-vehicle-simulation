@@ -52,6 +52,7 @@ export default class SourceSystem extends System {
 
     source.emissionType.onChange(handler);
     source.range.onChange(handler);
+    source.substance.onChange(handler);
 
     const handleTransform = this.addHandler(
       source.id,
