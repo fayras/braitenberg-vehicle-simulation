@@ -68,7 +68,11 @@ export default class ReactionSystem extends System {
         const x = Math.floor((bodyPosition.x + sensorOffset.x) / CORRELATION_SCALE);
         const y = Math.floor((bodyPosition.y + sensorOffset.y) / CORRELATION_SCALE);
 
-        if (!this.correlations[lookUpKey][y] || this.correlations[lookUpKey][y][x] === undefined) {
+        if (
+          !this.correlations[lookUpKey][y] ||
+          this.correlations[lookUpKey][y][x] === undefined ||
+          Number.isNaN(this.correlations[lookUpKey][y][x])
+        ) {
           sensor.activation.set(0);
           return;
         }
