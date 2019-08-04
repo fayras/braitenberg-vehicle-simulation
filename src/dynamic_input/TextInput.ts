@@ -21,8 +21,4 @@ export default class TextInput extends BaseInput<string | number> {
       this.inputElement.value = this.value.toString();
     }
   }
-
-  // preUpdate(time, delta) {
-  //     super.preUpdate(time, delta);
-  // }
 }

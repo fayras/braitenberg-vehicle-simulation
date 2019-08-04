@@ -10,7 +10,7 @@ export default class Checkbox extends BaseInput<boolean> {
     const html = `
       <label>
         <input type="checkbox">
-        <span class="checkable">${this.label}</span>
+        <span class="checkable">${this.config.label}</span>
       </label>
     `;
 

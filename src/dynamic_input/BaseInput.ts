@@ -13,6 +13,8 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
 
   protected entity: Entity;
 
+  protected showDefaultLabel = true;
+
   public constructor(scene: Phaser.Scene, attribute: Settable<T>, entity: Entity, config: any = {}) {
     super(scene, 0, 0);
 
@@ -30,7 +32,7 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     const root = document.createElement('div');
     root.className = 'base-input-container';
 
-    if (this.config.label) {
+    if (this.showDefaultLabel && this.config.label) {
       const labelEl = document.createElement('span');
       labelEl.innerText = this.config.label;
       labelEl.style.display = 'block';

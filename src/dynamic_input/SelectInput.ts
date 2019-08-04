@@ -1,21 +1,19 @@
 import BaseInput from './BaseInput';
-import * as enums from '../enums';
 
 export default class SelectInput<T> extends BaseInput<T> {
   protected create(): Element {
     const input = document.createElement('select');
 
-    let type: { [s: number]: string } = {};
-    Object.values(enums).forEach(e => {
-      if (Object.values(e).includes(this.value)) {
-        type = e;
-      }
-    });
+    if (!this.config.options) {
+      throw new Error('Die Konfiguration "options" muss für die Klasse "SelectInput" definiert sein.');
+    }
+
+    const type = this.config.options;
 
     Object.values(type).forEach(value => {
       const option = document.createElement('option');
-      option.value = value;
-      option.innerHTML = value;
+      option.value = value as string;
+      option.innerHTML = value as string;
       input.appendChild(option);
     });
 
