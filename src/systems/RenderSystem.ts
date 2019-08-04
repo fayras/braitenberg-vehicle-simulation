@@ -130,9 +130,7 @@ export default class RenderSystem extends System {
       const dragThreshold = 1;
       if (pointer.getDistance() > dragThreshold) {
         return;
-        console.log(1);
       }
-      console.log(2);
       EventBus.publish(EventType.ENTITY_SELECTED, entity);
     });
 
