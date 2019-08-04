@@ -26,7 +26,14 @@ export default class ConnectionSystem extends System {
       connection.network.get().outputs.forEach((id, index) => {
         const motor = motors.find(m => m.id === id);
         if (motor) {
-          motor.throttle.set(outputs[index]);
+          let value = outputs[index];
+
+          const neg = Math.sign(outputs[index]) === -1;
+          if (neg) {
+            value += 1;
+          }
+
+          motor.throttle.set(value);
         }
       });
     });
@@ -35,6 +42,10 @@ export default class ConnectionSystem extends System {
   // eslint-disable-next-line
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.MOTOR && component.name !== ComponentType.SENSOR) return;
+
+    if (!entity.hasComponents(ComponentType.CONNECTION)) {
+      return;
+    }
 
     const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
     const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
@@ -77,6 +88,10 @@ export default class ConnectionSystem extends System {
   // eslint-disable-next-line
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
     if (component.name !== ComponentType.MOTOR && component.name !== ComponentType.SENSOR) return;
+
+    if (!entity.hasComponents(ComponentType.CONNECTION)) {
+      return;
+    }
 
     const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
     const m = matrix(connection.network.get().weights);
