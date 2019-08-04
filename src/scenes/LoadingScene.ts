@@ -10,9 +10,17 @@ import vehicle3b from '../../assets/prefabs/3b.png';
 import source from '../../assets/prefabs/source.png';
 import blank from '../../assets/prefabs/blank.png';
 
-export default class MainInterfaceScene extends Phaser.Scene {
+export default class LoadingScene extends Phaser.Scene {
   public constructor() {
     super({ key: 'LoadingScene' });
+  }
+
+  public static userOptions(): object {
+    return {
+      Vehikel: 'vehicle',
+      Quelle: 'prefab-source',
+      Blank: 'prefab-blank',
+    };
   }
 
   public preload(): void {

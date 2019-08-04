@@ -10,16 +10,24 @@ export default class SelectInput<T> extends BaseInput<T> {
 
     const type = this.config.options;
 
-    Object.values(type).forEach(value => {
+    Object.keys(type).forEach(key => {
       const option = document.createElement('option');
-      option.value = value as string;
-      option.innerHTML = value as string;
+      const isNum = Number.isInteger(type[key]);
+      // Das `+` ist hier dazu da, um Integer-Werte später wiedererkennen
+      // zu können, da sonst alles in Strings umgewandelt wird.
+      option.value = isNum ? `+${type[key]}` : type[key];
+      option.innerHTML = key;
       input.appendChild(option);
     });
 
-    input.value = (this.value as unknown) as string;
+    const isNum = Number.isInteger(this.value as any);
+    input.value = ((isNum ? `+${this.value}` : this.value) as unknown) as string;
     input.addEventListener('change', () => {
-      this.value = (input.value as unknown) as T;
+      if (input.value.charAt(0) === '+') {
+        this.value = (Number(input.value.substr(1)) as unknown) as T;
+      } else {
+        this.value = (input.value as unknown) as T;
+      }
     });
 
     return input;
