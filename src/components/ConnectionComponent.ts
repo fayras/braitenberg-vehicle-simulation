@@ -41,8 +41,7 @@ export default class ConnectionComponent extends Component {
         outputs: data.outputIds,
         weights: w,
       },
-      'Verbindungen',
-      ConnectionNetwork,
+      ConnectionNetwork.create({ label: 'Verbindungen' }),
     );
   }
 

@@ -21,8 +21,14 @@ export default class SourceComponent extends Component {
 
   public constructor(data: SourceComponentData) {
     super();
-    this.range = new Attribute(data.range, 'Reichweite', NumberInput);
-    this.substance = new Attribute(data.substance || SubstanceType.LIGHT, 'Substanz', SelectInput);
-    this.emissionType = new Attribute(data.emissionType || EmissionType.GAUSSIAN, 'Charakteristik', SelectInput);
+    this.range = new Attribute(data.range, NumberInput.create({ label: 'Reichweite' }));
+    this.substance = new Attribute(
+      data.substance || SubstanceType.LIGHT,
+      SelectInput.create<SubstanceType, SelectInput<SubstanceType>>({ label: 'Substanz', options: SubstanceType }),
+    );
+    this.emissionType = new Attribute(
+      data.emissionType || EmissionType.GAUSSIAN,
+      SelectInput.create<EmissionType, SelectInput<EmissionType>>({ label: 'Charakteristik', options: EmissionType }),
+    );
   }
 }

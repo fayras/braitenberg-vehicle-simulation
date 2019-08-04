@@ -30,8 +30,8 @@ export default class RenderComponent extends Component {
 
   public constructor(data: RenderComponentData) {
     super();
-    this.asset = new Attribute(data.asset, 'Anzeige', TextInput);
-    this.size = new Attribute(data.size, 'Größe', NumberInput);
-    this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, 'Blend Mode', HiddenInput);
+    this.asset = new Attribute(data.asset, TextInput.create({ label: 'Anzeige' }));
+    this.size = new Attribute(data.size, NumberInput.create({ label: 'Größe' }));
+    this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, HiddenInput.create());
   }
 }

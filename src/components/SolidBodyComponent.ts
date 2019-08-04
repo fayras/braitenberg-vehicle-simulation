@@ -25,11 +25,14 @@ export default class SolidBodyComponent extends Component {
   public constructor(data: SolidBodyComponentData) {
     super();
     if (typeof data.size === 'number') {
-      this.size = new Attribute({ width: data.size, height: data.size }, 'Größe', SizeInput);
+      this.size = new Attribute({ width: data.size, height: data.size }, SizeInput.create({ label: 'Größe' }));
     } else {
-      this.size = new Attribute(data.size || { width: 50, height: 50 }, 'Größe', SizeInput);
+      this.size = new Attribute(data.size || { width: 50, height: 50 }, SizeInput.create({ label: 'Größe' }));
     }
-    this.shape = new Attribute(data.shape || BodyShape.RECTANGLE, 'Form', SelectInput);
-    this.isStatic = new Attribute(data.isStatic || false, 'Statisch', Checkbox);
+    this.shape = new Attribute(
+      data.shape || BodyShape.RECTANGLE,
+      SelectInput.create<BodyShape, SelectInput<BodyShape>>({ label: 'Form', options: BodyShape }),
+    );
+    this.isStatic = new Attribute(data.isStatic || false, Checkbox.create({ label: 'Statisch' }));
   }
 }

@@ -1,31 +1,22 @@
 import BaseInput from '../dynamic_input/BaseInput';
 import Entity from '../Entity';
 
-type ElementConstructor<T, S> = new (
-  scene: Phaser.Scene,
-  attr: Settable<T>,
-  value: T,
-  label: string,
-  entity: Entity,
-) => S;
+type ElementConstructor<T, S> = (scene: Phaser.Scene, attr: Settable<T>, entity: Entity) => S;
 
 type ChangeHandler<T> = (value: T, oldValue: T) => void;
 
 export default class Attribute<T, S extends BaseInput<T>> implements Settable<T> {
   private value: T;
 
-  private label: string;
-
-  private Element: ElementConstructor<T, S>;
+  private createElement: ElementConstructor<T, S>;
 
   private el: S | null = null;
 
   private changeHanlers: ChangeHandler<T>[] = [];
 
-  public constructor(value: T, label: string, renderAs: ElementConstructor<T, S>) {
+  public constructor(value: T, renderAs: ElementConstructor<T, S>) {
     this.value = value;
-    this.label = label;
-    this.Element = renderAs;
+    this.createElement = renderAs;
   }
 
   public get(): T {
@@ -58,13 +49,13 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
   }
 
   public render(scene: Phaser.Scene, entity: Entity): S {
-    this.el = new this.Element(scene, this, this.value, this.label, entity);
+    this.el = this.createElement(scene, this, entity);
     this.el.init();
 
     return this.el;
   }
 
   public renderedAs(type: any): boolean {
-    return this.Element === type;
+    return this.createElement === type;
   }
 }

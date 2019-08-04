@@ -42,7 +42,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
     interact(dragEl)
       .draggable({
         modifiers: [
-          interact.modifiers.restrict({
+          interact.modifiers!.restrict({
             restriction: 'parent',
             elementRect: { left: 0.4, right: 0.6, top: 0.4, bottom: 0.6 },
           }),

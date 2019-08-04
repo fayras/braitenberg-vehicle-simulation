@@ -27,10 +27,13 @@ export default class MotorComponent extends Component {
 
   public constructor(data: MotorComponentData) {
     super();
-    this.position = new Attribute(data.position, 'Position', PositionInput);
-    this.maxSpeed = new Attribute(data.maxSpeed || 50, 'Maximalgeschwindigkeit', NumberInput);
-    this.defaultSpeed = new Attribute(data.defaultSpeed || 0, 'Mindestgeschwindigkeit', NumberInput);
-    this.throttle = new Attribute(0 as number, '', HiddenInput);
-    this.visualThrottle = new Attribute<string | number, TextInput>('0', 'Aktuelle Geschwindigkeit', TextInput);
+    this.position = new Attribute(data.position, PositionInput.create({ label: 'Position' }));
+    this.maxSpeed = new Attribute(data.maxSpeed || 50, NumberInput.create({ label: 'Maximalgeschwindigkeit' }));
+    this.defaultSpeed = new Attribute(data.defaultSpeed || 0, NumberInput.create({ label: 'Mindestgeschwindigkeit' }));
+    this.throttle = new Attribute<number, HiddenInput>(0, HiddenInput.create());
+    this.visualThrottle = new Attribute<string | number, TextInput>(
+      '0',
+      TextInput.create({ label: 'Aktuelle Geschwindigkeit' }),
+    );
   }
 }

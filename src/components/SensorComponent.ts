@@ -28,10 +28,13 @@ export default class SensorComponent extends Component {
   // Konstruktor der Klasse mit Erstellung von Attributen für alle Parameter
   public constructor(data: SensorComponentData) {
     super();
-    this.position = new Attribute(data.position, 'Position', PositionInput);
-    this.range = new Attribute(data.range, 'Reichweite', NumberInput);
-    this.angle = new Attribute(data.angle, 'Öffnungswinkel', NumberInput);
-    this.reactsTo = new Attribute(data.reactsTo || SubstanceType.LIGHT, 'Reagiert auf', SelectInput);
-    this.activation = new Attribute(0 as number, 'Grad der Aktivierung', NumberInput);
+    this.position = new Attribute(data.position, PositionInput.create({ label: 'Position' }));
+    this.range = new Attribute(data.range, NumberInput.create({ label: 'Reichweite' }));
+    this.angle = new Attribute(data.angle, NumberInput.create({ label: 'Öffnungswinkel' }));
+    this.reactsTo = new Attribute(
+      data.reactsTo || SubstanceType.LIGHT,
+      SelectInput.create<SubstanceType, SelectInput<SubstanceType>>({ label: 'Reagiert auf', options: SubstanceType }),
+    );
+    this.activation = new Attribute(0 as number, NumberInput.create({ label: 'Grad der Aktivierung' }));
   }
 }

@@ -2,7 +2,7 @@ import { ComponentType } from '../enums';
 import Attribute from './Attribute';
 
 export default abstract class Component {
-  [key: string]: any;
+  [key: string]: number | boolean | string | Attribute<any, any> | Function;
 
   public abstract name: ComponentType;
 

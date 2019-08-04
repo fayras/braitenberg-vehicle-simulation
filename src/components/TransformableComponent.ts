@@ -22,7 +22,7 @@ export default class TransformableComponent extends Component {
 
   public constructor(data: TransformableComponentData) {
     super();
-    this.position = new Attribute(data.position || { x: 0, y: 0 }, 'Position', ReadonlyPosition);
-    this.angle = new Attribute(data.angle || 0, 'Rotation', RotationInput);
+    this.position = new Attribute(data.position || { x: 0, y: 0 }, ReadonlyPosition.create({ label: 'Position' }));
+    this.angle = new Attribute(data.angle || 0, RotationInput.create({ label: 'Rotation' }));
   }
 }

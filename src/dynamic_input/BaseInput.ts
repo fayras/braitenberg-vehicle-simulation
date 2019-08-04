@@ -9,20 +9,18 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
 
   private updateValue: () => void;
 
-  protected label: string;
+  protected config: any;
 
   protected entity: Entity;
 
-  protected showDefaultLabel = true;
-
-  public constructor(scene: Phaser.Scene, attribute: Settable<T>, value: T, label: string, entity: Entity) {
+  public constructor(scene: Phaser.Scene, attribute: Settable<T>, entity: Entity, config: any = {}) {
     super(scene, 0, 0);
 
-    this.m_value = value;
+    this.m_value = attribute.get();
     this.attribute = attribute;
+    this.config = config;
 
     this.updateValue = throttle(this.onUpdate, 60);
-    this.label = label;
     this.entity = entity;
 
     scene.add.existing(this);
@@ -32,9 +30,9 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     const root = document.createElement('div');
     root.className = 'base-input-container';
 
-    if (this.showDefaultLabel) {
+    if (this.config.label) {
       const labelEl = document.createElement('span');
-      labelEl.innerText = this.label;
+      labelEl.innerText = this.config.label;
       labelEl.style.display = 'block';
 
       root.appendChild(labelEl);
@@ -46,6 +44,15 @@ export default abstract class BaseInput<T> extends Phaser.GameObjects.DOMElement
     this.setElement(root);
 
     this.onAfterAppend(root);
+  }
+
+  public static create<Q, R extends BaseInput<Q>>(
+    this: { new (scene: Phaser.Scene, attr: Settable<Q>, entity: Entity, config: any): R },
+    config: any = {},
+  ): (scene: Phaser.Scene, attr: Settable<Q>, entity: Entity) => R {
+    return (scene: Phaser.Scene, attr: Settable<Q>, entity: Entity) => {
+      return new this(scene, attr, entity, config);
+    };
   }
 
   protected abstract create(entity: Entity): Element;
