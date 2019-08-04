@@ -35,6 +35,6 @@ export default class SensorComponent extends Component {
       data.reactsTo || SubstanceType.LIGHT,
       SelectInput.create<SubstanceType, SelectInput<SubstanceType>>({ label: 'Reagiert auf', options: SubstanceType }),
     );
-    this.activation = new Attribute(0 as number, NumberInput.create({ label: 'Grad der Aktivierung' }));
+    this.activation = new Attribute(0 as number, NumberInput.create({ label: 'Grad der Aktivierung', toFixed: 4 }));
   }
 }
