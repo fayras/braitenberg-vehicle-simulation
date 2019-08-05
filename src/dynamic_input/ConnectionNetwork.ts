@@ -41,8 +41,10 @@ export default class ConnectionNetwork extends BaseInput<ConnectionNetworkData> 
     const html = `
       <div class="connection-network-background">
         <div>${lines.join('')}</div>
+        <div class="text-center">Sensoren</div>
         <div class="connection-inputs">${inputs.join('')}</div>
         <div class="connection-outputs">${outputs.join('')}</div>
+        <div class="text-center">Motoren</div>
       </div>
     `;
     const nodes = parseDOM(html);

@@ -2,6 +2,10 @@ body {
   font-family: Calibri;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .deleteButton {
   background-color: transparent;
   margin-left: 90px;
