@@ -106,7 +106,7 @@ export default class PhysicsSystem extends System {
 
     component.size.onChange((value, old) => {
       const { body } = this.physicsObjects[entity.id];
-      // Hier wird der Körper einmal in die "aufrechte" Position gereht, weil `Matter.Body.scale`
+      // Hier wird der Körper einmal in die "aufrechte" Position gedreht, weil `Matter.Body.scale`
       // den Körper aus der "globalen" Sicht skaliert. D.h. sind scaleX und scaleY unterschied-
       // lich, dann wird der Körper gequetscht und zu einem Parallelogramm.
       Phaser.Physics.Matter.Matter.Body.rotate(body, -body.angle);
