@@ -96,12 +96,12 @@ export default class RenderSystem extends System {
     const body = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
 
     let image: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
-    if (body && typeof render.asset.get() === 'number') {
+    if ((body && typeof render.asset.get() === 'number') || typeof render.asset.get() === 'number') {
       image = this.scene.add.rectangle(
         transform.position.get().x,
         transform.position.get().y,
-        body.size.get().width,
-        body.size.get().height,
+        body ? body.size.get().width : render.size.get(),
+        body ? body.size.get().height : render.size.get(),
         render.asset.get() as number,
       );
     } else {
