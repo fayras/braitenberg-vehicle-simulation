@@ -13,6 +13,7 @@
     "jest": true
   },
   "rules": {
+    "no-continue": "off",
     "no-param-reassign": ["error", { "props": false }],
     "class-methods-use-this": ["error", { "exceptMethods": ["update", "onEntityCreated", "onEntityDestroyed"] }],
     "no-prototype-builtins": "off",

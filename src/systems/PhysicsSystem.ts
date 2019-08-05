@@ -21,13 +21,81 @@ export default class PhysicsSystem extends System {
 
   private physicsObjects: PhysicsObjectDictionary = {};
 
+  private bodiesGraphic: Phaser.GameObjects.Graphics;
+
   public constructor(scene: Phaser.Scene) {
     super(scene);
 
     EventBus.subscribe(EventType.APPLY_FORCE, this.applyForce.bind(this));
+
+    this.bodiesGraphic = this.scene.sys.add.graphics({ x: 0, y: 0 });
+    this.bodiesGraphic.setDepth(Number.MAX_VALUE);
   }
 
-  public update(): void {}
+  public update(): void {
+    this.renderBodies();
+  }
+
+  private renderBodies(): void {
+    this.bodiesGraphic.clear();
+
+    const graphics = this.bodiesGraphic;
+    const bodies = Object.values(this.physicsObjects);
+    const bodyColor = 0x999999;
+
+    let body;
+    let part;
+
+    for (let i = 0; i < bodies.length; i += 1) {
+      ({ body } = bodies[i]);
+
+      if (!body.render.visible) {
+        continue;
+      }
+
+      //  Handle compound parts
+      for (let k = body.parts.length > 1 ? 1 : 0; k < body.parts.length; k += 1) {
+        part = body.parts[k];
+
+        if (!part.render.visible) {
+          continue;
+        }
+
+        graphics.lineStyle(1, bodyColor, part.render.opacity);
+        graphics.fillStyle(bodyColor, part.render.opacity);
+
+        //  Part polygon
+        if (part.circleRadius) {
+          graphics.beginPath();
+          graphics.arc(part.position.x, part.position.y, part.circleRadius, 0, 2 * Math.PI);
+        } else {
+          graphics.beginPath();
+          graphics.moveTo(part.vertices[0].x, part.vertices[0].y);
+
+          const vertLength = part.vertices.length;
+
+          for (let j = 1; j < vertLength; j += 1) {
+            if (!part.vertices[j - 1].isInternal) {
+              graphics.lineTo(part.vertices[j].x, part.vertices[j].y);
+            } else {
+              graphics.moveTo(part.vertices[j].x, part.vertices[j].y);
+            }
+
+            if (part.vertices[j].isInternal) {
+              graphics.moveTo(
+                part.vertices[(j + 1) % part.vertices.length].x,
+                part.vertices[(j + 1) % part.vertices.length].y,
+              );
+            }
+          }
+
+          graphics.lineTo(part.vertices[0].x, part.vertices[0].y);
+          graphics.closePath();
+        }
+        graphics.strokePath();
+      }
+    }
+  }
 
   protected onEntityCreated(entity: Entity): void {
     const component = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
