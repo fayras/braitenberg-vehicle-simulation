@@ -23,6 +23,13 @@ body {
   width: 208px;
 }
 
+.component-title h3 {
+  padding: 0;
+  padding-bottom: 0.2em;
+  margin: 0.6em 0;
+  border-bottom: 2px black solid;
+}
+
 .component-title-info {
   font-size: 16px;
   font-weight: normal;
@@ -71,6 +78,14 @@ body {
   background-color: lightblue;
   border-radius: 10px;
   border: 2px #818181 solid;
+  /* `-6px`, weil die Breite 14 (10 + 2 für jede Border) ist und wir die Hälfte davon
+   *  nehmen. Da das dann aber ganz außen ist, sieht das nicht so gut aus. Damit das
+   *  nach "in der Mitte" des Randes aussieht, ist hier -6 gewählt.
+   *
+   *  PS: Mit dem Margin kann man sozusagen den Origin-Punkt angeben.
+   */
+  margin-left: -6px;
+  margin-top: -6px;
 }
 
 .connection-network-background {
