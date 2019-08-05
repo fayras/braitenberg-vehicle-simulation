@@ -44,10 +44,11 @@ body {
   height: 100px;
   display: block;
   background-color: white;
-  border: 2px black solid;
+  border: 2px #888 solid;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  border-radius: 2px;
 }
 
 .position-background .direction-indicator {
@@ -60,7 +61,7 @@ body {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
 
-  border-bottom: 5px solid #999;
+  border-bottom: 5px solid #ccc;
 }
 
 .position-indicator {
@@ -69,7 +70,7 @@ body {
   height: 10px;
   background-color: lightblue;
   border-radius: 10px;
-  border: 2px black solid;
+  border: 2px #818181 solid;
 }
 
 .connection-network-background {
