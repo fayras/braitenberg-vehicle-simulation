@@ -47,6 +47,8 @@ export default class ReactionSystem extends System {
   }
 
   public update(): void {
+    if (this.isPaused) return;
+
     this.entities.forEach(entity => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];

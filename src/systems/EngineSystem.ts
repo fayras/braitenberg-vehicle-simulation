@@ -9,6 +9,8 @@ export default class EngineSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.MOTOR];
 
   public update(): void {
+    if (this.isPaused) return;
+
     this.entities.forEach(entity => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];

@@ -10,6 +10,8 @@ export default abstract class System {
 
   protected scene: Phaser.Scene;
 
+  protected isPaused: boolean = false;
+
   public constructor(scene: Phaser.Scene) {
     this.scene = scene;
     EventBus.subscribe(EventType.ENTITY_CREATED, (entity: Entity) => {
@@ -59,6 +61,10 @@ export default abstract class System {
         }
       }
     });
+  }
+
+  public pause(flag: boolean): void {
+    this.isPaused = flag;
   }
 
   public abstract update(delta: number): void;

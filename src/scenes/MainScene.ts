@@ -30,15 +30,10 @@ import EntityManager from '../EntityManager';
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
-  private renderSystem: RenderSystem;
-
   private running: boolean = true;
 
   public constructor() {
     super({ key: 'MainScene' });
-    // RenderSystem ist ein bisschen besonders, da es immer laufen sollte, auch
-    // wenn die Simulation z.b. pausiert ist.
-    this.renderSystem = new RenderSystem(this);
   }
 
   public create(): void {
@@ -170,15 +165,12 @@ export default class MainScene extends Phaser.Scene {
       new SensorSystem(this),
       new ConnectionSystem(this),
       new ReactionSystem(this),
+      new RenderSystem(this),
     ];
   }
 
   public update(time: number, delta: number): void {
-    if (this.running) {
-      this.systems.forEach(s => s.update(delta));
-    }
-
-    this.renderSystem.update();
+    this.systems.forEach(s => s.update(delta));
   }
 
   public isRunning(): boolean {
@@ -187,6 +179,8 @@ export default class MainScene extends Phaser.Scene {
 
   public pause(flag: boolean): void {
     this.running = flag;
+    this.systems.forEach(s => s.pause(flag));
+
     // Wenn die Szene gestartet wird (play), wird ein neuer Snapshot erzeugt.
     if (flag) {
       MainScene.createSnapshot();

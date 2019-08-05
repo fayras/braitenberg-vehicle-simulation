@@ -11,6 +11,8 @@ export default class ConnectionSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.CONNECTION, ComponentType.MOTOR, ComponentType.SENSOR];
 
   public update(): void {
+    if (this.isPaused) return;
+
     this.entities.forEach(entity => {
       const connection = entity.getComponent(ComponentType.CONNECTION) as ConnectionComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
