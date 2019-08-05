@@ -9,6 +9,8 @@ export default abstract class SidebarScene extends Phaser.Scene {
 
   protected background: Phaser.GameObjects.Rectangle | null = null;
 
+  protected closeButton: Button | null = null;
+
   protected key: string;
 
   private handler: (gameSize: Phaser.Structs.Size) => void;
@@ -38,7 +40,7 @@ export default abstract class SidebarScene extends Phaser.Scene {
     this.container = container;
     this.container.setDepth(1);
 
-    const close = new Button(this, this.cameras.main.displayWidth - SidebarScene.getWidth() - 35, 35, 19, () => {
+    this.closeButton = new Button(this, this.cameras.main.displayWidth - 35, 35, 19, () => {
       this.tweens.add({
         targets: [this.container, this.background],
         x: `+=${SidebarScene.getWidth()}`,
@@ -48,14 +50,12 @@ export default abstract class SidebarScene extends Phaser.Scene {
         onComplete: () => this.close(),
       });
     });
-    this.add.existing(close);
 
     this.onCreate(container, ...args);
 
     this.tweens.add({
-      targets: [this.container, this.background],
+      targets: [this.container, this.background, this.closeButton],
       x: `-=${SidebarScene.getWidth()}`,
-      y: 0,
       duration: 200,
       ease: 'Expo.easeInOut',
       onComplete: () => {
@@ -109,6 +109,9 @@ export default abstract class SidebarScene extends Phaser.Scene {
   private handleResize(gameSize: Phaser.Structs.Size): void {
     if (this.container) {
       this.container.setPosition(gameSize.width - SidebarScene.getWidth(), this.container.y);
+    }
+    if (this.closeButton) {
+      this.closeButton.setPosition(gameSize.width - SidebarScene.getWidth() - 35, 35);
     }
     if (this.background) {
       this.background.setPosition(gameSize.width - SidebarScene.getWidth(), 0);
