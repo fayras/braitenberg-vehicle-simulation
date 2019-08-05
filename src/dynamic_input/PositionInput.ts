@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+import { throttle } from 'lodash-es';
 import interact from 'interactjs';
 import BaseInput from './BaseInput';
 import Entity from '../Entity';
@@ -22,12 +24,8 @@ export default class PositionInput extends BaseInput<Vector2D> {
       heightRatio = rect.height / size.get().height;
     }
 
-    // Die Hälfte der Breite/Höhe des Indikators. Der Wert wird über CSS gesetzt:
-    // 10px Breite + je 2px Kante auf beiden Seiten = 14px Breite
-    const indicatorSize = 7;
-    const snappingSize = 10;
-    this.position.x = this.value.x * widthRatio + rect.width / 2 - indicatorSize;
-    this.position.y = this.value.y * heightRatio + rect.height / 2 - indicatorSize;
+    this.position.x = rect.width / 2 - this.value.x * widthRatio;
+    this.position.y = rect.height / 2 - this.value.y * heightRatio;
 
     const html = `
       <div class="position-background" style="width:${rect.width}px;height:${rect.height}px;">
@@ -39,38 +37,35 @@ export default class PositionInput extends BaseInput<Vector2D> {
     const dragEl = getNode<HTMLDivElement>(nodes, '.position-indicator');
     dragEl.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
 
+    const snappingSize = 10;
+
     interact(dragEl)
-      .draggable({
-        modifiers: [
-          interact.modifiers!.restrict({
-            restriction: 'parent',
-            elementRect: { left: 0.4, right: 0.6, top: 0.4, bottom: 0.6 },
-          }),
-        ],
-      })
-      .on('dragmove', event => {
-        const { target, dx, dy } = event;
-        this.position.x += dx;
-        this.position.y += dy;
+      .draggable({})
+      .on(
+        'dragmove',
+        throttle(event => {
+          const { target, dx, dy } = event;
 
-        const newX = Math.round(this.position.x / (snappingSize * widthRatio)) * snappingSize * widthRatio;
-        const newY = Math.round(this.position.y / (snappingSize * heightRatio)) * snappingSize * heightRatio;
+          this.position.x = Phaser.Math.Clamp(this.position.x + dx, 0, rect.width);
+          this.position.y = Phaser.Math.Clamp(this.position.y + dy, 0, rect.height);
 
-        console.log(newX, newY);
+          // Es wird immer auf 5-px Schritte gerundet bzw. "gesnappt".
+          let newX = Math.round(this.position.x / snappingSize / widthRatio) * snappingSize * widthRatio;
+          let newY = Math.round(this.position.y / snappingSize / heightRatio) * snappingSize * heightRatio;
 
-        target.style.transform = `translate(${newX}px, ${newY}px)`;
-      })
+          newX = Phaser.Math.Clamp(Math.round(newX), 0, rect.width);
+          newY = Phaser.Math.Clamp(Math.round(newY), 0, rect.height);
+
+          target.style.transform = `translate(${newX}px, ${newY}px)`;
+        }),
+      )
       .on('dragend', () => {
-        let x = Math.round((this.position.x - rect.width / 2 + indicatorSize) / widthRatio);
-        let y = Math.round((this.position.y - rect.height / 2 + indicatorSize) / heightRatio);
+        const x = Math.floor(this.position.x / widthRatio);
+        const y = Math.floor(this.position.y / heightRatio);
 
-        x = Math.round(x / (snappingSize * widthRatio)) * snappingSize * widthRatio;
-        y = Math.round(y / (snappingSize * heightRatio)) * snappingSize * heightRatio;
-
-        console.log(x, y);
-
-        this.value = { x, y };
+        this.value = { x: rect.width / widthRatio / 2 - x, y: rect.height / heightRatio / 2 - y };
       });
+
     return nodes.body.childNodes[0] as Element;
   }
 }

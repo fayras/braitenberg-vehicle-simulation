@@ -68,8 +68,8 @@ body {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-
   border-bottom: 5px solid #ccc;
+  pointer-events: none;
 }
 
 .position-indicator {
@@ -79,14 +79,15 @@ body {
   background-color: lightblue;
   border-radius: 10px;
   border: 2px #818181 solid;
-  /* `-6px`, weil die Breite 14 (10 + 2 für jede Border) ist und wir die Hälfte davon
-   *  nehmen. Da das dann aber ganz außen ist, sieht das nicht so gut aus. Damit das
-   *  nach "in der Mitte" des Randes aussieht, ist hier -6 gewählt.
+  touch-action: none;
+  user-select: none;
+  /* `-7px`, weil die Breite 14 (10 + 2 für jede Border) ist und wir die Hälfte davon
+   *  nehmen.
    *
    *  PS: Mit dem Margin kann man sozusagen den Origin-Punkt angeben.
    */
-  margin-left: -6px;
-  margin-top: -6px;
+  margin-left: -7px;
+  margin-top: -7px;
 }
 
 .connection-network-background {
