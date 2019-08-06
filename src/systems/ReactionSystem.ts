@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Noty from 'noty';
 import { debounce } from 'lodash-es';
 import { conv2d, squeeze, tidy, Tensor2D, tensor4d, keep, memory } from '@tensorflow/tfjs-core';
 import System from './System';
@@ -35,8 +36,21 @@ export default class ReactionSystem extends System {
     super(scene);
 
     this.compute = debounce(() => {
-      this.maxValue = 0;
-      Object.values(SubstanceType).forEach(type => this.computeCorrelation(type));
+      const noty = new Noty({
+        text: '<i class="fa fa-sync-alt fa-spin"></i> Berechnung wird durchgeführt...',
+        timeout: false,
+        animation: {
+          open: null,
+        },
+      });
+      noty.show();
+
+      setTimeout(() => {
+        this.maxValue = 0;
+        const promises = Object.values(SubstanceType).map(type => this.computeCorrelation(type));
+
+        Promise.all(promises).then(() => noty.close());
+      }, 10);
     }, 100);
 
     EventBus.subscribe(EventType.SENSOR_CREATED, this.onSensorCreated.bind(this));
