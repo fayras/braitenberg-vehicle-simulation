@@ -5,12 +5,15 @@ export default class SizeInput extends BaseInput<Dimensions> {
   protected showDefaultLabel = false;
 
   protected create(): Element {
+    const min = this.config.min !== undefined ? this.config.min : -Infinity;
+    const max = this.config.max !== undefined ? this.config.max : Infinity;
+
     const html = `
       <div>
         <label>Breite</label>
-        <input name="width" type="number"></input>
+        <input name="width" type="number" min="${min}" max="${max}"></input>
         <label>Höhe</label>
-        <input name="height" type="number"></input>
+        <input name="height" type="number" min="${min}" max="${max}"></input>
       </div>
     `;
 
@@ -22,10 +25,22 @@ export default class SizeInput extends BaseInput<Dimensions> {
     height.value = String(this.value.height);
 
     width.addEventListener('change', () => {
-      this.value = { width: Number(width.value), height: Number(height.value) };
+      const value = Number(width.value);
+
+      if (value >= min && value <= max) {
+        this.value = { width: Number(width.value), height: Number(height.value) };
+      }
+
+      width.reportValidity();
     });
     height.addEventListener('change', () => {
-      this.value = { width: Number(width.value), height: Number(height.value) };
+      const value = Number(height.value);
+
+      if (value >= min && value <= max) {
+        this.value = { width: Number(width.value), height: Number(height.value) };
+      }
+
+      height.reportValidity();
     });
 
     return nodes.body.childNodes[0] as Element;
