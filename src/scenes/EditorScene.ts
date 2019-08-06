@@ -30,7 +30,9 @@ export default class EditorScene extends SidebarScene {
 
     this.makeInteractable(prefabBlank, position => {
       EntityManager.createEntity(
-        new TransformableComponent({ position }),
+        // In der Simulations-Welt ist Grad 0 nach unten zeigend, damit die Entität,
+        // wie auf der Vorlage, nach oben zeigt, wird die einmal um 180° gedreht.
+        new TransformableComponent({ position, angle: Math.PI }),
         new RenderComponent({ asset: 'prefab-blank', size: 100 }),
       );
     });
@@ -53,8 +55,8 @@ export default class EditorScene extends SidebarScene {
       const entity = new Entity();
       const transform = new TransformableComponent({
         position,
+        angle: Math.PI,
       });
-      transform.angle.set(-Math.PI / 2);
       entity.addComponent(transform);
       entity.addComponent(
         new SolidBodyComponent({
@@ -128,6 +130,7 @@ export default class EditorScene extends SidebarScene {
       const entity = new Entity();
       const transform = new TransformableComponent({
         position,
+        angle: Math.PI,
       });
       transform.angle.set(-Math.PI / 2);
       entity.addComponent(transform);
@@ -204,6 +207,7 @@ export default class EditorScene extends SidebarScene {
       const entity = new Entity();
       const transform = new TransformableComponent({
         position,
+        angle: Math.PI,
       });
       transform.angle.set(-Math.PI / 2);
       entity.addComponent(transform);
@@ -280,6 +284,7 @@ export default class EditorScene extends SidebarScene {
       const entity = new Entity();
       const transform = new TransformableComponent({
         position,
+        angle: Math.PI,
       });
       transform.angle.set(-Math.PI / 2);
       entity.addComponent(transform);
