@@ -48,11 +48,18 @@ class EntityManager {
 
     if (!entity) {
       console.warn(`Entität mit ID ${entityId} konnte nicht gefunden werden`);
-      return;
+      return undefined;
     }
 
-    entity.addComponent(component);
+    const id = entity.addComponent(component);
+
+    if (id === -1) {
+      return undefined;
+    }
+
     EventBus.publish(EventType.ENTITY_COMPONENT_ADDED, { entity, component });
+
+    return entity;
   }
 
   // löscht den übergebenen Komponenten der Entität mit der übergeben Id

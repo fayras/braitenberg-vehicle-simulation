@@ -39,10 +39,11 @@ export default class SettingScene extends SidebarScene {
     el.addListener('click');
     el.on('click', () => {
       const name = (select as HTMLSelectElement).value;
+      let added;
 
       switch (name) {
         case ComponentType.MOTOR:
-          EntityManager.addComponent(
+          added = EntityManager.addComponent(
             entity.id,
             new MotorComponent({
               position: { x: 0, y: 0 },
@@ -52,7 +53,7 @@ export default class SettingScene extends SidebarScene {
           );
           break;
         case ComponentType.SENSOR:
-          EntityManager.addComponent(
+          added = EntityManager.addComponent(
             entity.id,
             new SensorComponent({
               position: { x: 0, y: 0 },
@@ -62,7 +63,7 @@ export default class SettingScene extends SidebarScene {
           );
           break;
         case ComponentType.SOURCE:
-          EntityManager.addComponent(
+          added = EntityManager.addComponent(
             entity.id,
             new SourceComponent({
               range: 100,
@@ -70,13 +71,13 @@ export default class SettingScene extends SidebarScene {
           );
           break;
         case ComponentType.SOLID_BODY:
-          EntityManager.addComponent(entity.id, new SolidBodyComponent({}));
+          added = EntityManager.addComponent(entity.id, new SolidBodyComponent({}));
           break;
         case ComponentType.CONNECTION:
           {
             const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map(com => com.id);
             const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map(com => com.id);
-            EntityManager.addComponent(
+            added = EntityManager.addComponent(
               entity.id,
               new ConnectionComponent({
                 inputIds: inputs,
@@ -86,6 +87,10 @@ export default class SettingScene extends SidebarScene {
           }
           break;
         default:
+      }
+
+      if (added === undefined) {
+        return;
       }
 
       new Noty({ text: `Komponente ${name} hinzugefügt.` }).show();
