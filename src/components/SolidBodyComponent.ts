@@ -25,9 +25,15 @@ export default class SolidBodyComponent extends Component {
   public constructor(data: SolidBodyComponentData) {
     super();
     if (typeof data.size === 'number') {
-      this.size = new Attribute({ width: data.size, height: data.size }, SizeInput.create({ label: 'Größe' }));
+      this.size = new Attribute(
+        { width: data.size, height: data.size },
+        SizeInput.create({ label: 'Größe', min: 20, max: 500 }),
+      );
     } else {
-      this.size = new Attribute(data.size || { width: 50, height: 50 }, SizeInput.create({ label: 'Größe' }));
+      this.size = new Attribute(
+        data.size || { width: 50, height: 50 },
+        SizeInput.create({ label: 'Größe', min: 20, max: 500 }),
+      );
     }
     this.shape = new Attribute(
       data.shape || BodyShape.RECTANGLE,
