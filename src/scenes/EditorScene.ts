@@ -349,18 +349,6 @@ export default class EditorScene extends SidebarScene {
       EntityManager.addExistingEntity(entity);
     });
 
-    // this.makeInteractable(prefab, position => {
-    //   const entity = new Entity();
-    //   entity.addComponent(new TransformableComponent(position));
-    //   entity.addComponent(new SolidBodyComponent(100));
-    //   entity.addComponent(new RenderComponent('vehicle', 100));
-    //   const motor1 = entity.addComponent(new MotorComponent({ x: -50, y: 0 }, 20, 2));
-    //   const motor2 = entity.addComponent(new MotorComponent({ x: 50, y: 0 }, 20, 2));
-    //   const sensor1 = entity.addComponent(new SensorComponent({ x: 0, y: 55 }, 80, 1.3));
-    //   entity.addComponent(new ConnectionComponent([sensor1], [motor1, motor2], [[0, 1]]));
-    //   EntityManager.addExistingEntity(entity);
-    // });
-
     this.pack([prefabBlank, prefabSource, prefab2a, prefab2b, prefab3a, prefab3b]);
   }
 

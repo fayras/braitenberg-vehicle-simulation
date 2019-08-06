@@ -1,3 +1,5 @@
+import Noty from 'noty';
+
 import Entity from './Entity';
 import EventBus from './EventBus';
 
@@ -47,7 +49,7 @@ class EntityManager {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      console.warn(`Entität mit ID ${entityId} konnte nicht gefunden werden`);
+      new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
       return undefined;
     }
 
@@ -67,7 +69,7 @@ class EntityManager {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      console.warn(`Entität mit ID ${entityId} konnte nicht gefunden werden`);
+      new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
       return;
     }
 
