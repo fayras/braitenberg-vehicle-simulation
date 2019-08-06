@@ -214,7 +214,7 @@ export default class MainScene extends Phaser.Scene {
     const entities = EntityManager.getEntities();
     const snapshot = entities.map(entity => entity.serialize());
     const dataStr = JSON.stringify(snapshot);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
 
     const exportfkt = document.createElement('a');
     exportfkt.setAttribute('href', dataUri);
@@ -234,17 +234,19 @@ export default class MainScene extends Phaser.Scene {
       const files = importEl.files || [];
 
       if (files.length <= 0) {
-        console.log('Es wurde keine korrete Datei ausgewählt.');
+        swal('Es wurde keine korrete Datei ausgewählt.');
+        return;
       }
       const fr = new FileReader();
-      fr.onload = function(e) {
-        console.log(e);
-        const result = JSON.parse(e.target.result) as SerializedEntity[];
+      fr.addEventListener('load', () => {
+        if (fr.result === null) return;
+
+        const result = JSON.parse(fr.result as string) as SerializedEntity[];
         entities.forEach(entity => EntityManager.destroyEntity(entity.id));
         EntityManager.loadEntities(result);
-      };
-      console.log(files.item(0));
-      fr.readAsText(files.item(0));
+      });
+
+      fr.readAsText(files[0]);
     });
 
     importEl.click();

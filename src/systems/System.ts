@@ -69,11 +69,15 @@ export default abstract class System {
 
   public abstract update(delta: number): void;
 
+  // eslint-disable-next-line
   protected onEntityCreated(entity: Entity): void {}
 
+  // eslint-disable-next-line
   protected onEntityDestroyed(entity: Entity): void {}
 
+  // eslint-disable-next-line
   protected onEntityComponentAdded(entity: Entity, component: Component): void {}
 
+  // eslint-disable-next-line
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {}
 }
