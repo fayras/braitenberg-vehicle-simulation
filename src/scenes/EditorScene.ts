@@ -46,17 +46,6 @@ export default class EditorScene extends SidebarScene {
       );
     });
 
-    // Fügt der Standard Quelle die erwarteten Eigenschaften hinzu
-    this.makeInteractable(prefabSource, position => {
-      EntityManager.createEntity(
-        new TransformableComponent({ position }),
-        new SourceComponent({
-          range: 100,
-        }),
-        new RenderComponent({ asset: 'prefab-source', size: 100 }),
-      );
-    });
-
     // Fügt das von Braitenberg als Vehikel 2a bezeichnete Gefährt
     // mit 2 Sensoren und 2 direkt verbundenen Motoren hinzu
     // Das Vehikel fährt von Lichtquellen weg
@@ -74,7 +63,7 @@ export default class EditorScene extends SidebarScene {
       );
       entity.addComponent(
         new RenderComponent({
-          asset: 'prefab-2a',
+          asset: 'vehicle',
           size: 100,
         }),
       );
@@ -135,7 +124,7 @@ export default class EditorScene extends SidebarScene {
     // Fügt das von Braitenberg als Vehikel 2b bezeichnete Gefährt
     // mit 2 Sensoren und 2 überkreutz verbundenen Motoren hinzu
     // Das Gefährt fährt auf Lichtquellen zu
-    this.makeInteractable(prefab2a, position => {
+    this.makeInteractable(prefab2b, position => {
       const entity = new Entity();
       const transform = new TransformableComponent({
         position,
@@ -149,7 +138,7 @@ export default class EditorScene extends SidebarScene {
       );
       entity.addComponent(
         new RenderComponent({
-          asset: 'prefab-2b',
+          asset: 'vehicle',
           size: 100,
         }),
       );
@@ -225,7 +214,7 @@ export default class EditorScene extends SidebarScene {
       );
       entity.addComponent(
         new RenderComponent({
-          asset: 'prefab-3a',
+          asset: 'vehicle',
           size: 100,
         }),
       );
@@ -287,82 +276,6 @@ export default class EditorScene extends SidebarScene {
     // mit 2 Sensoren und 2 verbundenen Motoren hinzu,
     // die Motoren sind negativ verschaltet
     // Das Gefährt fährt auf langsam auf die Lichtquellen zu
-    this.makeInteractable(prefab3a, position => {
-      const entity = new Entity();
-      const transform = new TransformableComponent({
-        position,
-      });
-      transform.angle.set(-Math.PI / 2);
-      entity.addComponent(transform);
-      entity.addComponent(
-        new SolidBodyComponent({
-          size: { width: 100, height: 150 },
-        }),
-      );
-      entity.addComponent(
-        new RenderComponent({
-          asset: 'prefab-3a',
-          size: 100,
-        }),
-      );
-      const motor1 = entity.addComponent(
-        new MotorComponent({
-          position: { x: -50, y: 0 },
-          maxSpeed: 30,
-          defaultSpeed: 1,
-        }),
-      );
-      const motor2 = entity.addComponent(
-        new MotorComponent({
-          position: { x: 50, y: 0 },
-          maxSpeed: 30,
-          defaultSpeed: 1,
-        }),
-      );
-      const sensor1 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 20,
-          angle: 0.4,
-        }),
-      );
-      const sensor2 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 20,
-          angle: 0.4,
-        }),
-      );
-      const sensor3 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      const sensor4 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      entity.addComponent(
-        new ConnectionComponent({
-          inputIds: [sensor1, sensor2, sensor3, sensor4],
-          outputIds: [motor1, motor2],
-          //TO-DO Negative Verknüpfung umsetzen
-          weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
-        }),
-      );
-      EntityManager.addExistingEntity(entity);
-    });
-
-    // Fügt das von Braitenberg als Vehikel 3b bezeichnete Gefährt
-    // mit 2 Sensoren und 2 überkreutzten Motoren hinzu,
-    // die Motoren sind negativ verschaltet
     this.makeInteractable(prefab3b, position => {
       const entity = new Entity();
       const transform = new TransformableComponent({
@@ -377,7 +290,7 @@ export default class EditorScene extends SidebarScene {
       );
       entity.addComponent(
         new RenderComponent({
-          asset: 'prefab-3b',
+          asset: 'vehicle',
           size: 100,
         }),
       );
@@ -429,7 +342,7 @@ export default class EditorScene extends SidebarScene {
         new ConnectionComponent({
           inputIds: [sensor1, sensor2, sensor3, sensor4],
           outputIds: [motor1, motor2],
-          //TO-DO Negative Verknüpfung umsetzen
+          // TO-DO Negative Verknüpfung umsetzen
           weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
         }),
       );
