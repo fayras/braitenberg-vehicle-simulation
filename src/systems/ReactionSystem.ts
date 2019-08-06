@@ -94,7 +94,7 @@ export default class ReactionSystem extends System {
         }
 
         const value = this.correlations[lookUpKey][y][x]; // / this.maxValue;
-        const noise = gaussianRandom(-0.1, 0.1);
+        const noise = gaussianRandom(-0.0001, 0.0001);
         sensor.activation.set(value + noise);
       });
     });

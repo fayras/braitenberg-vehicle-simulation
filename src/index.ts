@@ -6,6 +6,8 @@ import LoadingScene from './scenes/LoadingScene';
 import 'animate.css';
 import 'noty/lib/noty.css';
 import 'noty/lib/themes/relax.css';
+import '../assets/css/picnic.min.css';
+import '../assets/css/styling.css';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -27,8 +29,6 @@ const config: Phaser.Types.Core.GameConfig = {
     default: 'matter',
     matter: {
       gravity: { y: 0 },
-      // debug: true,
-      debugBodyColor: 0xffffff,
     },
   },
 };

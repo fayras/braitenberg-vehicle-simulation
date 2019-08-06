@@ -17,13 +17,23 @@ import SourceComponent from './components/SourceComponent';
 class EntityManager {
   private entities: { [id: number]: Entity } = {};
 
-  // fügt eine neue, bereits erstellte Entität dem EntityManger hinzu
+  /**
+   * Falls eine Entität manuell angelegt werden musste, kann diese hiermit
+   * der Entity-Pool hinzugefügt werden. Das löst auch die Nachricht
+   * `ENTITY_CREATED` auf dem Bus aus.
+   *
+   * @param entity
+   */
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
     EventBus.publish(EventType.ENTITY_CREATED, entity);
   }
 
-  // fügt eine neue, noch nicht erstelle Entität mit den übergebenen Komponenten hinzu
+  /**
+   * Erzeugt eine neue Entität mit den übergebenen Komponenten.
+   *
+   * @param components
+   */
   public createEntity(...components: Component[]): Entity {
     const entity = new Entity();
     components.forEach(c => {
@@ -35,7 +45,11 @@ class EntityManager {
     return entity;
   }
 
-  // zerstört die Entität mit der übergebenen Id
+  /**
+   * Zerstört eine Entität.
+   *
+   * @param id Die ID einer Entität, die zerstört werden soll.
+   */
   public destroyEntity(id: number): void {
     const entity = this.entities[id];
 
@@ -43,8 +57,18 @@ class EntityManager {
     delete this.entities[id];
   }
 
-  // fügt den übergebenen Komponenten der Entität mit der übergebenen Id hinzu
-  // Rückgabe:
+  /**
+   * Fügt einer vorhandenen Entität eine Komponente hinzu. Diese Methode sollte
+   * nach Möglichkeit Entity.addComponent vorgezogen werden, da diese die
+   * entsprechende Nachricht `ENTITY_COMPONENT_ADDED` auf dem Bus sendet.
+   *
+   * @param entityId Die ID einer Entität.
+   * @param component
+   *
+   * @returns Gibt die entsprechende Entität zurück, zu der die Komponente hin-
+   *          zugefügt wurde, oder aber `undefined`, wenn dies nicht passiert
+   *          ist.
+   */
   public addComponent(entityId: number, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 
@@ -55,6 +79,8 @@ class EntityManager {
 
     const id = entity.addComponent(component);
 
+    // Eine ID -1 heißt, dass die Komponente nicht hinzugefügt wurde. Dann
+    // dürfen wir auch keine Nachricht über den Bus schicken.
     if (id === -1) {
       return undefined;
     }
@@ -64,7 +90,12 @@ class EntityManager {
     return entity;
   }
 
-  // löscht den übergebenen Komponenten der Entität mit der übergeben Id
+  /**
+   * Entfernt eine Komponente von einer vorhanden Entität.
+   *
+   * @param entityId Die ID einer Entität.
+   * @param component
+   */
   public removeComponent(entityId: number, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 
@@ -77,18 +108,33 @@ class EntityManager {
     EventBus.publish(EventType.ENTITY_COMPONENT_REMOVED, { entity, component });
   }
 
-  // gibt alle eingefügten Entitäten zurück
+  /**
+   * Gibt alle vorhandenen ENtität zurück.
+   */
   public getEntities(): Entity[] {
     return Object.values(this.entities);
   }
 
-  // lädt aus einem Array alle Entitäten und Komponenten und fügt sie dem EntityManager hinzu
+  /**
+   * Deserialisiert alle Entitäten eines Objekts und fügt diese den vorhanden
+   * Entitäten hinzu.
+   * Achtung! Die Funktion fügt neue Entitäten nur hinzu, d.h. es werden bereits
+   * vorhandene Entitäten nicht gelöscht, darum muss sich der Entwickler selbst
+   * kümmern.
+   *
+   * @param allEntities
+   */
   public loadEntities(allEntities: SerializedEntity[]): void {
     allEntities.forEach(serializedEntity => {
       const entity = new Entity();
+
       serializedEntity.components.forEach(serializedComponent => {
         const { name, id, attributes } = serializedComponent;
         const component = EntityManager.getComponent(name, attributes);
+
+        // Normalerweise sollte es immer eine richtige Komponente sein, wenn diese
+        // mit der App exportiert wurde. Falls aber aus welchen Gründen auch immer
+        // eine unbekannte Komponente erzeugt wurde, dann fangen wir das hier ab.
         if (component) {
           component.id = id;
           entity.addComponent(component);
@@ -99,6 +145,15 @@ class EntityManager {
     });
   }
 
+  /**
+   * Eine Hilfsfunktion, um anhand vom Namen und übergebenen Attributen eine neue
+   * Instanz der entsprechenden Komponente zu erzeugen.
+   *
+   * @param name Der Name bzw. Typ der Komponente.
+   * @param attributes Die Attribute als ein Objekt. Dabei ist wichtig, dass es keine
+   *                   Überprüfung auch Richtigkeit der Werte gibt! Für nähere Infos
+   *                   zu den möglichen Attributen siehe jeweilige Komponenten-Klasse.
+   */
   private static getComponent(name: ComponentType, attributes: any): Component | undefined {
     switch (name) {
       case ComponentType.TRANSFORMABLE:

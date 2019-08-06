@@ -1,5 +1,6 @@
 export function noop(): void {}
 
+// https://stackoverflow.com/a/39187274
 export function gaussianRand(): number {
   let rand = 0;
 
@@ -10,6 +11,11 @@ export function gaussianRand(): number {
   return rand / 6;
 }
 
+/**
+ * Liefert einen zufällig generierten Wert zurück, welche normalverteilt ist.
+ * @param start
+ * @param end
+ */
 export function gaussianRandom(start: number, end: number): number {
-  return Math.floor(start + gaussianRand() * (end - start + 1));
+  return start + gaussianRand() * (end - start);
 }

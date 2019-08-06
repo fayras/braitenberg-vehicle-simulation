@@ -14,6 +14,12 @@ export default class Attribute<T, S extends BaseInput<T>> implements Settable<T>
 
   private changeHanlers: ChangeHandler<T>[] = [];
 
+  /**
+   * Der Konstruktor!
+   *
+   * @param value
+   * @param renderAs
+   */
   public constructor(value: T, renderAs: ElementConstructor<T, S>) {
     this.value = value;
     this.createElement = renderAs;

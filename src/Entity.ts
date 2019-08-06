@@ -8,18 +8,36 @@ export default class Entity {
 
   private components: Component[] = [];
 
+  /**
+   * Hier wird einmal gespeichert, wie viele ENtitäten es in der Welt gibt.
+   * Das wird dazu benutzt, um Entitäten stets eie eindeutige ID geben zu
+   * können.
+   */
   public static numOfEntities = 0;
 
+  /**
+   * Erzeugt eine neue Entität.
+   * Dies ist möglich, da manchmal nötig, nach Möglichkeit sollten jedoch die
+   * entsprechenden Funktionen aus der Klasse `EntityManager` benutzt werden.
+   */
   public constructor() {
     this.id = Entity.numOfEntities;
     Entity.numOfEntities += 1;
   }
 
-  // fügt die Übergebene Componente der Entität hinzu, wenn es nicht schon zu viele Componenten gibt
-  //  gibt die Id der neu hinzugefügten Componente zurück
+  /**
+   * Fügt eine neue Komponente zur Entität hinzu, falls die maximal erlaubte
+   * Anzahl des Typs noch nicht überschritten wurde.
+   *
+   * @param component
+   *
+   * @returns Liefert die ID der Komponente zurück. Wurde die Komponente nicht
+   *          hinzugefügt, dann wird `-1` zurückgegeben.
+   */
   public addComponent(component: Component): number {
     const currentAmount = this.getMultipleComponents(component.name).length;
 
+    // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
     if (currentAmount >= component.getMaxAmount()) {
       new Noty({
         text: `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`,
@@ -31,8 +49,8 @@ export default class Entity {
     return component.id;
   }
 
-  // entfernt die übergebene Componente, falls vorhanden
-  // gibt entfernte Componente zurück
+  // entfernt die übergebene Komponente falls vorhanden
+  // gibt entfernte Komponentezurück
   public removeComponent(component: Component): Component | undefined {
     const index = this.components.indexOf(component);
     if (index >= 0) {
@@ -42,12 +60,12 @@ export default class Entity {
     return undefined;
   }
 
-  // gibt die erste Componente mit dem Übergebenen Component Typ zurück
+  // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
   public getComponent<T extends Component>(name: ComponentType): T | undefined {
     return this.components.find(c => c.name === name) as T;
   }
 
-  // gibt alle Componenten mit dem übergebenen Component Type zurück
+  // gibt alle Komponente mit dem übergebenen Component Type zurück
   public getMultipleComponents(name: ComponentType): Component[] {
     return this.components.filter(c => c.name === name);
   }
@@ -58,7 +76,7 @@ export default class Entity {
     return components.every(name => available.includes(name));
   }
 
-  // gibt alle Componenten der Entität zurück
+  // gibt alle Komponente der Entität zurück
   public getAllComponents(): Component[] {
     return this.components;
   }
