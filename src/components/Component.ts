@@ -2,6 +2,9 @@ import { ComponentType } from '../enums';
 import Attribute from './Attribute';
 
 export default abstract class Component {
+  // Hier wird einmal festgelegt, was für Typen die Klasse enthalten kann,
+  // das ist nötig, damit später über diese mit `Object.keys(this)` drüber
+  // iteriert werden kann.
   [key: string]: number | boolean | string | Attribute<any, any> | Function;
 
   public abstract name: ComponentType;

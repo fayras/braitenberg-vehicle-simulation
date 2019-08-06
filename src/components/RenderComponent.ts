@@ -7,10 +7,11 @@ import NumberInput from '../dynamic_input/NumberInput';
 import HiddenInput from '../dynamic_input/HiddenInput';
 import SelectInput from '../dynamic_input/SelectInput';
 import LoadingScene from '../scenes/LoadingScene';
+import SizeInput from '../dynamic_input/SizeInput';
 
 interface RenderComponentData {
   asset: AssetKey | Color;
-  size: number;
+  size: Dimensions | number;
   blendMode?: Phaser.BlendModes;
 }
 
@@ -19,7 +20,7 @@ export default class RenderComponent extends Component {
 
   public asset: Attribute<AssetKey | Color, SelectInput<any>>;
 
-  public size: Attribute<number, NumberInput>;
+  public size: Attribute<Dimensions, SizeInput>;
 
   public blendMode: Attribute<Phaser.BlendModes, HiddenInput>;
 
@@ -45,7 +46,18 @@ export default class RenderComponent extends Component {
         },
       }),
     );
-    this.size = new Attribute(data.size, NumberInput.create({ label: 'Größe' }));
     this.blendMode = new Attribute(data.blendMode || Phaser.BlendModes.NORMAL, HiddenInput.create());
+    // this.size = new Attribute(data.size, NumberInput.create({ label: 'Größe' }));
+    if (typeof data.size === 'number') {
+      this.size = new Attribute(
+        { width: data.size, height: 0 },
+        SizeInput.create({ label: 'Größe', min: 0, max: 4000 }),
+      );
+    } else {
+      this.size = new Attribute(
+        data.size || { width: 50, height: 50 },
+        SizeInput.create({ label: 'Größe', min: 0, max: 4000 }),
+      );
+    }
   }
 }

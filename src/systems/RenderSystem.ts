@@ -84,8 +84,9 @@ export default class RenderSystem extends System {
 
     render.size.onChange(value => {
       const image = this.renderObjects[entity.id];
-      const scale = value / image.width;
-      image.setScale(scale);
+      const scaleX = value.width / image.width;
+      const scaleY = value.height === 0 ? scaleX : value.height / image.height;
+      image.setScale(scaleX, scaleY);
     });
 
     this.createImage(entity, render);
@@ -100,8 +101,8 @@ export default class RenderSystem extends System {
       image = this.scene.add.rectangle(
         transform.position.get().x,
         transform.position.get().y,
-        body ? body.size.get().width : render.size.get(),
-        body ? body.size.get().height : render.size.get(),
+        body ? body.size.get().width : render.size.get().width,
+        body ? body.size.get().height : render.size.get().height,
         render.asset.get() as number,
       );
     } else {
@@ -110,8 +111,10 @@ export default class RenderSystem extends System {
         transform.position.get().y,
         render.asset.get() as string,
       );
-      const scale = render.size.get() / image.width;
-      image.setScale(scale);
+      const scaleX = render.size.get().width / image.width;
+      const scaleY = render.size.get().height === 0 ? scaleX : render.size.get().height / image.height;
+      console.log(scaleX, scaleY);
+      image.setScale(scaleX, scaleY);
     }
 
     if (render.blendMode.get()) {
