@@ -30,7 +30,7 @@ import EntityManager from '../EntityManager';
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
-  private running: boolean = true;
+  private running: boolean = false;
 
   public constructor() {
     super({ key: 'MainScene' });
@@ -38,6 +38,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
+    this.pause(true);
     this.scene.launch('MainInterfaceScene');
 
     // Anpassen der Szene an aktuelle Bildschirmgröße

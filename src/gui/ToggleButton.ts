@@ -23,10 +23,10 @@ export default class ToggleButton extends Button {
   protected handleClick(action: (btn: Button) => void): void {
     action(this);
     if (this.pressed === false) {
-      this.setFrame(this.deactiveIcon);
+      this.setFrame(this.activeIcon);
       this.pressed = true;
     } else {
-      this.setFrame(this.activeIcon);
+      this.setFrame(this.deactiveIcon);
       this.pressed = false;
     }
   }
