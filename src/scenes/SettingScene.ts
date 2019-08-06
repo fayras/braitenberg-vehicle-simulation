@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Noty from 'noty';
 import Entity from '../Entity';
 import { ComponentType } from '../enums';
 import SidebarScene from './SidebarScene';
@@ -86,6 +87,9 @@ export default class SettingScene extends SidebarScene {
           break;
         default:
       }
+
+      new Noty({ text: `Komponente ${name} hinzugefügt.` }).show();
+
       // alle Componenten der Enittät neu laden
       this.container!.removeAll(true);
       this.container!.height = 0;

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
@@ -11,6 +12,14 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader' }, // creates style nodes from JS strings
+          { loader: MiniCssExtractPlugin.loader },
+          { loader: 'css-loader' }, // translates CSS into CommonJS
+        ],
+      },
       {
         test: /\.(js|ts)$/,
         exclude: /node_modules/,
@@ -36,6 +45,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: './index.html',
+    }),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // all options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+      ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
   ],
 };

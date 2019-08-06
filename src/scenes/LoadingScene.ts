@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import Noty from 'noty';
 
 import buttonSpriteSheet from '../../assets/gui_buttons.png';
 
@@ -38,7 +39,21 @@ export default class LoadingScene extends Phaser.Scene {
   }
 
   public create(): void {
+    LoadingScene.setNotificationsOptions();
     this.scene.start('MainScene');
+  }
+
+  private static setNotificationsOptions(): void {
+    Noty.overrideDefaults({
+      layout: 'topCenter',
+      theme: 'relax',
+      timeout: 1500,
+      progressBar: false,
+      animation: {
+        open: 'animated fadeInDown faster',
+        close: 'animated fadeOut faster',
+      },
+    });
   }
 
   private createProgress(): void {
