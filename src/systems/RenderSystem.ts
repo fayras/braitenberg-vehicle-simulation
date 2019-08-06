@@ -98,11 +98,12 @@ export default class RenderSystem extends System {
 
     let image: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
     if ((body && typeof render.asset.get() === 'number') || typeof render.asset.get() === 'number') {
+      const renderHeight = render.size.get().height === 0 ? render.size.get().width : render.size.get().height;
       image = this.scene.add.rectangle(
         transform.position.get().x,
         transform.position.get().y,
         body ? body.size.get().width : render.size.get().width,
-        body ? body.size.get().height : render.size.get().height,
+        body ? body.size.get().height : renderHeight,
         render.asset.get() as number,
       );
     } else {
@@ -113,7 +114,6 @@ export default class RenderSystem extends System {
       );
       const scaleX = render.size.get().width / image.width;
       const scaleY = render.size.get().height === 0 ? scaleX : render.size.get().height / image.height;
-      console.log(scaleX, scaleY);
       image.setScale(scaleX, scaleY);
     }
 
