@@ -97,27 +97,11 @@ export default class EditorScene extends SidebarScene {
           angle: 0.4,
         }),
       );
-      const sensor3 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      const sensor4 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
       entity.addComponent(
         new ConnectionComponent({
-          inputIds: [sensor1, sensor2, sensor3, sensor4],
+          inputIds: [sensor1, sensor2],
           outputIds: [motor1, motor2],
-          weights: [[1, 0], [0, 1], [0, 1], [1, 0]],
+          weights: [[1, 0], [0, 1]],
         }),
       );
       EntityManager.addExistingEntity(entity);
@@ -173,36 +157,20 @@ export default class EditorScene extends SidebarScene {
           angle: 0.4,
         }),
       );
-      const sensor3 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      const sensor4 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
       entity.addComponent(
         new ConnectionComponent({
-          inputIds: [sensor1, sensor2, sensor3, sensor4],
+          inputIds: [sensor1, sensor2],
           outputIds: [motor1, motor2],
-          weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
+          weights: [[0, 1], [1, 0]],
         }),
       );
       EntityManager.addExistingEntity(entity);
     });
 
     // Fügt das von Braitenberg als Vehikel 3a bezeichnete Gefährt
-    // mit 2 Sensoren und 2 verbundenen Motoren hinzu,
+    // mit 2 Sensoren und 2 gerade verbundenen Motoren hinzu,
     // die Motoren sind negativ verschaltet
-    // Das Gefährt fährt auf langsam auf die Lichtquellen zu
+    // Das Gefährt fährt langsam auf die Lichtquellen zu
     this.makeInteractable(prefab3a, position => {
       const entity = new Entity();
       const transform = new TransformableComponent({
@@ -250,34 +218,18 @@ export default class EditorScene extends SidebarScene {
           angle: 0.4,
         }),
       );
-      const sensor3 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      const sensor4 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
       entity.addComponent(
         new ConnectionComponent({
-          inputIds: [sensor1, sensor2, sensor3, sensor4],
+          inputIds: [sensor1, sensor2],
           outputIds: [motor1, motor2],
-          weights: [[-1, 0], [0, -1], [0, -1], [-1, 0]],
+          weights: [[-1, 0], [0, -1]],
         }),
       );
       EntityManager.addExistingEntity(entity);
     });
 
-    // Fügt das von Braitenberg als Vehikel 3a bezeichnete Gefährt
-    // mit 2 Sensoren und 2 verbundenen Motoren hinzu,
+    // Fügt das von Braitenberg als Vehikel 3b bezeichnete Gefährt
+    // mit 2 Sensoren und 2 ueberkreuz verbundenen Motoren hinzu,
     // die Motoren sind negativ verschaltet
     // Das Gefährt fährt auf langsam auf die Lichtquellen zu
     this.makeInteractable(prefab3b, position => {
@@ -327,28 +279,12 @@ export default class EditorScene extends SidebarScene {
           angle: 0.4,
         }),
       );
-      const sensor3 = entity.addComponent(
-        new SensorComponent({
-          position: { x: -50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
-      const sensor4 = entity.addComponent(
-        new SensorComponent({
-          position: { x: 50, y: 75 },
-          range: 30,
-          angle: 0.4,
-          reactsTo: SubstanceType.BARRIER,
-        }),
-      );
       entity.addComponent(
         new ConnectionComponent({
-          inputIds: [sensor1, sensor2, sensor3, sensor4],
+          inputIds: [sensor1, sensor2],
           outputIds: [motor1, motor2],
           // TO-DO Negative Verknüpfung umsetzen
-          weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
+          weights: [[0, -1], [-1, 0]],
         }),
       );
       EntityManager.addExistingEntity(entity);
