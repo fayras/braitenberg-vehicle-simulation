@@ -35,12 +35,13 @@ export default class ScrollableContainer extends Phaser.GameObjects.Container {
     this.scrollHandler = e => {
       // Die delta Werte sind leider krass unterschiedlich für verschiedene Browser, so liefert
       // Chrome z.b. immer Werte 100 / -100, Firefox hingegen immer 3 / -3.
-      delta += e.deltaY === 100 || e.deltaY === -100 ? Math.sign(e.deltaY) * 3 : e.deltaY;
+      // delta += e.deltaY === 100 || e.deltaY === -100 ? Math.sign(e.deltaY) * 3 : e.deltaY;
+      delta += e.deltaY;
 
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (this.getBounds().contains(e.x, e.y)) {
-            this.scroll(delta * 20);
+            this.scroll(delta);
             delta = 0;
           }
           ticking = false;

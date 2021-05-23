@@ -43,7 +43,7 @@ export default class PositionInput extends BaseInput<Vector2D> {
       .draggable({})
       .on(
         'dragmove',
-        throttle(event => {
+        throttle((event) => {
           const { target, dx, dy } = event;
 
           this.position.x = Phaser.Math.Clamp(this.position.x + dx, 0, rect.width);

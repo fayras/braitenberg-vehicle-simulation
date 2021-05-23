@@ -15,7 +15,9 @@
     // Import non-ES modules as default imports.
     "esModuleInterop": true,
 
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true
   },
   "include": ["src", "assets", "typings"]
 }
