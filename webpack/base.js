@@ -11,7 +11,7 @@ module.exports = {
   mode: 'development',
   devtool: 'eval-source-map',
   resolve: {
-    extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts', '.tsx'],
   },
   module: {
     rules: [
@@ -24,7 +24,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(js|ts)$/,
+        test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

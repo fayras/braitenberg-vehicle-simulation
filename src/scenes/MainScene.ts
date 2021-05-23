@@ -38,7 +38,7 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
-    this.pause(true);
+    // this.pause(true);
     this.scene.launch('MainInterfaceScene');
 
     // Anpassen der Szene an aktuelle Bildschirmgröße
@@ -135,7 +135,12 @@ export default class MainScene extends Phaser.Scene {
       new ConnectionComponent({
         inputIds: [sensor1, sensor2, sensor3, sensor4],
         outputIds: [motor1, motor2],
-        weights: [[0, 1], [1, 0], [1, 0], [0, 1]],
+        weights: [
+          [0, 1],
+          [1, 0],
+          [1, 0],
+          [0, 1],
+        ],
       }),
     );
     EntityManager.addExistingEntity(entity);
@@ -165,13 +170,13 @@ export default class MainScene extends Phaser.Scene {
       new EngineSystem(this),
       new SensorSystem(this),
       new ConnectionSystem(this),
-      new ReactionSystem(this),
+      // new ReactionSystem(this),
       new RenderSystem(this),
     ];
   }
 
   public update(time: number, delta: number): void {
-    this.systems.forEach(s => s.update(delta));
+    this.systems.forEach((s) => s.update(delta));
   }
 
   public isRunning(): boolean {
@@ -180,7 +185,7 @@ export default class MainScene extends Phaser.Scene {
 
   public pause(flag: boolean): void {
     this.running = flag;
-    this.systems.forEach(s => s.pause(flag));
+    this.systems.forEach((s) => s.pause(flag));
 
     // Wenn die Szene gestartet wird (play), wird ein neuer Snapshot erzeugt.
     if (flag) {
@@ -191,7 +196,7 @@ export default class MainScene extends Phaser.Scene {
   // Speicherung des aktuellen Status von allen Entitäten
   public static createSnapshot(): void {
     const entities = EntityManager.getEntities();
-    const snapshot = entities.map(entity => entity.serialize());
+    const snapshot = entities.map((entity) => entity.serialize());
 
     localStorage.setItem('snapshot', JSON.stringify(snapshot));
   }
@@ -204,7 +209,7 @@ export default class MainScene extends Phaser.Scene {
     let aktuellerStatus;
     if (snapshot) {
       aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
-      entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+      entities.forEach((entity) => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
       swal('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Speichern Knopf.');
@@ -213,7 +218,7 @@ export default class MainScene extends Phaser.Scene {
 
   public static exportJson(): void {
     const entities = EntityManager.getEntities();
-    const snapshot = entities.map(entity => entity.serialize());
+    const snapshot = entities.map((entity) => entity.serialize());
     const dataStr = JSON.stringify(snapshot);
     const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
 
@@ -243,7 +248,7 @@ export default class MainScene extends Phaser.Scene {
         if (fr.result === null) return;
 
         const result = JSON.parse(fr.result as string) as SerializedEntity[];
-        entities.forEach(entity => EntityManager.destroyEntity(entity.id));
+        entities.forEach((entity) => EntityManager.destroyEntity(entity.id));
         EntityManager.loadEntities(result);
       });
 

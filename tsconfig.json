@@ -17,7 +17,8 @@
 
     "skipLibCheck": true,
     "noImplicitReturns": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "jsx": "react-jsx"
   },
   "include": ["src", "assets", "typings"]
 }

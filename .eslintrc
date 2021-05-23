@@ -1,9 +1,17 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "tsconfig.json"
+    "project": "tsconfig.json",
+    "ecmaFeatures": {
+      "jsx": true // Allows for the parsing of JSX
+    }
   },
-  "plugins": ["@typescript-eslint"],
+  "settings": {
+    "react": {
+      "version": "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
+    }
+  },
+  "plugins": ["plugin:react/recommended", "@typescript-eslint"],
   "extends": [
     "airbnb-typescript/base",
     "prettier",
@@ -27,7 +35,17 @@
         "allowExpressions": true,
         "allowTypedFunctionExpressions": true
       }
-    ]
+    ],
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
   },
   "overrides": [
     {

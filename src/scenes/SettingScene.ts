@@ -30,10 +30,7 @@ export default class SettingScene extends SidebarScene {
 
     const select = row.getChildByName('components');
 
-    const el = this.add
-      .dom(0, 0)
-      .createFromHTML('<i class="fa fa-plus"></i>')
-      .setClassName('deleteButton');
+    const el = this.add.dom(0, 0).createFromHTML('<i class="fa fa-plus"></i>').setClassName('deleteButton');
 
     el.setData('ignoreHeight', true);
     el.addListener('click');
@@ -75,8 +72,8 @@ export default class SettingScene extends SidebarScene {
           break;
         case ComponentType.CONNECTION:
           {
-            const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map(com => com.id);
-            const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map(com => com.id);
+            const inputs = entity.getMultipleComponents(ComponentType.SENSOR).map((com) => com.id);
+            const outputs = entity.getMultipleComponents(ComponentType.MOTOR).map((com) => com.id);
             added = EntityManager.addComponent(
               entity.id,
               new ConnectionComponent({
@@ -105,6 +102,7 @@ export default class SettingScene extends SidebarScene {
   }
 
   public onCreate(container: ScrollableContainer, entity: Entity): void {
+    console.log('onCreate');
     const deleteEntity = this.add.dom(0, 0, 'button', '', 'Entität Löschen').setClassName('error base-input-container');
     deleteEntity.addListener('click');
     deleteEntity.on('click', () => {
@@ -141,7 +139,7 @@ export default class SettingScene extends SidebarScene {
         });
       }
 
-      const attributes = Object.keys(component).map(attribute => {
+      const attributes = Object.keys(component).map((attribute) => {
         if (component[attribute] instanceof Attribute) {
           return (component[attribute] as Attribute<any, any>).render(this, entity);
         }
