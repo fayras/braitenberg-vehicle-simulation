@@ -13,6 +13,18 @@ body {
   pointer-events: auto;
 }
 
+.main-navigation {
+  margin: 10px;
+}
+
+.main-navigation > button {
+  margin-right: 5px;
+}
+
+.raised {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24) !important;
+}
+
 .text-center {
   text-align: center;
 }

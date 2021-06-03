@@ -27,7 +27,7 @@ import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
-import { playState, reset } from '../gui/store';
+import { playState, reset } from '../gui/store/mainNavigation';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
