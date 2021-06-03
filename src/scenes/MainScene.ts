@@ -27,6 +27,8 @@ import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
+import { playState, reset } from '../gui/store';
+
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
@@ -47,6 +49,8 @@ export default class MainScene extends Phaser.Scene {
 
     this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
+
+    playState.watch((state) => this.pause(state));
 
     EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
       this.scene.launch('SettingScene', entity);

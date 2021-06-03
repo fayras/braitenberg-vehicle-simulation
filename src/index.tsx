@@ -51,7 +51,6 @@ class Game extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      // <Provider store={store}>
       <div
         style={{
           display: 'flex',
@@ -64,11 +63,8 @@ class App extends React.Component {
         <Ui />
         <Game />
       </div>
-      // </Provider>
     );
   }
 }
 
 ReactDOM.render(<App />, document.body);
-
-// ReactDOM.render(<Ui />, document.getElementById('ui'));

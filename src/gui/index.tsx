@@ -1,9 +1,16 @@
 import React from 'react';
 
+import MainNavigation from './MainNavigation';
+
+import 'rsuite/dist/styles/rsuite-default.css';
+
 export default function App(): JSX.Element {
+  // const { test: count, increase } = testStore();
+
   return (
-    <div style={{ textAlign: 'center', position: 'absolute' }}>
-      <h1>Hello World</h1>
+    <div className="ui-container">
+      <MainNavigation />
+      {/* <button onClick={increase}>one up</button> */}
     </div>
   );
 }
