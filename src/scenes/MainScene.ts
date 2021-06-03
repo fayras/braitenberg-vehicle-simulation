@@ -40,7 +40,6 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
-    // this.pause(true);
     this.scene.launch('MainInterfaceScene');
 
     // Anpassen der Szene an aktuelle Bildschirmgröße
@@ -51,6 +50,7 @@ export default class MainScene extends Phaser.Scene {
     this.scene.add('settings', SettingScene, false);
 
     playState.watch((state) => this.pause(state));
+    this.pause(playState.getState());
 
     EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
       this.scene.launch('SettingScene', entity);
