@@ -1,23 +1,44 @@
 import React from 'react';
-import { Button, IconButton, Icon } from 'rsuite';
+import { IconButton, Flex, Spacer } from '@chakra-ui/react';
 import { useStore } from 'effector-react';
 import { playState, togglePlay, reset } from './store/mainNavigation';
+import { PauseIcon, PlayIcon, RewindIcon, BookmarkIcon, MenuIcon } from './icons';
 
 export default function MainNavigation(): JSX.Element {
   const play = useStore(playState);
 
   return (
-    <div className="main-navigation">
+    <Flex className="main-navigation click-through">
       <IconButton
-        className="raised"
+        aria-label="play"
         size="lg"
-        icon={<Icon icon={play ? 'play' : 'pause'} />}
+        boxShadow="base"
+        icon={play ? <PlayIcon w={8} h={8} /> : <PauseIcon w={8} h={8} />}
         onClick={() => togglePlay()}
       />
-      <IconButton className="raised" size="lg" onClick={() => reset()} icon={<Icon icon="undo" />} />
-      <IconButton className="raised" size="lg" icon={<Icon icon="save" />} />
-      <IconButton className="raised" size="lg" icon={<Icon icon="file-download" />} />
-      <IconButton className="raised" size="lg" icon={<Icon icon="file-upload" />} />
-    </div>
+      <IconButton
+        aria-label="reset"
+        size="lg"
+        boxShadow="base"
+        onClick={() => reset()}
+        icon={<RewindIcon w={8} h={8} />}
+      />
+      <IconButton aria-label="save" size="lg" boxShadow="base" icon={<BookmarkIcon w={8} h={8} />} />
+      <Spacer className="click-through" />
+      <IconButton
+        aria-label="PrefabSidebar Icon"
+        size="lg"
+        boxShadow="base"
+        right={0}
+        icon={<MenuIcon w={8} h={8} />}
+        onClick={() => {}}
+      />
+      {/* <IconButton
+        aria-label="download" size="lg"
+        boxShadow="base" icon={<Icon icon="file-download" />} />
+      <IconButton
+        aria-label="upload" size="lg"
+        boxShadow="base" icon={<Icon icon="file-upload" />} /> */}
+    </Flex>
   );
 }

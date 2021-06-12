@@ -4,13 +4,16 @@ body {
 
 .ui-container {
   position: absolute;
-  pointer-events: none;
   width: 100%;
   height: 100%;
 }
 
-.ui-container > * {
+.click-through > * {
   pointer-events: auto;
+}
+
+.click-through {
+  pointer-events: none;
 }
 
 .main-navigation {

@@ -1,15 +1,16 @@
 import Phaser from 'phaser';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ChakraProvider } from '@chakra-ui/react';
 import MainScene from './scenes/MainScene';
 import MainInterfaceScene from './scenes/MainInterfaceScene';
 import LoadingScene from './scenes/LoadingScene';
 import Ui from './gui/index';
 
-import 'animate.css';
-import 'noty/lib/noty.css';
-import 'noty/lib/themes/relax.css';
-import '../assets/css/picnic.min.css';
+// import 'animate.css';
+// import 'noty/lib/noty.css';
+// import 'noty/lib/themes/relax.css';
+// import '../assets/css/picnic.min.css';
 import '../assets/css/styling.css';
 
 class Game extends React.Component {
@@ -51,18 +52,20 @@ class Game extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignContent: 'center',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          height: '100vh',
-        }}
-      >
-        <Ui />
-        <Game />
-      </div>
+      <ChakraProvider>
+        <div
+          style={{
+            display: 'flex',
+            alignContent: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            height: '100vh',
+          }}
+        >
+          <Ui />
+          <Game />
+        </div>
+      </ChakraProvider>
     );
   }
 }
