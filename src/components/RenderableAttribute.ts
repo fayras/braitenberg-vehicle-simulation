@@ -5,9 +5,9 @@ type ChangeHandler<T> = (value: T, oldValue: T) => void;
 export default class RenderableAttribute<T, S extends React.FunctionComponent<any>> {
   private value: T;
 
-  private reactComponent: S;
+  private reactComponent: S | undefined;
 
-  private componentProps: Omit<React.ComponentProps<S>, 'value'>;
+  private componentProps: Omit<React.ComponentProps<S>, 'value'> | {};
 
   private changeHanlers: ChangeHandler<T>[] = [];
 
@@ -18,10 +18,10 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
    * @param renderAs
    * @param props
    */
-  public constructor(value: T, reactComponent: S, props: Omit<React.ComponentProps<S>, 'value'>) {
+  public constructor(value: T, renderAs?: S, props?: Omit<React.ComponentProps<S>, 'value'>) {
     this.value = value;
-    this.reactComponent = reactComponent;
-    this.componentProps = props;
+    this.reactComponent = renderAs || undefined;
+    this.componentProps = props || {};
   }
 
   public get(): T {
@@ -49,7 +49,11 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
     }
   }
 
-  public render(): () => React.FunctionComponentElement<S> {
+  public render(): () => React.FunctionComponentElement<S> | null {
+    if (this.reactComponent === undefined) {
+      return () => null;
+    }
+
     return () => {
       const [val, setVal] = useState(this.value);
 
@@ -66,7 +70,7 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
         onInput: (value: T) => this.set(value),
       };
 
-      return React.createElement(this.reactComponent, props, null);
+      return React.createElement(this.reactComponent!, props, null);
     };
   }
 }

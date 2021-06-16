@@ -40,7 +40,7 @@ export default class MotorComponent extends Component {
       max: this.maxSpeed.get(),
     });
 
-    this.throttle = new Attribute(0, NumberInput, { label: 'Geschwindigkeit' });
+    this.throttle = new Attribute(0);
     this.visualThrottle = new Attribute('0' as string | number, NumberInput, {
       label: 'Aktuelle Geschwindigkeit',
       readonly: true,
