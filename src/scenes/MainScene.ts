@@ -28,6 +28,7 @@ import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
 import { playState, reset } from '../gui/store/mainNavigation';
+import { select as selectEntity } from '../gui/store/selectedEntity';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -53,6 +54,7 @@ export default class MainScene extends Phaser.Scene {
     this.pause(playState.getState());
 
     EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
+      selectEntity(entity);
       this.scene.launch('SettingScene', entity);
     });
 
