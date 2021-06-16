@@ -1,10 +1,9 @@
 import { ComponentType } from '../enums';
 import Component from './Component';
-import Attribute from './Attribute';
-import NumberInput from '../dynamic_input/NumberInput';
-import PositionInput from '../dynamic_input/PositionInput';
-import TextInput from '../dynamic_input/TextInput';
-import HiddenInput from '../dynamic_input/HiddenInput';
+import Attribute from './RenderableAttribute';
+
+import PositionInput from '../gui/PositionInput';
+import NumberInput from '../gui/NumberInput';
 
 interface MotorComponentData {
   position: Vector2D;
@@ -15,34 +14,36 @@ interface MotorComponentData {
 export default class MotorComponent extends Component {
   public name: ComponentType = ComponentType.MOTOR;
 
-  public position: Attribute<Vector2D, PositionInput>;
+  public position: Attribute<Vector2D, typeof PositionInput>;
 
-  public defaultSpeed: Attribute<number, NumberInput>;
+  public defaultSpeed: Attribute<number, typeof NumberInput>;
 
-  public maxSpeed: Attribute<number, NumberInput>;
+  public maxSpeed: Attribute<number, typeof NumberInput>;
 
-  public throttle: Attribute<number, HiddenInput>;
+  public throttle: Attribute<number, typeof NumberInput>;
 
-  public visualThrottle: Attribute<string | number, TextInput>;
+  public visualThrottle: Attribute<string | number, typeof NumberInput>;
 
   public constructor(data: MotorComponentData) {
     super();
-    this.position = new Attribute(data.position, PositionInput.create({ label: 'Position' }));
+    this.position = new Attribute(data.position, PositionInput, { label: 'Position' });
 
-    this.maxSpeed = new Attribute(
-      data.maxSpeed || 50,
-      NumberInput.create({ label: 'Maximalgeschwindigkeit', min: 1, max: 50 }),
-    );
+    this.maxSpeed = new Attribute(data.maxSpeed || 50, NumberInput, {
+      label: 'Maximalgeschwindigkeit',
+      min: 1,
+      max: 50,
+    });
 
-    this.defaultSpeed = new Attribute(
-      data.defaultSpeed || 0,
-      NumberInput.create({ label: 'Mindestgeschwindigkeit', min: 0, max: this.maxSpeed.get() }),
-    );
+    this.defaultSpeed = new Attribute(data.defaultSpeed || 0, NumberInput, {
+      label: 'Mindestgeschwindigkeit',
+      min: 0,
+      max: this.maxSpeed.get(),
+    });
 
-    this.throttle = new Attribute<number, HiddenInput>(0, HiddenInput.create());
-    this.visualThrottle = new Attribute<string | number, TextInput>(
-      '0',
-      TextInput.create({ label: 'Aktuelle Geschwindigkeit' }),
-    );
+    this.throttle = new Attribute(0, NumberInput, { label: 'Geschwindigkeit' });
+    this.visualThrottle = new Attribute('0' as string | number, NumberInput, {
+      label: 'Aktuelle Geschwindigkeit',
+      readonly: true,
+    });
   }
 }
