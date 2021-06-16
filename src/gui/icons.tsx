@@ -1,6 +1,8 @@
 import React from 'react';
 import { Icon as ChakraIcon, IconProps } from '@chakra-ui/react';
 
+// Die svg paths stammen von "https://heroicons.dev/".
+
 const Icon = (props: IconProps) => (
   <ChakraIcon viewBox="0 0 24 24" fill="none" stroke="currentColor" w={6} h={6} {...props} />
 );
