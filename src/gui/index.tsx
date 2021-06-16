@@ -1,6 +1,8 @@
 import React from 'react';
 
 import MainNavigation from './MainNavigation';
+import EntityDrawer from './EntityDrawer';
+import PrefabDrawer from './PrefabDrawer';
 
 // import 'rsuite/dist/styles/rsuite-default.css';
 
@@ -10,7 +12,8 @@ export default function App(): JSX.Element {
   return (
     <div className="ui-container click-through">
       <MainNavigation />
-      {/* <button onClick={increase}>one up</button> */}
+      <EntityDrawer />
+      <PrefabDrawer />
     </div>
   );
 }
