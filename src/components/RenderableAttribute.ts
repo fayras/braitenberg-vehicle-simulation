@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 type ChangeHandler<T> = (value: T, oldValue: T) => void;
 
-export default class RenderableAttribute<T, S extends React.FunctionComponent<any>> {
+type ConditionalProps<S> = S extends React.FunctionComponent<any> ? Omit<React.ComponentProps<S>, 'value'> : {};
+
+export default class RenderableAttribute<T, S extends React.FunctionComponent<any> | null> {
   private value: T;
 
   private reactComponent: S | undefined;
 
-  private componentProps: Omit<React.ComponentProps<S>, 'value'> | {};
+  private componentProps: ConditionalProps<S> | {};
 
   private changeHanlers: ChangeHandler<T>[] = [];
 
@@ -18,7 +20,7 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
    * @param renderAs
    * @param props
    */
-  public constructor(value: T, renderAs?: S, props?: Omit<React.ComponentProps<S>, 'value'>) {
+  public constructor(value: T, renderAs?: S, props?: ConditionalProps<S>) {
     this.value = value;
     this.reactComponent = renderAs || undefined;
     this.componentProps = props || {};

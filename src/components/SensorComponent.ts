@@ -1,9 +1,9 @@
 import { ComponentType, SubstanceType } from '../enums';
 import Component from './Component';
-import NumberInput from '../dynamic_input/NumberInput';
-import Attribute from './Attribute';
-import SelectInput from '../dynamic_input/SelectInput';
-import PositionInput from '../dynamic_input/PositionInput';
+import RenderableAttribute from './RenderableAttribute';
+import NumberInput from '../gui/NumberInput';
+import SelectInput from '../gui/SelectInput';
+import PositionInput from '../gui/PositionInput';
 
 interface SensorComponentData {
   position: Vector2D;
@@ -15,26 +15,28 @@ interface SensorComponentData {
 export default class SensorComponent extends Component {
   public name: ComponentType = ComponentType.SENSOR;
 
-  public range: Attribute<number, NumberInput>;
+  public range: RenderableAttribute<number, typeof NumberInput>;
 
-  public angle: Attribute<number, NumberInput>;
+  public angle: RenderableAttribute<number, typeof NumberInput>;
 
-  public position: Attribute<Vector2D, PositionInput>;
+  public position: RenderableAttribute<Vector2D, typeof PositionInput>;
 
-  public activation: Attribute<number, NumberInput>;
+  public activation: RenderableAttribute<number, typeof NumberInput>;
 
-  public reactsTo: Attribute<SubstanceType, SelectInput<SubstanceType>>;
+  public reactsTo: RenderableAttribute<SubstanceType, typeof SelectInput>;
 
   // Konstruktor der Klasse mit Erstellung von Attributen für alle Parameter
   public constructor(data: SensorComponentData) {
     super();
-    this.position = new Attribute(data.position, PositionInput.create({ label: 'Position' }));
-    this.range = new Attribute(data.range, NumberInput.create({ label: 'Reichweite' }));
-    this.angle = new Attribute(data.angle, NumberInput.create({ label: 'Öffnungswinkel' }));
-    this.reactsTo = new Attribute(
-      data.reactsTo || SubstanceType.LIGHT,
-      SelectInput.create<SubstanceType, SelectInput<SubstanceType>>({ label: 'Reagiert auf', options: SubstanceType }),
-    );
-    this.activation = new Attribute(0 as number, NumberInput.create({ label: 'Grad der Aktivierung', toFixed: 4 }));
+    this.position = new RenderableAttribute(data.position, PositionInput, { label: 'Position' });
+    this.range = new RenderableAttribute(data.range, NumberInput, { label: 'Reichweite' });
+    this.angle = new RenderableAttribute(data.angle, NumberInput, { label: 'Öffnungswinkel' });
+    this.reactsTo = new RenderableAttribute(data.reactsTo || SubstanceType.LIGHT, SelectInput, {
+      label: 'Reagiert auf',
+      options: SubstanceType,
+    });
+    this.activation = new RenderableAttribute(0 as number, NumberInput, {
+      label: 'Grad der Aktivierung' /* toFixed: 4 */,
+    });
   }
 }

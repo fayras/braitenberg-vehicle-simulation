@@ -1,8 +1,8 @@
 import { ComponentType, SubstanceType, EmissionType } from '../enums';
 import Component from './Component';
-import Attribute from './Attribute';
-import SelectInput from '../dynamic_input/SelectInput';
-import NumberInput from '../dynamic_input/NumberInput';
+import RenderableAttribute from './RenderableAttribute';
+import SelectInput from '../gui/SelectInput';
+import NumberInput from '../gui/NumberInput';
 
 interface SourceComponentData {
   range: number;
@@ -13,22 +13,22 @@ interface SourceComponentData {
 export default class SourceComponent extends Component {
   public name: ComponentType = ComponentType.SOURCE;
 
-  public range: Attribute<number, NumberInput>;
+  public range: RenderableAttribute<number, typeof NumberInput>;
 
-  public substance: Attribute<SubstanceType, SelectInput<SubstanceType>>;
+  public substance: RenderableAttribute<SubstanceType, typeof SelectInput>;
 
-  public emissionType: Attribute<EmissionType, SelectInput<EmissionType>>;
+  public emissionType: RenderableAttribute<EmissionType, typeof SelectInput>;
 
   public constructor(data: SourceComponentData) {
     super();
-    this.range = new Attribute(data.range, NumberInput.create({ label: 'Reichweite' }));
-    this.substance = new Attribute(
-      data.substance || SubstanceType.LIGHT,
-      SelectInput.create<SubstanceType, SelectInput<SubstanceType>>({ label: 'Substanz', options: SubstanceType }),
-    );
-    this.emissionType = new Attribute(
-      data.emissionType || EmissionType.GAUSSIAN,
-      SelectInput.create<EmissionType, SelectInput<EmissionType>>({ label: 'Charakteristik', options: EmissionType }),
-    );
+    this.range = new RenderableAttribute(data.range, NumberInput, { label: 'Reichweite' });
+    this.substance = new RenderableAttribute(data.substance || SubstanceType.LIGHT, SelectInput, {
+      label: 'Substanz',
+      options: SubstanceType,
+    });
+    this.emissionType = new RenderableAttribute(data.emissionType || EmissionType.GAUSSIAN, SelectInput, {
+      label: 'Charakteristik',
+      options: EmissionType,
+    });
   }
 }

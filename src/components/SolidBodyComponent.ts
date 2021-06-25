@@ -1,9 +1,9 @@
 import { ComponentType, BodyShape } from '../enums';
 import Component from './Component';
-import Attribute from './Attribute';
-import SelectInput from '../dynamic_input/SelectInput';
-import Checkbox from '../dynamic_input/Checkbox';
-import SizeInput from '../dynamic_input/SizeInput';
+import RenderableAttribute from './RenderableAttribute';
+import SelectInput from '../gui/SelectInput';
+import CheckboxInput from '../gui/CheckboxInput';
+import SizeInput from '../gui/SizeInput';
 
 interface SolidBodyComponentData {
   size?: Dimensions | number;
@@ -14,31 +14,33 @@ interface SolidBodyComponentData {
 export default class SolidBodyComponent extends Component {
   public name: ComponentType = ComponentType.SOLID_BODY;
 
-  public size: Attribute<Dimensions, SizeInput>;
+  public size: RenderableAttribute<Dimensions, typeof SizeInput>;
 
-  public shape: Attribute<BodyShape, SelectInput<BodyShape>>;
+  public shape: RenderableAttribute<BodyShape, typeof SelectInput>;
 
-  public isStatic: Attribute<boolean, Checkbox>;
+  public isStatic: RenderableAttribute<boolean, typeof CheckboxInput>;
 
   protected maxAmount = 1;
 
   public constructor(data: SolidBodyComponentData) {
     super();
     if (typeof data.size === 'number') {
-      this.size = new Attribute(
-        { width: data.size, height: data.size },
-        SizeInput.create({ label: 'Größe', min: 20, max: 500 }),
-      );
+      this.size = new RenderableAttribute({ width: data.size, height: data.size }, SizeInput, {
+        label: 'Größe',
+        /* min: 20,
+        max: 500, */
+      });
     } else {
-      this.size = new Attribute(
-        data.size || { width: 50, height: 50 },
-        SizeInput.create({ label: 'Größe', min: 20, max: 500 }),
-      );
+      this.size = new RenderableAttribute(data.size || { width: 50, height: 50 }, SizeInput, {
+        label: 'Größe',
+        /* min: 20,
+        max: 500, */
+      });
     }
-    this.shape = new Attribute(
-      data.shape || BodyShape.RECTANGLE,
-      SelectInput.create<BodyShape, SelectInput<BodyShape>>({ label: 'Form', options: BodyShape }),
-    );
-    this.isStatic = new Attribute(data.isStatic || false, Checkbox.create({ label: 'Statisch' }));
+    this.shape = new RenderableAttribute(data.shape || BodyShape.RECTANGLE, SelectInput, {
+      label: 'Form',
+      options: BodyShape,
+    });
+    this.isStatic = new RenderableAttribute(data.isStatic || false, CheckboxInput, { label: 'Statisch' });
   }
 }

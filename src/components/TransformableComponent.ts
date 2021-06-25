@@ -1,8 +1,8 @@
 import { ComponentType } from '../enums';
 import Component from './Component';
-import Attribute from './Attribute';
-import ReadonlyPosition from '../dynamic_input/ReadonlyPosition';
-import RotationInput from '../dynamic_input/RotationInput';
+import RenderableAttribute from './RenderableAttribute';
+import PositionInput from '../gui/PositionInput';
+import RotationInput from '../gui/RotationInput';
 
 interface TransformableComponentData {
   position: Vector2D;
@@ -12,9 +12,9 @@ interface TransformableComponentData {
 export default class TransformableComponent extends Component {
   public name: ComponentType = ComponentType.TRANSFORMABLE;
 
-  public position: Attribute<Vector2D, ReadonlyPosition>;
+  public position: RenderableAttribute<Vector2D, typeof PositionInput>;
 
-  public angle: Attribute<number, RotationInput>;
+  public angle: RenderableAttribute<number, typeof RotationInput>;
 
   protected maxAmount = 1;
 
@@ -22,7 +22,7 @@ export default class TransformableComponent extends Component {
 
   public constructor(data: TransformableComponentData) {
     super();
-    this.position = new Attribute(data.position || { x: 0, y: 0 }, ReadonlyPosition.create({ label: 'Position' }));
-    this.angle = new Attribute(data.angle || 0, RotationInput.create({ label: 'Rotation' }));
+    this.position = new RenderableAttribute(data.position || { x: 0, y: 0 }, PositionInput, { label: 'Position' });
+    this.angle = new RenderableAttribute(data.angle || 0, RotationInput, { label: 'Rotation' });
   }
 }
