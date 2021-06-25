@@ -3,7 +3,6 @@ import Noty from 'noty';
 import Entity from '../Entity';
 import { ComponentType } from '../enums';
 import SidebarScene from './SidebarScene';
-import Attribute from '../components/Attribute';
 import EntityManager from '../EntityManager';
 import ConnectionComponent from '../components/ConnectionComponent';
 import MotorComponent from '../components/MotorComponent';
@@ -139,13 +138,14 @@ export default class SettingScene extends SidebarScene {
         });
       }
 
-      const attributes = Object.keys(component).map((attribute) => {
-        if (component[attribute] instanceof Attribute) {
-          return (component[attribute] as Attribute<any, any>).render(this, entity);
-        }
+      // const attributes = Object.keys(component).map((attribute) => {
+      //   if (component[attribute] instanceof Attribute) {
+      //     return (component[attribute] as Attribute<any, any>).render(this, entity);
+      //   }
 
-        return undefined;
-      });
+      //   return undefined;
+      // });
+      const attributes: any[] = [];
 
       return [title, deleteButton, ...attributes];
     });
