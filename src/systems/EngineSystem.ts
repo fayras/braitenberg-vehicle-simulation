@@ -11,11 +11,11 @@ export default class EngineSystem extends System {
   public update(): void {
     if (this.isPaused) return;
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const motors = entity.getMultipleComponents(ComponentType.MOTOR) as MotorComponent[];
 
-      motors.forEach(motor => {
+      motors.forEach((motor) => {
         // Wir müssen die neue "Position des Motors" am Vehikel berechnen
         const offset = Phaser.Physics.Matter.Matter.Vector.rotate(motor.position.get(), transform.angle.get());
         // const throttle = Math.min(motor.throttle, 1);
@@ -25,7 +25,7 @@ export default class EngineSystem extends System {
         const max = Number(motor.maxSpeed.get());
         const thrust = base + (max - base) * motor.throttle.get();
 
-        motor.visualThrottle.set(thrust.toFixed(2));
+        motor.visualThrottle.set(thrust.toFixed(2) + window.Math.random());
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.
