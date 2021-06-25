@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton, Flex, Spacer } from '@chakra-ui/react';
 import { useStore } from 'effector-react';
 import { playState, togglePlay, reset } from './store/mainNavigation';
+import { open as openPrefabDrawer } from './store/prefabDrawer';
 import { PauseIcon, PlayIcon, RewindIcon, BookmarkIcon, MenuIcon } from './icons';
 
 export default function MainNavigation(): JSX.Element {
@@ -31,7 +32,7 @@ export default function MainNavigation(): JSX.Element {
         boxShadow="base"
         right={0}
         icon={<MenuIcon w={8} h={8} />}
-        onClick={() => {}}
+        onClick={() => openPrefabDrawer()}
       />
       {/* <IconButton
         aria-label="download" size="lg"

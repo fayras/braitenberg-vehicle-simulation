@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import MainScene from './scenes/MainScene';
 import MainInterfaceScene from './scenes/MainInterfaceScene';
 import LoadingScene from './scenes/LoadingScene';
@@ -49,10 +49,28 @@ class Game extends React.Component {
   }
 }
 
+const theme = extendTheme({
+  components: {
+    Drawer: {
+      variants: {
+        clickThrough: {
+          // parts: ['dialog, dialogContainer'],
+          dialog: {
+            pointerEvents: 'auto',
+          },
+          dialogContainer: {
+            pointerEvents: 'none',
+          },
+        },
+      },
+    },
+  },
+});
+
 class App extends React.Component {
   render() {
     return (
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <div
           style={{
             display: 'flex',
