@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import swal from 'sweetalert';
 
-import EditorScene from './EditorScene';
 import SettingScene from './SettingScene';
 
 import SolidBodyComponent from '../components/SolidBodyComponent';
@@ -47,7 +46,6 @@ export default class MainScene extends Phaser.Scene {
     this.scale.on('resize', this.handleResize.bind(this));
     this.matter.world.setBounds();
 
-    this.scene.add('editor', EditorScene, false);
     this.scene.add('settings', SettingScene, false);
 
     playState.watch((state) => this.pause(state));
