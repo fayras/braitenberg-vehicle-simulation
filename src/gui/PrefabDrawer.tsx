@@ -1,4 +1,4 @@
-import React, { DragEventHandler } from 'react';
+import React from 'react';
 import { useStore } from 'effector-react';
 import {
   Drawer,
@@ -6,7 +6,6 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
-  DrawerFooter,
   Image,
   ImageProps,
   Flex,
@@ -15,8 +14,8 @@ import {
 import { motion, Point2D } from 'framer-motion';
 import { isOpen as openStore, close } from './store/prefabDrawer';
 
+import Entity from '../Entity';
 import EntityManager from '../EntityManager';
-import { SubstanceType, EmissionType, BodyShape } from '../enums';
 
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
@@ -28,7 +27,6 @@ import ConnectionComponent from '../components/ConnectionComponent';
 
 import blank from '../../assets/prefabs/blank.png';
 import source from '../../assets/prefabs/source.png';
-import vehicle from '../../assets/vehicleV2.png';
 import vehicle2a from '../../assets/prefabs/2a.png';
 import vehicle2b from '../../assets/prefabs/2b.png';
 import vehicle3a from '../../assets/prefabs/3a.png';
@@ -41,9 +39,7 @@ const renderPrefab = (src: string, handler: PrefabHandler) => {
   return (
     <Center w="120px">
       <MotionImage
-        // position={'absolute'}
         src={src}
-        // style={{ position: 'absolute' }}
         drag
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         dragElastic={1}
@@ -79,7 +75,7 @@ export default function PrefabDrawer(): JSX.Element {
     >
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Create your account</DrawerHeader>
+        <DrawerHeader>Vorlagen</DrawerHeader>
 
         <DrawerBody overflow="visible">
           <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
@@ -91,6 +87,7 @@ export default function PrefabDrawer(): JSX.Element {
                 new RenderComponent({ asset: 'prefab-blank', size: 100 }),
               );
             })}
+
             {renderPrefab(source, (position) => {
               EntityManager.createEntity(
                 new TransformableComponent({ position }),
@@ -100,15 +97,248 @@ export default function PrefabDrawer(): JSX.Element {
                 new RenderComponent({ asset: 'prefab-source', size: 100 }),
               );
             })}
+
+            {renderPrefab(vehicle2a, (position) => {
+              const entity = new Entity();
+              const transform = new TransformableComponent({
+                position,
+                angle: Math.PI,
+              });
+              entity.addComponent(transform);
+              entity.addComponent(
+                new SolidBodyComponent({
+                  size: { width: 100, height: 150 },
+                }),
+              );
+              entity.addComponent(
+                new RenderComponent({
+                  asset: 'vehicle',
+                  size: 100,
+                }),
+              );
+              const motor1 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: -50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const motor2 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: 50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const sensor1 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: -50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              const sensor2 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: 50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              entity.addComponent(
+                new ConnectionComponent({
+                  inputIds: [sensor1, sensor2],
+                  outputIds: [motor1, motor2],
+                  weights: [
+                    [1, 0],
+                    [0, 1],
+                  ],
+                }),
+              );
+              EntityManager.addExistingEntity(entity);
+            })}
+
+            {renderPrefab(vehicle2b, (position) => {
+              const entity = new Entity();
+              const transform = new TransformableComponent({
+                position,
+                angle: Math.PI,
+              });
+              transform.angle.set(-Math.PI / 2);
+              entity.addComponent(transform);
+              entity.addComponent(
+                new SolidBodyComponent({
+                  size: { width: 100, height: 150 },
+                }),
+              );
+              entity.addComponent(
+                new RenderComponent({
+                  asset: 'vehicle',
+                  size: 100,
+                }),
+              );
+              const motor1 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: -50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const motor2 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: 50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const sensor1 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: -50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              const sensor2 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: 50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              entity.addComponent(
+                new ConnectionComponent({
+                  inputIds: [sensor1, sensor2],
+                  outputIds: [motor1, motor2],
+                  weights: [
+                    [0, 1],
+                    [1, 0],
+                  ],
+                }),
+              );
+              EntityManager.addExistingEntity(entity);
+            })}
+
+            {renderPrefab(vehicle3a, (position) => {
+              const entity = new Entity();
+              const transform = new TransformableComponent({
+                position,
+                angle: Math.PI,
+              });
+              transform.angle.set(-Math.PI / 2);
+              entity.addComponent(transform);
+              entity.addComponent(
+                new SolidBodyComponent({
+                  size: { width: 100, height: 150 },
+                }),
+              );
+              entity.addComponent(
+                new RenderComponent({
+                  asset: 'vehicle',
+                  size: 100,
+                }),
+              );
+              const motor1 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: -50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const motor2 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: 50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const sensor1 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: -50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              const sensor2 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: 50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              entity.addComponent(
+                new ConnectionComponent({
+                  inputIds: [sensor1, sensor2],
+                  outputIds: [motor1, motor2],
+                  weights: [
+                    [-1, 0],
+                    [0, -1],
+                  ],
+                }),
+              );
+              EntityManager.addExistingEntity(entity);
+            })}
+
+            {renderPrefab(vehicle3b, (position) => {
+              const entity = new Entity();
+              const transform = new TransformableComponent({
+                position,
+                angle: Math.PI,
+              });
+              transform.angle.set(-Math.PI / 2);
+              entity.addComponent(transform);
+              entity.addComponent(
+                new SolidBodyComponent({
+                  size: { width: 100, height: 150 },
+                }),
+              );
+              entity.addComponent(
+                new RenderComponent({
+                  asset: 'vehicle',
+                  size: 100,
+                }),
+              );
+              const motor1 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: -50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const motor2 = entity.addComponent(
+                new MotorComponent({
+                  position: { x: 50, y: 0 },
+                  maxSpeed: 30,
+                  defaultSpeed: 1,
+                }),
+              );
+              const sensor1 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: -50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              const sensor2 = entity.addComponent(
+                new SensorComponent({
+                  position: { x: 50, y: 75 },
+                  range: 20,
+                  angle: 0.4,
+                }),
+              );
+              entity.addComponent(
+                new ConnectionComponent({
+                  inputIds: [sensor1, sensor2],
+                  outputIds: [motor1, motor2],
+                  // TO-DO Negative Verknüpfung umsetzen
+                  weights: [
+                    [0, -1],
+                    [-1, 0],
+                  ],
+                }),
+              );
+              EntityManager.addExistingEntity(entity);
+            })}
           </Flex>
         </DrawerBody>
-
-        <DrawerFooter>
-          {/* <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="blue">Save</Button> */}
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
