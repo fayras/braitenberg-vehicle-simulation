@@ -1,9 +1,9 @@
 import { ComponentType, SubstanceType } from '../enums';
 import Component from './Component';
 import RenderableAttribute from './RenderableAttribute';
-import NumberInput from '../gui/NumberInput';
-import SelectInput from '../gui/SelectInput';
-import PositionInput from '../gui/PositionInput';
+import NumberInput from '../gui/Inputs/NumberInput';
+import SelectInput from '../gui/Inputs/SelectInput';
+import PositionInput from '../gui/Inputs/PositionInput';
 
 interface SensorComponentData {
   position: Vector2D;

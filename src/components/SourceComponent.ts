@@ -1,8 +1,8 @@
 import { ComponentType, SubstanceType, EmissionType } from '../enums';
 import Component from './Component';
 import RenderableAttribute from './RenderableAttribute';
-import SelectInput from '../gui/SelectInput';
-import NumberInput from '../gui/NumberInput';
+import SelectInput from '../gui/Inputs/SelectInput';
+import NumberInput from '../gui/Inputs/NumberInput';
 
 interface SourceComponentData {
   range: number;

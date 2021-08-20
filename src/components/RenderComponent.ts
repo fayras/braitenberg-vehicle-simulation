@@ -3,10 +3,10 @@ import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './RenderableAttribute';
 // import TextInput from '../dynamic_input/TextInput';
-import NumberInput from '../gui/NumberInput';
+import NumberInput from '../gui/Inputs/NumberInput';
 // import HiddenInput from '../dynamic_input/HiddenInput';
-import SelectInput from '../gui/SelectInput';
-import SizeInput from '../gui/SizeInput';
+import SelectInput from '../gui/Inputs/SelectInput';
+import SizeInput from '../gui/Inputs/SizeInput';
 // import SizeInput from '../dynamic_input/SizeInput';
 import LoadingScene from '../scenes/LoadingScene';
 

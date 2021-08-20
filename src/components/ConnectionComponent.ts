@@ -3,7 +3,7 @@ import { matrix, ones } from 'mathjs';
 import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './RenderableAttribute';
-import ConnectionNetwork from '../gui/ConnectionNetwork';
+import ConnectionNetwork from '../gui/Inputs/ConnectionNetwork';
 
 interface ConnectionComponentData {
   inputIds: number[];

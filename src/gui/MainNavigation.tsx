@@ -1,8 +1,8 @@
 import React from 'react';
 import { IconButton, Flex, Spacer } from '@chakra-ui/react';
 import { useStore } from 'effector-react';
-import { playState, togglePlay, reset } from './store/mainNavigation';
-import { open as openPrefabDrawer } from './store/prefabDrawer';
+import { playState, togglePlay, reset } from './_store/mainNavigation';
+import { open as openPrefabDrawer } from './_store/prefabDrawer';
 import { PauseIcon, PlayIcon, RewindIcon, BookmarkIcon, MenuIcon } from './icons';
 
 export default function MainNavigation(): JSX.Element {

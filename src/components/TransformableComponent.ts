@@ -1,8 +1,8 @@
 import { ComponentType } from '../enums';
 import Component from './Component';
 import RenderableAttribute from './RenderableAttribute';
-import PositionInput from '../gui/PositionInput';
-import RotationInput from '../gui/RotationInput';
+import PositionInput from '../gui/Inputs/PositionInput';
+import RotationInput from '../gui/Inputs/RotationInput';
 
 interface TransformableComponentData {
   position: Vector2D;

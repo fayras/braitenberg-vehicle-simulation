@@ -1,9 +1,9 @@
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import { useStore } from 'effector-react';
-import { selectedEntity, select } from './store/selectedEntity';
-import { ComponentType } from '../enums';
-import MotorComponent from '../components/MotorComponent';
-import RenderableAttribute from '../components/RenderableAttribute';
+import { selectedEntity, select } from '../_store/selectedEntity';
+import { ComponentType } from '../../enums';
+import MotorComponent from '../../components/MotorComponent';
+import RenderableAttribute from '../../components/RenderableAttribute';
 
 type RA = RenderableAttribute<unknown, FunctionComponent<unknown>>;
 

@@ -1,9 +1,9 @@
 import { ComponentType, BodyShape } from '../enums';
 import Component from './Component';
 import RenderableAttribute from './RenderableAttribute';
-import SelectInput from '../gui/SelectInput';
-import CheckboxInput from '../gui/CheckboxInput';
-import SizeInput from '../gui/SizeInput';
+import SelectInput from '../gui/Inputs/SelectInput';
+import CheckboxInput from '../gui/Inputs/CheckboxInput';
+import SizeInput from '../gui/Inputs/SizeInput';
 
 interface SolidBodyComponentData {
   size?: Dimensions | number;

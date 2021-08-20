@@ -2,8 +2,8 @@ import { ComponentType } from '../enums';
 import Component from './Component';
 import Attribute from './RenderableAttribute';
 
-import PositionInput from '../gui/PositionInput';
-import NumberInput from '../gui/NumberInput';
+import PositionInput from '../gui/Inputs/PositionInput';
+import NumberInput from '../gui/Inputs/NumberInput';
 
 interface MotorComponentData {
   position: Vector2D;
