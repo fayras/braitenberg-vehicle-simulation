@@ -57,3 +57,15 @@ export const MenuIcon = (props: IconProps) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
   </Icon>
 );
+
+export const DownIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </Icon>
+);
+
+export const RightIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </Icon>
+);
