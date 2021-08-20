@@ -15,12 +15,12 @@ import SourceComponent from '../../components/SourceComponent';
 import TransformableComponent from '../../components/TransformableComponent';
 import ConnectionComponent from '../../components/ConnectionComponent';
 
-import blank from '../../assets/prefabs/blank.png';
-import source from '../../assets/prefabs/source.png';
-import vehicle2a from '../../assets/prefabs/2a.png';
-import vehicle2b from '../../assets/prefabs/2b.png';
-import vehicle3a from '../../assets/prefabs/3a.png';
-import vehicle3b from '../../assets/prefabs/3b.png';
+import blank from '../../../assets/prefabs/blank.png';
+import source from '../../../assets/prefabs/source.png';
+import vehicle2a from '../../../assets/prefabs/2a.png';
+import vehicle2b from '../../../assets/prefabs/2b.png';
+import vehicle3a from '../../../assets/prefabs/3a.png';
+import vehicle3b from '../../../assets/prefabs/3b.png';
 
 export default function PrefabDrawer(): JSX.Element {
   const isOpen = useStore(openStore);
