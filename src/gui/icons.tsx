@@ -69,3 +69,9 @@ export const RightIcon = (props: IconProps) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
   </Icon>
 );
+
+export const PlusIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+  </Icon>
+);
