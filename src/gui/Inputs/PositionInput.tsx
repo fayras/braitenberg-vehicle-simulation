@@ -1,16 +1,19 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
+import RenderableAttribute from '../../components/RenderableAttribute';
 
 type Props = {
-  value: Vector2D;
+  // value: Vector2D;
+  attribute: RenderableAttribute<Vector2D, any>;
   label: string;
 };
 
-export default function PositionInput(props: Props): JSX.Element {
+export default observer((props: Props): JSX.Element => {
   // const { test: count, increase } = testStore();
 
   return (
     <div>
-      {props.label}: {props.value.x}, {props.value.y}
+      {props.label}: {props.attribute.value.x}, {props.attribute.value.y}
     </div>
   );
-}
+});

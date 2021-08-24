@@ -1,8 +1,11 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
+import RenderableAttribute from '../../components/RenderableAttribute';
 // import { InputNumber } from 'rsuite';
 
 type Props = {
-  value: number;
+  // value: number;
+  attribute: RenderableAttribute<number, any>;
   label: string;
   options: { [key: string]: unknown };
   onInput?: (value: string | number) => void;
@@ -11,10 +14,10 @@ type Props = {
   readonly?: boolean;
 };
 
-export default function SelectInput(props: Props): JSX.Element {
+export default observer((props: Props): JSX.Element => {
   return (
     <div>
-      {props.label}:{props.value}
+      {props.label}:{props.attribute.value}
       {/* <InputNumber
         value={props.value}
         onChange={(val) => (props.onInput ? props.onInput(val) : undefined)}
@@ -22,4 +25,4 @@ export default function SelectInput(props: Props): JSX.Element {
       /> */}
     </div>
   );
-}
+});

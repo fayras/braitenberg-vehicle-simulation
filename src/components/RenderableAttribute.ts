@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { makeObservable, observable, action } from 'mobx';
 
 type ChangeHandler<T> = (value: T, oldValue: T) => void;
 
-type ConditionalProps<S> = S extends React.FunctionComponent<any> ? Omit<React.ComponentProps<S>, 'value'> : {};
+type ConditionalProps<S> = S extends React.FunctionComponent<any> ? Omit<React.ComponentProps<S>, 'attribute'> : {};
 
 export default class RenderableAttribute<T, S extends React.FunctionComponent<any> | null> {
-  private value: T;
+  public value: T;
 
   private reactComponent: S | undefined;
 
@@ -24,6 +25,11 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
     this.value = value;
     this.reactComponent = renderAs || undefined;
     this.componentProps = props || {};
+
+    makeObservable(this, {
+      value: observable,
+      set: action,
+    });
   }
 
   public get(): T {
@@ -57,19 +63,9 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
     }
 
     return () => {
-      const [val, setVal] = useState(this.value);
-
-      useEffect(() => {
-        const handler = (val: T) => setVal(val);
-        this.onChange(handler);
-
-        return () => this.removeHandler(handler);
-      });
-
       const props = {
         ...this.componentProps,
-        value: val,
-        onInput: (value: T) => this.set(value),
+        attribute: this,
       };
 
       return React.createElement(this.reactComponent!, props, null);
