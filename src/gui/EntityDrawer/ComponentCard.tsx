@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Heading, IconButton, Collapse, useDisclosure, Spacer } from '@chakra-ui/react';
+import { Box, Heading, IconButton, Tooltip, Collapse, useDisclosure, Spacer } from '@chakra-ui/react';
 import Component from '../../components/Component';
 import { DownIcon, RightIcon, TrashIcon } from '../icons';
 
@@ -34,18 +34,21 @@ export default function ComponentCard({ component, onDelete }: ComponentCardProp
         <Heading size="sm">{component.name}</Heading>
         <Spacer />
         {isHover && (
-          <IconButton
-            variant="ghost"
-            size="xs"
-            isRound={true}
-            height="4"
-            icon={<TrashIcon color="gray.400" w={4} h={4} />}
-            aria-label="Komponente entfernen"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete?.();
-            }}
-          />
+          <Tooltip placement="top-end" label={'Komponente löschen'}>
+            <IconButton
+              variant="ghost"
+              size="xs"
+              isRound={true}
+              height="4"
+              disabled={!component.isDeletable()}
+              icon={<TrashIcon color="gray.400" w={4} h={4} />}
+              aria-label="Komponente entfernen"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.();
+              }}
+            />
+          </Tooltip>
         )}
       </Box>
       <Collapse in={isOpen}>
