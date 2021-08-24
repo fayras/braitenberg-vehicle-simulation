@@ -1,4 +1,5 @@
 import Noty from 'noty';
+import { makeObservable, observable, action } from 'mobx';
 
 import { ComponentType } from './enums';
 import Component from './components/Component';
@@ -23,6 +24,16 @@ export default class Entity {
   public constructor() {
     this.id = Entity.numOfEntities;
     Entity.numOfEntities += 1;
+
+    makeObservable<Entity, 'components'>(this, {
+      components: observable,
+      addComponent: action,
+      removeComponent: action,
+      // getComponent: computed,
+      // getMultipleComponents: computed,
+      // getAllComponents: computed,
+      // hasComponents: computed,
+    });
   }
 
   /**
@@ -62,18 +73,18 @@ export default class Entity {
 
   // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
   public getComponent<T extends Component>(name: ComponentType): T | undefined {
-    return this.components.find(c => c.name === name) as T;
+    return this.components.find((c) => c.name === name) as T;
   }
 
   // gibt alle Komponente mit dem übergebenen Component Type zurück
   public getMultipleComponents(name: ComponentType): Component[] {
-    return this.components.filter(c => c.name === name);
+    return this.components.filter((c) => c.name === name);
   }
 
   //
   public hasComponents(...components: ComponentType[]): boolean {
-    const available = this.components.map(c => c.name);
-    return components.every(name => available.includes(name));
+    const available = this.components.map((c) => c.name);
+    return components.every((name) => available.includes(name));
   }
 
   // gibt alle Komponente der Entität zurück
@@ -85,7 +96,7 @@ export default class Entity {
   public serialize(): SerializedEntity {
     return {
       id: this.id,
-      components: this.components.map(component => component.serialize()),
+      components: this.components.map((component) => component.serialize()),
     };
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { observer, Observer } from 'mobx-react-lite';
 import { useStore } from 'effector-react';
 import {
   Drawer,
@@ -43,11 +44,19 @@ export default function EntityDrawer(): JSX.Element {
         <DrawerHeader>Ausgewählte Entität (ID {entity?.id})</DrawerHeader>
 
         <DrawerBody>
-          <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
-            {components?.map((component) => (
-              <ComponentCard key={component.id} component={component} />
-            ))}
-          </Flex>
+          <Observer>
+            {() => (
+              <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+                {components?.map((component) => (
+                  <ComponentCard
+                    key={component.id}
+                    component={component}
+                    onDelete={() => EntityManager.removeComponent(entity.id, component)}
+                  />
+                ))}
+              </Flex>
+            )}
+          </Observer>
         </DrawerBody>
 
         <DrawerFooter justifyContent="left">
