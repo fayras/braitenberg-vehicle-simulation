@@ -52,7 +52,9 @@ export default function ComponentCard({ component, onDelete }: ComponentCardProp
         )}
       </Box>
       <Collapse in={isOpen}>
-        <Box p="2">{attributes}</Box>
+        <Box p="2" pb="0">
+          {attributes}
+        </Box>
       </Collapse>
     </Box>
   );
