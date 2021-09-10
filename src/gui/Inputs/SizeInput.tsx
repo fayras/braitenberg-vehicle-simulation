@@ -1,25 +1,43 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import RenderableAttribute from '../../components/RenderableAttribute';
-// import { InputNumber } from 'rsuite';
+import { Box, NumberInput, NumberInputField, FormLabel, Flex, Spacer } from '@chakra-ui/react';
 
 type Props = {
-  // value: Dimensions;
   attribute: RenderableAttribute<Dimensions, any>;
   label: string;
-  onInput?: (value: string | number) => void;
   readonly?: boolean;
 };
 
 export default observer((props: Props): JSX.Element => {
   return (
-    <div>
-      {props.label}:{props.attribute.value.width},{props.attribute.value.height}
-      {/* <InputNumber
-        value={props.value}
-        onChange={(val) => (props.onInput ? props.onInput(val) : undefined)}
-        disabled={props.readonly}
-      /> */}
-    </div>
+    <Box mb="2.5">
+      <FormLabel color="gray.800" fontSize="sm" mb="0">
+        {props.label}
+      </FormLabel>
+      <Flex>
+        <NumberInput
+          value={props.attribute.value.width}
+          size="sm"
+          variant="filled"
+          onChange={(val) => {
+            props.attribute.set({ width: Number(val), height: props.attribute.value.height });
+          }}
+        >
+          <NumberInputField />
+        </NumberInput>
+        <Spacer mx="1" />
+        <NumberInput
+          value={props.attribute.value.height}
+          size="sm"
+          variant="filled"
+          onChange={(val) => {
+            props.attribute.set({ width: props.attribute.value.width, height: Number(val) });
+          }}
+        >
+          <NumberInputField />
+        </NumberInput>
+      </Flex>
+    </Box>
   );
 });

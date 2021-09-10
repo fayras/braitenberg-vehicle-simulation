@@ -1,10 +1,14 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import RenderableAttribute from '../../components/RenderableAttribute';
-// import { InputNumber } from 'rsuite';
+import { Box, NumberInput, NumberInputField, FormLabel } from '@chakra-ui/react';
+import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react';
+
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m;
+}
 
 type Props = {
-  // value: number;
   attribute: RenderableAttribute<number, any>;
   label: string;
   onInput?: (value: string | number) => void;
@@ -13,13 +17,39 @@ type Props = {
 
 export default observer((props: Props): JSX.Element => {
   return (
-    <div>
-      {props.label}:{props.attribute.value}
-      {/* <InputNumber
-        value={props.value}
-        onChange={(val) => (props.onInput ? props.onInput(val) : undefined)}
+    <Box mb="2.5">
+      <FormLabel color="gray.800" fontSize="sm" mb="0">
+        {props.label}
+      </FormLabel>
+      <NumberInput
+        value={props.attribute.value}
+        size="sm"
+        variant="filled"
         disabled={props.readonly}
-      /> */}
-    </div>
+        onChange={(val) => {
+          const value = Number(val);
+          if (!isNaN(value)) {
+            props.attribute.set(value);
+          }
+        }}
+      >
+        <NumberInputField />
+      </NumberInput>
+      <Slider
+        aria-label="Rotation"
+        value={mod(props.attribute.value, Math.PI * 2)}
+        min={0}
+        max={Math.PI * 2}
+        step={0.01}
+        onChange={(val) => {
+          props.attribute.set(val);
+        }}
+      >
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+    </Box>
   );
 });
