@@ -1,13 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import RenderableAttribute from '../../components/RenderableAttribute';
-// import { InputNumber } from 'rsuite';
+import { Box, NumberInput, NumberInputField, FormLabel } from '@chakra-ui/react';
 
 type Props = {
-  // value: number;
   attribute: RenderableAttribute<number, any>;
   label: string;
-  // onInput?: (value: string | number) => void;
   min?: number;
   max?: number;
   readonly?: boolean;
@@ -15,13 +13,21 @@ type Props = {
 
 export default observer((props: Props): JSX.Element => {
   return (
-    <div>
-      {props.label}:{props.attribute.value}
-      {/* <InputNumber
-        value={props.value}
-        onChange={(val) => (props.onInput ? props.onInput(val) : undefined)}
+    <Box mb="2.5">
+      <FormLabel color="gray.800" fontSize="sm" mb="0">
+        {props.label}
+      </FormLabel>
+      <NumberInput
+        value={props.attribute.value}
+        size="sm"
+        variant="filled"
         disabled={props.readonly}
-      /> */}
-    </div>
+        onChange={(val) => {
+          props.attribute.set(Number(val));
+        }}
+      >
+        <NumberInputField />
+      </NumberInput>
+    </Box>
   );
 });
