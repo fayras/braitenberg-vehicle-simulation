@@ -16,7 +16,7 @@ export default function ComponentCard({ component, onDelete }: ComponentCardProp
   const attributes = component.getRenderableAttributes().map((attr, index) => {
     const Comp = attr.render();
 
-    return <Comp key={`${component.id}_${index}`} />;
+    return <Comp key={`ComponentCard_${component.id}_${index}`} />;
   });
 
   return (

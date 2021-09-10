@@ -25,7 +25,7 @@ export default class EngineSystem extends System {
         const max = Number(motor.maxSpeed.get());
         const thrust = base + (max - base) * motor.throttle.get();
 
-        motor.visualThrottle.set(thrust.toFixed(2) + window.Math.random());
+        motor.visualThrottle.set(thrust.toFixed(2));
 
         // Es muss auch die Richtung "nach vorne" berechnet werden, da das Vehikel eine Rotation
         // haben kann.

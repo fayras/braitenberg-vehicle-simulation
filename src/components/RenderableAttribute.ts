@@ -14,6 +14,8 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
 
   private changeHanlers: ChangeHandler<T>[] = [];
 
+  private key: string;
+
   /**
    * Der Konstruktor!
    *
@@ -25,6 +27,7 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
     this.value = value;
     this.reactComponent = renderAs || undefined;
     this.componentProps = props || {};
+    this.key = (new Date().valueOf() + Math.random().toFixed(5)).toString();
 
     makeObservable(this, {
       value: observable,
@@ -66,6 +69,7 @@ export default class RenderableAttribute<T, S extends React.FunctionComponent<an
       const props = {
         ...this.componentProps,
         attribute: this,
+        key: this.key,
       };
 
       return React.createElement(this.reactComponent!, props, null);
