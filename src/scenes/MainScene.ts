@@ -136,16 +136,12 @@ export default class MainScene extends Phaser.Scene {
       }),
     );
     entity.addComponent(
-      new ConnectionComponent({
-        inputIds: [sensor1, sensor2, sensor3, sensor4],
-        outputIds: [motor1, motor2],
-        weights: [
-          [0, 1],
-          [1, 0],
-          [1, 0],
-          [0, 1],
-        ],
-      }),
+      new ConnectionComponent([
+        { input: sensor1, output: motor2, weight: 1 },
+        { input: sensor2, output: motor1, weight: 1 },
+        { input: sensor3, output: motor1, weight: 1 },
+        { input: sensor4, output: motor2, weight: 1 },
+      ]),
     );
     EntityManager.addExistingEntity(entity);
 
@@ -173,7 +169,7 @@ export default class MainScene extends Phaser.Scene {
       new SourceSystem(this),
       new EngineSystem(this),
       new SensorSystem(this),
-      new ConnectionSystem(this),
+      // new ConnectionSystem(this),
       // new ReactionSystem(this),
       new RenderSystem(this),
     ];

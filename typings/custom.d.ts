@@ -125,6 +125,14 @@ interface Dimensions {
   height: number;
 }
 
+type ConnectionPair = {
+  input: ComponentId;
+  output: ComponentId;
+  weight: number;
+};
+
+type ConnectionComponentData = ConnectionPair[];
+
 type Color = number;
 
 type Vector2D = Phaser.Physics.Matter.Matter.Vector;

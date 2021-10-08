@@ -113,14 +113,10 @@ export default function PrefabDrawer(): JSX.Element {
                   }),
                 );
                 entity.addComponent(
-                  new ConnectionComponent({
-                    inputIds: [sensor1, sensor2],
-                    outputIds: [motor1, motor2],
-                    weights: [
-                      [1, 0],
-                      [0, 1],
-                    ],
-                  }),
+                  new ConnectionComponent([
+                    { input: sensor1, output: motor1, weight: 1 },
+                    { input: sensor2, output: motor2, weight: 1 },
+                  ]),
                 );
                 EntityManager.addExistingEntity(entity);
               }}
@@ -176,14 +172,10 @@ export default function PrefabDrawer(): JSX.Element {
                   }),
                 );
                 entity.addComponent(
-                  new ConnectionComponent({
-                    inputIds: [sensor1, sensor2],
-                    outputIds: [motor1, motor2],
-                    weights: [
-                      [0, 1],
-                      [1, 0],
-                    ],
-                  }),
+                  new ConnectionComponent([
+                    { input: sensor1, output: motor2, weight: 1 },
+                    { input: sensor2, output: motor1, weight: 1 },
+                  ]),
                 );
                 EntityManager.addExistingEntity(entity);
               }}
@@ -239,14 +231,10 @@ export default function PrefabDrawer(): JSX.Element {
                   }),
                 );
                 entity.addComponent(
-                  new ConnectionComponent({
-                    inputIds: [sensor1, sensor2],
-                    outputIds: [motor1, motor2],
-                    weights: [
-                      [-1, 0],
-                      [0, -1],
-                    ],
-                  }),
+                  new ConnectionComponent([
+                    { input: sensor1, output: motor1, weight: -1 },
+                    { input: sensor2, output: motor2, weight: -1 },
+                  ]),
                 );
                 EntityManager.addExistingEntity(entity);
               }}
@@ -302,15 +290,10 @@ export default function PrefabDrawer(): JSX.Element {
                   }),
                 );
                 entity.addComponent(
-                  new ConnectionComponent({
-                    inputIds: [sensor1, sensor2],
-                    outputIds: [motor1, motor2],
-                    // TO-DO Negative Verknüpfung umsetzen
-                    weights: [
-                      [0, -1],
-                      [-1, 0],
-                    ],
-                  }),
+                  new ConnectionComponent([
+                    { input: sensor1, output: motor2, weight: -1 },
+                    { input: sensor2, output: motor1, weight: -1 },
+                  ]),
                 );
                 EntityManager.addExistingEntity(entity);
               }}

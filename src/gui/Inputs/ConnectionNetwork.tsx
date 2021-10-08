@@ -1,19 +1,88 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useStore } from 'effector-react';
 import { observer } from 'mobx-react-lite';
+import { motion } from 'framer-motion';
+import { Box, FormLabel } from '@chakra-ui/react';
 import RenderableAttribute from '../../components/RenderableAttribute';
+import { selectedEntity } from '../_store/selectedEntity';
+import { ComponentType } from '../../enums';
 
 type Props = {
-  // value: Vector2D;
-  attribute: RenderableAttribute<Vector2D, any>;
+  attribute: RenderableAttribute<ConnectionComponentData, any>;
   label: string;
 };
 
 export default observer((props: Props): JSX.Element => {
-  // const { test: count, increase } = testStore();
+  const [selectedSensor, selectSensor] = useState<number | null>(null);
+  const entity = useStore(selectedEntity);
+  const sensors = entity?.getMultipleComponents(ComponentType.SENSOR);
+  const motors = entity?.getMultipleComponents(ComponentType.MOTOR);
 
+  if (!sensors || !motors) {
+    return <div>Es können keine Verbindungen geschaffen werden.</div>;
+  }
+
+  const sensorOffset = 100 / sensors.length / 2;
+  const motorOffset = 100 / motors.length / 2;
+  const radius = 7;
   return (
     <div>
-      {props.label}: {props.attribute.value.x}, {props.attribute.value.y}
+      <Box mb="2.5">
+        <FormLabel color="gray.800" fontSize="sm" mb="0">
+          {props.label}
+        </FormLabel>
+      </Box>
+      <motion.svg width="100%" height={50 + 2 * radius}>
+        {props.attribute.get().map((pair) => {
+          const sensorIndex = sensors.findIndex((s) => s.id === pair.input);
+          const motorIndex = motors.findIndex((m) => m.id === pair.output);
+
+          console.log('pair:', sensorIndex, motorIndex);
+
+          return (
+            <motion.line
+              key={`${pair.input}_${pair.output}`}
+              stroke="black"
+              x1={`${(sensorIndex / sensors.length) * 100 + sensorOffset}%`}
+              y1={radius}
+              x2={`${(motorIndex / motors.length) * 100 + motorOffset}%`}
+              y2={50 + radius}
+            />
+          );
+        })}
+        {sensors.map((s, index) => (
+          <motion.circle
+            key={s.id}
+            cx={`${(index / sensors.length) * 100 + sensorOffset}%`}
+            cy={radius}
+            r={radius}
+            cursor="pointer"
+            onClick={() => selectSensor(s.id)}
+          />
+        ))}
+        {motors.map((m, index) => (
+          <motion.circle
+            key={m.id}
+            fill={selectedSensor ? 'red' : 'black'}
+            cx={`${(index / motors.length) * 100 + motorOffset}%`}
+            cy={50 + radius}
+            r={radius}
+            onClick={() => {
+              if (!selectedSensor) {
+                return;
+              }
+
+              const currentPairs = props.attribute.get();
+              const exists = currentPairs.find((pair) => pair.input === selectedSensor && pair.output === m.id);
+              if (!exists) {
+                props.attribute.set([...currentPairs, { input: selectedSensor, output: m.id, weight: 1 }]);
+              }
+
+              selectSensor(null);
+            }}
+          />
+        ))}
+      </motion.svg>
     </div>
   );
 });
