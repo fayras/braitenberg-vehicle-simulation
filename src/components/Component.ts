@@ -1,6 +1,7 @@
 import { ComponentType } from '../enums';
 import RenderableAttribute from './RenderableAttribute';
 
+export type ComponentId = number;
 type UnknownRenderableAttribute = RenderableAttribute<unknown, React.FunctionComponent<unknown>>;
 
 function isRenderableAttribute(argument: unknown): argument is UnknownRenderableAttribute {
@@ -15,7 +16,7 @@ export default abstract class Component {
 
   public abstract name: ComponentType;
 
-  public id: number;
+  public id: ComponentId;
 
   private static count = 0;
 

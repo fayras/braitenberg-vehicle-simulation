@@ -28,7 +28,11 @@ export default observer((props: Props): JSX.Element => {
         }}
       >
         {Object.entries(props.options).map(([key, value]) => {
-          return <option value={value as string}>{value as string}</option>;
+          return (
+            <option key={key} value={value as string}>
+              {value as string}
+            </option>
+          );
         })}
       </Select>
     </Box>
