@@ -1,10 +1,23 @@
-import { createEvent, createStore } from 'effector';
+import { makeAutoObservable } from 'mobx';
 
-export const toggle = createEvent<void>();
-export const open = createEvent<void>();
-export const close = createEvent<void>();
+class PrefabDrawerStore {
+  isOpen: boolean = false;
 
-export const isOpen = createStore<boolean>(false)
-  .on(toggle, (state) => !state)
-  .on(open, (state) => true)
-  .on(close, (state) => false);
+  constructor() {
+    makeAutoObservable(this);
+  }
+
+  open() {
+    this.isOpen = true;
+  }
+
+  close() {
+    this.isOpen = false;
+  }
+
+  toggle() {
+    this.isOpen = !this.isOpen;
+  }
+}
+
+export const store = new PrefabDrawerStore();

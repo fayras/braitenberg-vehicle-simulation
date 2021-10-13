@@ -1,16 +1,21 @@
-import { createEvent, createStore } from 'effector';
+import { makeAutoObservable } from 'mobx';
 
-export const togglePlay = createEvent();
-export const setPlay = createEvent<boolean>();
-export const reset = createEvent();
-export const saveSnapshop = createEvent();
-export const importData = createEvent();
-export const exportData = createEvent();
+class MainNavigationStore {
+  playState: boolean = false;
 
-export const playState = createStore<boolean>(false)
-  .on(togglePlay, (play) => !play)
-  .on(setPlay, (_, flag) => flag);
+  constructor() {
+    makeAutoObservable(this);
+  }
 
-// export const snapshot = createStore<boolean>(false)
-//   .on(togglePlay, (play) => !play)
-//   .on(setPlay, (_, flag) => flag);
+  togglePlay() {
+    this.playState = !this.playState;
+  }
+
+  setPlay(state: boolean) {
+    this.playState = state;
+  }
+
+  reset() {}
+}
+
+export const store = new MainNavigationStore();

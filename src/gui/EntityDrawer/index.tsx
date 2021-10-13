@@ -1,6 +1,5 @@
 import React from 'react';
 import { observer, Observer } from 'mobx-react-lite';
-import { useStore } from 'effector-react';
 import {
   Drawer,
   DrawerContent,
@@ -17,37 +16,35 @@ import {
 } from '@chakra-ui/react';
 import { PlusIcon } from '../icons';
 
-import { selectedEntity, components as selectedEntityComponents, select } from '../_store/selectedEntity';
+import { store as selectedEntityStore } from '../_store/selectedEntity';
 import ComponentCard from './ComponentCard';
 import EntityManager from '../../EntityManager';
 import MotorComponent from '../../components/MotorComponent';
 
-export default function EntityDrawer(): JSX.Element {
-  const entity = useStore(selectedEntity);
-  const components = useStore(selectedEntityComponents);
+export default observer((): JSX.Element => {
+  const entity = selectedEntityStore.selectedEntity;
+  const components = selectedEntityStore.components;
   if (entity === null) {
     return <></>;
   }
 
-  // const components = entity.getAllComponents();
-
   return (
     <Drawer
       variant="clickThrough"
-      isOpen={entity !== null}
+      isOpen={selectedEntityStore.isSelected}
       placement="right"
       closeOnOverlayClick={false}
-      onClose={() => select(null)}
+      onClose={() => selectedEntityStore.select(null)}
     >
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Ausgewählte Entität (ID {entity?.id})</DrawerHeader>
+        <DrawerHeader>Ausgewählte Entität (ID {entity.id})</DrawerHeader>
 
         <DrawerBody>
           <Observer>
             {() => (
               <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
-                {components?.map((component) => (
+                {components.map((component) => (
                   <ComponentCard
                     key={component.id}
                     component={component}
@@ -98,4 +95,4 @@ export default function EntityDrawer(): JSX.Element {
       </DrawerContent>
     </Drawer>
   );
-}
+});

@@ -1,7 +1,6 @@
 import React from 'react';
-import { useStore } from 'effector-react';
 import { Drawer, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Flex } from '@chakra-ui/react';
-import { isOpen as openStore, close } from '../_store/prefabDrawer';
+import { store } from '../_store/prefabDrawer';
 import Prefab from './Prefab';
 
 import Entity from '../../Entity';
@@ -21,17 +20,16 @@ import vehicle2a from '../../../assets/prefabs/2a.png';
 import vehicle2b from '../../../assets/prefabs/2b.png';
 import vehicle3a from '../../../assets/prefabs/3a.png';
 import vehicle3b from '../../../assets/prefabs/3b.png';
+import { observer } from 'mobx-react-lite';
 
-export default function PrefabDrawer(): JSX.Element {
-  const isOpen = useStore(openStore);
-
+export default observer((): JSX.Element => {
   return (
     <Drawer
       variant="clickThrough"
-      isOpen={isOpen}
+      isOpen={store.isOpen}
       placement="right"
       closeOnOverlayClick={false}
-      onClose={() => close()}
+      onClose={() => store.close()}
     >
       <DrawerContent>
         <DrawerCloseButton />
@@ -303,4 +301,4 @@ export default function PrefabDrawer(): JSX.Element {
       </DrawerContent>
     </Drawer>
   );
-}
+});

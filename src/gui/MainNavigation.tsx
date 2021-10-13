@@ -1,29 +1,39 @@
 import React from 'react';
 import { IconButton, Flex, Spacer } from '@chakra-ui/react';
-import { useStore } from 'effector-react';
-import { playState, togglePlay, reset } from './_store/mainNavigation';
-import { open as openPrefabDrawer } from './_store/prefabDrawer';
+import { store } from './_store/mainNavigation';
+import { store as prefabDrawerStore } from './_store/prefabDrawer';
 import { PauseIcon, PlayIcon, RewindIcon, BookmarkIcon, MenuIcon } from './icons';
+import { observer } from 'mobx-react-lite';
+
+const TogglePlayButton = observer((): JSX.Element => {
+  return (
+    <IconButton
+      aria-label="play"
+      size="lg"
+      boxShadow="base"
+      icon={store.playState ? <PlayIcon w={8} h={8} /> : <PauseIcon w={8} h={8} />}
+      onClick={() => store.togglePlay()}
+    />
+  );
+});
+
+const ResetButton = observer((): JSX.Element => {
+  return (
+    <IconButton
+      aria-label="reset"
+      size="lg"
+      boxShadow="base"
+      onClick={() => store.reset()}
+      icon={<RewindIcon w={8} h={8} />}
+    />
+  );
+});
 
 export default function MainNavigation(): JSX.Element {
-  const play = useStore(playState);
-
   return (
     <Flex className="main-navigation click-through">
-      <IconButton
-        aria-label="play"
-        size="lg"
-        boxShadow="base"
-        icon={play ? <PlayIcon w={8} h={8} /> : <PauseIcon w={8} h={8} />}
-        onClick={() => togglePlay()}
-      />
-      <IconButton
-        aria-label="reset"
-        size="lg"
-        boxShadow="base"
-        onClick={() => reset()}
-        icon={<RewindIcon w={8} h={8} />}
-      />
+      <TogglePlayButton />
+      <ResetButton />
       <IconButton aria-label="save" size="lg" boxShadow="base" icon={<BookmarkIcon w={8} h={8} />} />
       <Spacer className="click-through" />
       <IconButton
@@ -32,7 +42,7 @@ export default function MainNavigation(): JSX.Element {
         boxShadow="base"
         right={0}
         icon={<MenuIcon w={8} h={8} />}
-        onClick={() => openPrefabDrawer()}
+        onClick={() => prefabDrawerStore.open()}
       />
       {/* <IconButton
         aria-label="download" size="lg"

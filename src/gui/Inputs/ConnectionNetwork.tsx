@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useStore } from 'effector-react';
 import { observer } from 'mobx-react-lite';
 import { motion } from 'framer-motion';
 import { Box, FormLabel } from '@chakra-ui/react';
 import RenderableAttribute from '../../components/RenderableAttribute';
-import { selectedEntity } from '../_store/selectedEntity';
+import { store as selectedEntityStore } from '../_store/selectedEntity';
 import { ComponentType } from '../../enums';
 
 type Props = {
@@ -14,7 +13,7 @@ type Props = {
 
 export default observer((props: Props): JSX.Element => {
   const [selectedSensor, selectSensor] = useState<number | null>(null);
-  const entity = useStore(selectedEntity);
+  const entity = selectedEntityStore.selectedEntity;
   const sensors = entity?.getMultipleComponents(ComponentType.SENSOR);
   const motors = entity?.getMultipleComponents(ComponentType.MOTOR);
 

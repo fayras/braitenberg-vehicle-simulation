@@ -26,8 +26,9 @@ import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
 import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
-import { playState, reset } from '../gui/_store/mainNavigation';
-import { select as selectEntity } from '../gui/_store/selectedEntity';
+import { store as mainNavigationStore } from '../gui/_store/mainNavigation';
+import { store as selectedEntityStore } from '../gui/_store/selectedEntity';
+import { reaction } from 'mobx';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
@@ -48,11 +49,17 @@ export default class MainScene extends Phaser.Scene {
 
     this.scene.add('settings', SettingScene, false);
 
-    playState.watch((state) => this.pause(state));
-    this.pause(playState.getState());
+    // playState.watch((state) => this.pause(state));
+    this.pause(mainNavigationStore.playState);
+    reaction(
+      () => mainNavigationStore.playState,
+      (playstate) => {
+        this.pause(playstate);
+      },
+    );
 
     EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
-      selectEntity(entity);
+      selectedEntityStore.select(entity);
       this.scene.launch('SettingScene', entity);
     });
 
