@@ -1,7 +1,5 @@
 import Phaser from 'phaser';
 
-import SettingScene from './SettingScene';
-
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import RenderComponent from '../components/RenderComponent';
 import MotorComponent from '../components/MotorComponent';
@@ -40,13 +38,10 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
-    this.scene.launch('MainInterfaceScene');
 
     // Anpassen der Szene an aktuelle Bildschirmgröße
     this.scale.on('resize', this.handleResize.bind(this));
     this.matter.world.setBounds();
-
-    this.scene.add('settings', SettingScene, false);
 
     // playState.watch((state) => this.pause(state));
     this.pause(mainNavigationStore.playState);
@@ -59,7 +54,6 @@ export default class MainScene extends Phaser.Scene {
 
     EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
       selectedEntityStore.select(entity);
-      this.scene.launch('SettingScene', entity);
     });
 
     EntityManager.createEntity(

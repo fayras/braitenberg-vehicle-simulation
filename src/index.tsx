@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import MainScene from './scenes/MainScene';
-import MainInterfaceScene from './scenes/MainInterfaceScene';
 import LoadingScene from './scenes/LoadingScene';
 import Ui from './gui/index';
 
@@ -24,7 +23,7 @@ class Game extends React.Component {
       input: {
         windowEvents: false,
       },
-      scene: [LoadingScene, MainScene, MainInterfaceScene],
+      scene: [LoadingScene, MainScene],
       physics: {
         default: 'matter',
         matter: {
