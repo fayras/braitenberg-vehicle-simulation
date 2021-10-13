@@ -24,7 +24,6 @@ import ReactionSystem from '../systems/ReactionSystem';
 import EntityManager from '../EntityManager';
 
 import { store as mainNavigationStore } from '../gui/_store/mainNavigation';
-import { store as selectedEntityStore } from '../gui/_store/selectedEntity';
 import { reaction } from 'mobx';
 
 export default class MainScene extends Phaser.Scene {
@@ -51,10 +50,6 @@ export default class MainScene extends Phaser.Scene {
         this.pause(playstate);
       },
     );
-
-    EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
-      selectedEntityStore.select(entity);
-    });
 
     EntityManager.createEntity(
       new TransformableComponent({ position: { x: 600, y: 450 } }),

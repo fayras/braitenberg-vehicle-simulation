@@ -7,6 +7,8 @@ import TransformableComponent from '../components/TransformableComponent';
 import EventBus from '../EventBus';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import Component from '../components/Component';
+import { store as selectedEntityStore } from '../gui/_store/selectedEntity';
+import { reaction } from 'mobx';
 
 interface RenderObjectDictionary {
   [entityId: number]: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
@@ -22,14 +24,15 @@ export default class RenderSystem extends System {
   public constructor(scene: Phaser.Scene) {
     super(scene);
 
-    EventBus.subscribe(EventType.ENTITY_SELECTED, (entity: Entity) => {
-      this.removeHighlight();
-      this.highlight(entity);
-    });
-
-    EventBus.subscribe(EventType.SIDEBAR_CLOSED, () => {
-      this.removeHighlight();
-    });
+    reaction(
+      () => selectedEntityStore.selectedEntity,
+      (entity) => {
+        this.removeHighlight();
+        if (entity !== null) {
+          this.highlight(entity);
+        }
+      },
+    );
   }
 
   private highlight(entity: Entity): void {
@@ -65,7 +68,7 @@ export default class RenderSystem extends System {
   }
 
   public update(): void {
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const renderObject = this.renderObjects[entity.id];
 
@@ -77,12 +80,12 @@ export default class RenderSystem extends System {
   protected onEntityCreated(entity: Entity): void {
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
 
-    render.asset.onChange(value => {
+    render.asset.onChange((value) => {
       this.onEntityDestroyed(entity);
       this.createImage(entity, render);
     });
 
-    render.size.onChange(value => {
+    render.size.onChange((value) => {
       const image = this.renderObjects[entity.id];
       const scaleX = value.width / image.width;
       const scaleY = value.height === 0 ? scaleX : value.height / image.height;
@@ -134,7 +137,7 @@ export default class RenderSystem extends System {
       if (pointer.getDistance() > dragThreshold) {
         return;
       }
-      EventBus.publish(EventType.ENTITY_SELECTED, entity);
+      selectedEntityStore.select(entity);
     });
 
     this.renderObjects[entity.id] = image;
