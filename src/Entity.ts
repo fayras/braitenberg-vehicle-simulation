@@ -1,4 +1,3 @@
-import Noty from 'noty';
 import { makeObservable, observable, action } from 'mobx';
 
 import { ComponentType } from './enums';
@@ -50,9 +49,8 @@ export default class Entity {
 
     // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
     if (currentAmount >= component.getMaxAmount()) {
-      new Noty({
-        text: `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`,
-      }).show();
+      // TODO: Alert auslösen
+      // `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`
       return -1;
     }
 

@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import swal from 'sweetalert';
 
 import SettingScene from './SettingScene';
 
@@ -219,7 +218,8 @@ export default class MainScene extends Phaser.Scene {
       entities.forEach((entity) => EntityManager.destroyEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
-      swal('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Speichern Knopf.');
+      // TODO: Alert auslösen
+      // swal('Es konnte keine Scene geladen werden! Bitte verwenden Sie zunächst den Speichern Knopf.');
     }
   }
 
@@ -247,7 +247,8 @@ export default class MainScene extends Phaser.Scene {
       const files = importEl.files || [];
 
       if (files.length <= 0) {
-        swal('Es wurde keine korrete Datei ausgewählt.');
+        // TODO: Alert auslösen
+        // swal('Es wurde keine korrete Datei ausgewählt.');
         return;
       }
       const fr = new FileReader();

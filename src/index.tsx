@@ -7,9 +7,6 @@ import MainInterfaceScene from './scenes/MainInterfaceScene';
 import LoadingScene from './scenes/LoadingScene';
 import Ui from './gui/index';
 
-// import 'animate.css';
-// import 'noty/lib/noty.css';
-// import 'noty/lib/themes/relax.css';
 // import '../assets/css/picnic.min.css';
 import '../assets/css/styling.css';
 

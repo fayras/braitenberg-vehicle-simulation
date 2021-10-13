@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import Noty from 'noty';
 import { debounce } from 'lodash-es';
 import { conv2d, squeeze, tidy, Tensor2D, tensor4d, keep, memory } from '@tensorflow/tfjs-core';
 import System from './System';
@@ -36,20 +35,18 @@ export default class ReactionSystem extends System {
     super(scene);
 
     this.compute = debounce(() => {
-      const noty = new Noty({
-        text: '<i class="fa fa-sync-alt fa-spin"></i> Berechnung wird durchgeführt...',
-        timeout: false,
-        animation: {
-          open: null,
-        },
-      });
-      noty.show();
+      // TODO: Alert auslösen
+      // const noty = new Noty({
+      //   text: '<i class="fa fa-sync-alt fa-spin"></i> Berechnung wird durchgeführt...',
+      // });
+      // noty.show();
 
       setTimeout(() => {
         this.maxValue = 0;
-        const promises = Object.values(SubstanceType).map(type => this.computeCorrelation(type));
+        const promises = Object.values(SubstanceType).map((type) => this.computeCorrelation(type));
 
-        Promise.all(promises).then(() => noty.close());
+        // TODO: Alert auslösen
+        // Promise.all(promises).then(() => noty.close());
       }, 10);
     }, 100);
 
@@ -63,7 +60,7 @@ export default class ReactionSystem extends System {
   public update(): void {
     if (this.isPaused) return;
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
 
@@ -72,7 +69,7 @@ export default class ReactionSystem extends System {
         return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
       });
 
-      sensors.forEach(sensor => {
+      sensors.forEach((sensor) => {
         const lookUpKey = `${sensor.id}:${closestAngle}`;
 
         if (!this.correlations[lookUpKey]) {
@@ -102,11 +99,11 @@ export default class ReactionSystem extends System {
 
   private computeCorrelation(type: SubstanceType): Promise<void> {
     return new Promise((resolve, reject) => {
-      const sensors = Object.values(this.sensors).filter(s => s.type === type);
+      const sensors = Object.values(this.sensors).filter((s) => s.type === type);
 
       const { width, height } = this;
 
-      sensors.forEach(sensor => {
+      sensors.forEach((sensor) => {
         Object.entries(sensor.values).forEach(([angle, angleValues]) => {
           const lookUpKey = `${sensor.id}:${angle}`;
 
@@ -121,7 +118,7 @@ export default class ReactionSystem extends System {
             // });
             const maxTensor = conv.max();
             const result = conv.div<Tensor2D>(maxTensor);
-            result.array().then(value => {
+            result.array().then((value) => {
               this.correlations[lookUpKey] = value;
               // console.log(lookUpKey, type, value);
               // this.maxValue = max;
@@ -135,7 +132,7 @@ export default class ReactionSystem extends System {
 
   private computeCombinedSources(type: SubstanceType): void {
     const combined = new Float32Array(this.width * this.height);
-    const sources = Object.values(this.sources).filter(s => s.type === type);
+    const sources = Object.values(this.sources).filter((s) => s.type === type);
 
     for (let i = 0; i < combined.length; i += 1) {
       const sum = sources.reduce((acc, source) => {

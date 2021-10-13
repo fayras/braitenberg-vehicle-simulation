@@ -1,5 +1,3 @@
-import Noty from 'noty';
-
 import Entity from './Entity';
 import EventBus from './EventBus';
 
@@ -36,7 +34,7 @@ class EntityManager {
    */
   public createEntity(...components: Component[]): Entity {
     const entity = new Entity();
-    components.forEach(c => {
+    components.forEach((c) => {
       entity.addComponent(c);
     });
     this.entities[entity.id] = entity;
@@ -73,7 +71,8 @@ class EntityManager {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
+      // TODO: Alert auslösen
+      // new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
       return undefined;
     }
 
@@ -100,7 +99,8 @@ class EntityManager {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
+      // TODO: Alert auslösen
+      // new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
       return;
     }
 
@@ -125,10 +125,10 @@ class EntityManager {
    * @param allEntities
    */
   public loadEntities(allEntities: SerializedEntity[]): void {
-    allEntities.forEach(serializedEntity => {
+    allEntities.forEach((serializedEntity) => {
       const entity = new Entity();
 
-      serializedEntity.components.forEach(serializedComponent => {
+      serializedEntity.components.forEach((serializedComponent) => {
         const { name, id, attributes } = serializedComponent;
         const component = EntityManager.getComponent(name, attributes);
 
