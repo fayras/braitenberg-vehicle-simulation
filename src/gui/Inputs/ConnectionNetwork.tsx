@@ -5,6 +5,7 @@ import { Box, FormLabel } from '@chakra-ui/react';
 import RenderableAttribute from '../../components/RenderableAttribute';
 import { store as selectedEntityStore } from '../_store/selectedEntity';
 import { ComponentType } from '../../enums';
+import { ComponentId } from '../../components/Component';
 
 type Props = {
   attribute: RenderableAttribute<ConnectionComponentData, any>;
@@ -12,7 +13,7 @@ type Props = {
 };
 
 export default observer((props: Props): JSX.Element => {
-  const [selectedSensor, selectSensor] = useState<number | null>(null);
+  const [selectedSensor, selectSensor] = useState<ComponentId | null>(null);
   const entity = selectedEntityStore.selectedEntity;
   const sensors = entity?.getMultipleComponents(ComponentType.SENSOR);
   const motors = entity?.getMultipleComponents(ComponentType.MOTOR);
@@ -32,7 +33,7 @@ export default observer((props: Props): JSX.Element => {
         </FormLabel>
       </Box>
       <motion.svg width="100%" height={50 + 2 * radius}>
-        {props.attribute.get().map((pair) => {
+        {props.attribute.value.map((pair) => {
           const sensorIndex = sensors.findIndex((s) => s.id === pair.input);
           const motorIndex = motors.findIndex((m) => m.id === pair.output);
 
@@ -71,10 +72,10 @@ export default observer((props: Props): JSX.Element => {
                 return;
               }
 
-              const currentPairs = props.attribute.get();
+              const currentPairs = props.attribute.value;
               const exists = currentPairs.find((pair) => pair.input === selectedSensor && pair.output === m.id);
               if (!exists) {
-                props.attribute.set([...currentPairs, { input: selectedSensor, output: m.id, weight: 1 }]);
+                props.attribute.value = [...currentPairs, { input: selectedSensor, output: m.id, weight: 1 }];
               }
 
               selectSensor(null);

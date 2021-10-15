@@ -128,7 +128,7 @@ export default observer((): JSX.Element => {
                   position,
                   angle: Math.PI,
                 });
-                transform.angle.set(-Math.PI / 2);
+                transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
                   new SolidBodyComponent({
@@ -187,7 +187,7 @@ export default observer((): JSX.Element => {
                   position,
                   angle: Math.PI,
                 });
-                transform.angle.set(-Math.PI / 2);
+                transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
                   new SolidBodyComponent({
@@ -246,7 +246,7 @@ export default observer((): JSX.Element => {
                   position,
                   angle: Math.PI,
                 });
-                transform.angle.set(-Math.PI / 2);
+                transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
                   new SolidBodyComponent({

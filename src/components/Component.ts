@@ -51,7 +51,7 @@ export default abstract class Component {
     const attrs: { [key: string]: any } = {};
     Object.keys(this).forEach((attr) => {
       if (this[attr] instanceof RenderableAttribute) {
-        attrs[attr] = (this[attr] as RenderableAttribute<any, any>).get();
+        attrs[attr] = (this[attr] as RenderableAttribute<any, any>).value;
       }
     });
 

@@ -20,7 +20,7 @@ export default observer((props: Props): JSX.Element => {
           size="sm"
           variant="filled"
           onChange={(val) => {
-            props.attribute.set({ x: Number(val), y: props.attribute.value.y });
+            props.attribute.value = { x: Number(val), y: props.attribute.value.y };
           }}
         >
           <NumberInputField />
@@ -31,7 +31,7 @@ export default observer((props: Props): JSX.Element => {
           size="sm"
           variant="filled"
           onChange={(val) => {
-            props.attribute.set({ x: props.attribute.value.x, y: Number(val) });
+            props.attribute.value = { x: props.attribute.value.x, y: Number(val) };
           }}
         >
           <NumberInputField />
