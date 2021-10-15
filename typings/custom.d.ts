@@ -77,13 +77,13 @@ interface CollisionBodies {
 }
 
 interface SerializedComponent {
-  id: number;
+  id: string;
   name: import('../src/enums').ComponentType;
   attributes: any;
 }
 
 interface SerializedEntity {
-  id: number;
+  id: string;
   components: SerializedComponent[];
 }
 

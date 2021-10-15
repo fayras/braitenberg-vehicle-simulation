@@ -1,19 +1,15 @@
 import { makeObservable, observable, action } from 'mobx';
+import { v4 as uuidV4 } from 'uuid';
 
 import { ComponentType } from './enums';
-import Component from './components/Component';
+import Component, { ComponentId } from './components/Component';
+
+export type EntityID = string;
 
 export default class Entity {
-  public id: number;
+  public id: EntityID;
 
   private components: Component[] = [];
-
-  /**
-   * Hier wird einmal gespeichert, wie viele ENtitäten es in der Welt gibt.
-   * Das wird dazu benutzt, um Entitäten stets eie eindeutige ID geben zu
-   * können.
-   */
-  public static numOfEntities = 0;
 
   /**
    * Erzeugt eine neue Entität.
@@ -21,8 +17,7 @@ export default class Entity {
    * entsprechenden Funktionen aus der Klasse `EntityManager` benutzt werden.
    */
   public constructor() {
-    this.id = Entity.numOfEntities;
-    Entity.numOfEntities += 1;
+    this.id = uuidV4();
 
     makeObservable<Entity, 'components'>(this, {
       components: observable,
@@ -44,14 +39,14 @@ export default class Entity {
    * @returns Liefert die ID der Komponente zurück. Wurde die Komponente nicht
    *          hinzugefügt, dann wird `-1` zurückgegeben.
    */
-  public addComponent(component: Component): number {
+  public addComponent(component: Component): ComponentId | undefined {
     const currentAmount = this.getMultipleComponents(component.name).length;
 
     // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
     if (currentAmount >= component.getMaxAmount()) {
       // TODO: Alert auslösen
       // `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`
-      return -1;
+      return undefined;
     }
 
     this.components.push(component);

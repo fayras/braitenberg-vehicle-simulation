@@ -1,7 +1,8 @@
+import { v4 as uuidV4 } from 'uuid';
 import { ComponentType } from '../enums';
 import RenderableAttribute from './RenderableAttribute';
 
-export type ComponentId = number;
+export type ComponentId = string;
 type UnknownRenderableAttribute = RenderableAttribute<unknown, React.FunctionComponent<unknown>>;
 
 function isRenderableAttribute(argument: unknown): argument is UnknownRenderableAttribute {
@@ -18,8 +19,6 @@ export default abstract class Component {
 
   public id: ComponentId;
 
-  private static count = 0;
-
   protected maxAmount: number = Infinity;
 
   protected deletable: boolean = true;
@@ -27,8 +26,7 @@ export default abstract class Component {
   protected infoTip: string = '';
 
   public constructor() {
-    this.id = Component.count;
-    Component.count += 1;
+    this.id = uuidV4();
   }
 
   public getMaxAmount(): number {

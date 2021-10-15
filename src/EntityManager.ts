@@ -1,5 +1,4 @@
-import Entity from './Entity';
-import EventBus from './EventBus';
+import Entity, { EntityID } from './Entity';
 
 import Component from './components/Component';
 import { EventType, ComponentType } from './enums';
@@ -13,7 +12,7 @@ import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
 
 class EntityManager {
-  private entities: { [id: number]: Entity } = {};
+  private entities: { [id: EntityID]: Entity } = {};
 
   /**
    * Falls eine Entität manuell angelegt werden musste, kann diese hiermit
@@ -48,7 +47,7 @@ class EntityManager {
    *
    * @param id Die ID einer Entität, die zerstört werden soll.
    */
-  public destroyEntity(id: number): void {
+  public destroyEntity(id: EntityID): void {
     const entity = this.entities[id];
 
     EventBus.publish(EventType.ENTITY_DESTROYED, entity);
@@ -67,7 +66,7 @@ class EntityManager {
    *          zugefügt wurde, oder aber `undefined`, wenn dies nicht passiert
    *          ist.
    */
-  public addComponent(entityId: number, component: Component): Entity | undefined {
+  public addComponent(entityId: EntityID, component: Component): Entity | undefined {
     const entity = this.entities[entityId];
 
     if (!entity) {
@@ -78,9 +77,9 @@ class EntityManager {
 
     const id = entity.addComponent(component);
 
-    // Eine ID -1 heißt, dass die Komponente nicht hinzugefügt wurde. Dann
+    // Eine ID "undefined" heißt, dass die Komponente nicht hinzugefügt wurde. Dann
     // dürfen wir auch keine Nachricht über den Bus schicken.
-    if (id === -1) {
+    if (id === undefined) {
       return undefined;
     }
 
@@ -95,7 +94,7 @@ class EntityManager {
    * @param entityId Die ID einer Entität.
    * @param component
    */
-  public removeComponent(entityId: number, component: Component): Entity | undefined {
+  public removeComponent(entityId: EntityID, component: Component): void {
     const entity = this.entities[entityId];
 
     if (!entity) {
