@@ -20,7 +20,7 @@ export default observer((props: Props): JSX.Element => {
         <Checkbox
           isChecked={props.attribute.value}
           onChange={(val) => {
-            props.attribute.set(val.target.checked);
+            props.attribute.value = val.target.checked;
           }}
         />
       </Flex>

@@ -24,7 +24,7 @@ export default observer((props: Props): JSX.Element => {
         size="sm"
         value={props.attribute.value}
         onChange={(event) => {
-          props.attribute.set(event.target.value);
+          props.attribute.value = event.target.value;
         }}
       >
         {Object.entries(props.options).map(([key, value]) => {

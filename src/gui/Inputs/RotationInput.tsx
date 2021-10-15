@@ -29,7 +29,7 @@ export default observer((props: Props): JSX.Element => {
         onChange={(val) => {
           const value = Number(val);
           if (!isNaN(value)) {
-            props.attribute.set(value);
+            props.attribute.value = value;
           }
         }}
       >
@@ -42,7 +42,7 @@ export default observer((props: Props): JSX.Element => {
         max={Math.PI * 2}
         step={0.01}
         onChange={(val) => {
-          props.attribute.set(val);
+          props.attribute.value = val;
         }}
       >
         <SliderTrack>

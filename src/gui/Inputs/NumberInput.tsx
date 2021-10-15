@@ -23,7 +23,7 @@ export default observer((props: Props): JSX.Element => {
         variant="filled"
         disabled={props.readonly}
         onChange={(val) => {
-          props.attribute.set(Number(val));
+          props.attribute.value = Number(val);
         }}
       >
         <NumberInputField />
