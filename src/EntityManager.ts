@@ -11,8 +11,96 @@ import SensorComponent from './components/SensorComponent';
 import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
 
+export class EntityQuery {
+  private mEntities: Set<Entity> = new Set();
+  public types: readonly ComponentType[];
+  private onAddedHandlers: Set<(entity: Entity) => any> = new Set();
+  private onRemovedHandlers: Set<(entity: Entity) => any> = new Set();
+
+  constructor(types: ComponentType[]) {
+    this.types = types;
+  }
+
+  public static getKey(types: readonly ComponentType[]) {
+    return types.reduce((a, b) => a | b);
+  }
+
+  get key() {
+    return EntityQuery.getKey(this.types);
+  }
+
+  get entities(): ReadonlySet<Entity> {
+    return this.mEntities;
+  }
+
+  public add(entity: Entity) {
+    this.mEntities.add(entity);
+    this.onAddedHandlers.forEach((handler) => handler(entity));
+  }
+
+  public remove(entity: Entity) {
+    this.mEntities.delete(entity);
+    this.onRemovedHandlers.forEach((handler) => handler(entity));
+  }
+
+  public has(entity: Entity) {
+    return this.mEntities.has(entity);
+  }
+
+  public onEntityAdded(callback: (entity: Entity) => any): IDisposable {
+    this.onAddedHandlers.add(callback);
+
+    return { dispose: () => this.onAddedHandlers.delete(callback) };
+  }
+
+  public onEntityRemoved(callback: (entity: Entity) => any): IDisposable {
+    this.onRemovedHandlers.add(callback);
+
+    return { dispose: () => this.onRemovedHandlers.delete(callback) };
+  }
+}
+
 class EntityManager {
   private entities: { [id: EntityID]: Entity } = {};
+  private queries: Map<ComponentType, EntityQuery> = new Map();
+
+  public createQuery(types: ComponentType[]): EntityQuery {
+    const key = EntityQuery.getKey(types);
+    let query = this.queries.get(key);
+
+    if (query !== undefined) {
+      return query;
+    }
+
+    const entities = this.getEntities();
+    query = new EntityQuery(types);
+
+    for (const entity of entities) {
+      if (entity.hasComponents(...types)) {
+        query.add(entity);
+      }
+    }
+
+    this.queries.set(key, query);
+
+    return query;
+  }
+
+  public getQuery(types: ComponentType[]): EntityQuery | undefined {
+    const key = EntityQuery.getKey(types);
+
+    return this.queries.get(key);
+  }
+
+  private updateQueries(entity: Entity) {
+    for (const [key, query] of this.queries) {
+      if (this.entities[entity.id] && entity.hasComponents(...query.types)) {
+        query.add(entity);
+      } else if (query.has(entity)) {
+        query.remove(entity);
+      }
+    }
+  }
 
   /**
    * Falls eine Entität manuell angelegt werden musste, kann diese hiermit
@@ -23,7 +111,7 @@ class EntityManager {
    */
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
-    EventBus.publish(EventType.ENTITY_CREATED, entity);
+    this.updateQueries(entity);
   }
 
   /**
@@ -37,7 +125,7 @@ class EntityManager {
       entity.addComponent(c);
     });
     this.entities[entity.id] = entity;
-    EventBus.publish(EventType.ENTITY_CREATED, entity);
+    this.updateQueries(entity);
 
     return entity;
   }
@@ -49,9 +137,9 @@ class EntityManager {
    */
   public destroyEntity(id: EntityID): void {
     const entity = this.entities[id];
-
-    EventBus.publish(EventType.ENTITY_DESTROYED, entity);
     delete this.entities[id];
+
+    this.updateQueries(entity);
   }
 
   /**
@@ -83,7 +171,7 @@ class EntityManager {
       return undefined;
     }
 
-    EventBus.publish(EventType.ENTITY_COMPONENT_ADDED, { entity, component });
+    this.updateQueries(entity);
 
     return entity;
   }
@@ -104,7 +192,7 @@ class EntityManager {
     }
 
     entity.removeComponent(component);
-    EventBus.publish(EventType.ENTITY_COMPONENT_REMOVED, { entity, component });
+    this.updateQueries(entity);
   }
 
   /**
