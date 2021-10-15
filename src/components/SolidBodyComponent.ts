@@ -12,7 +12,9 @@ interface SolidBodyComponentData {
 }
 
 export default class SolidBodyComponent extends Component {
-  public name: ComponentType = ComponentType.SOLID_BODY;
+  public name: string = 'Fester Körper';
+
+  public type: ComponentType = ComponentType.SOLID_BODY;
 
   public size: RenderableAttribute<Dimensions, typeof SizeInput>;
 

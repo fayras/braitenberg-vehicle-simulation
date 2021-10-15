@@ -13,7 +13,9 @@ interface SensorComponentData {
 }
 
 export default class SensorComponent extends Component {
-  public name: ComponentType = ComponentType.SENSOR;
+  public name: string = 'Sensor';
+
+  public type: ComponentType = ComponentType.SENSOR;
 
   public range: RenderableAttribute<number, typeof NumberInput>;
 

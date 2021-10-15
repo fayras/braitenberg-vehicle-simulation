@@ -15,7 +15,9 @@ export default abstract class Component {
   // iteriert werden kann.
   [key: string]: number | boolean | string | RenderableAttribute<any, any> | Function;
 
-  public abstract name: ComponentType;
+  public abstract type: ComponentType;
+
+  public abstract name: string;
 
   public id: ComponentId;
 
@@ -61,7 +63,7 @@ export default abstract class Component {
 
     return {
       id: this.id,
-      name: this.name,
+      type: this.type,
       attributes,
     };
   }

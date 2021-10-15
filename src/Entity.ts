@@ -40,7 +40,7 @@ export default class Entity {
    *          hinzugefügt, dann wird `-1` zurückgegeben.
    */
   public addComponent(component: Component): ComponentId | undefined {
-    const currentAmount = this.getMultipleComponents(component.name).length;
+    const currentAmount = this.getMultipleComponents(component.type).length;
 
     // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
     if (currentAmount >= component.getMaxAmount()) {
@@ -65,19 +65,19 @@ export default class Entity {
   }
 
   // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
-  public getComponent<T extends Component>(name: ComponentType): T | undefined {
-    return this.components.find((c) => c.name === name) as T;
+  public getComponent<T extends Component>(type: ComponentType): T | undefined {
+    return this.components.find((c) => c.type === type) as T;
   }
 
   // gibt alle Komponente mit dem übergebenen Component Type zurück
-  public getMultipleComponents(name: ComponentType): Component[] {
-    return this.components.filter((c) => c.name === name);
+  public getMultipleComponents(type: ComponentType): Component[] {
+    return this.components.filter((c) => c.type === type);
   }
 
   //
   public hasComponents(...components: ComponentType[]): boolean {
-    const available = this.components.map((c) => c.name);
-    return components.every((name) => available.includes(name));
+    const available = this.components.map((c) => c.type);
+    return components.every((type) => available.includes(type));
   }
 
   // gibt alle Komponente der Entität zurück

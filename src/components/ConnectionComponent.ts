@@ -4,7 +4,9 @@ import Attribute from './RenderableAttribute';
 import ConnectionNetwork from '../gui/Inputs/ConnectionNetwork';
 
 export default class ConnectionComponent extends Component {
-  public name: ComponentType = ComponentType.CONNECTION;
+  public name: string = 'Verbingsnetzwerk';
+
+  public type: ComponentType = ComponentType.CONNECTION;
 
   public network: Attribute<ConnectionComponentData, typeof ConnectionNetwork>;
 

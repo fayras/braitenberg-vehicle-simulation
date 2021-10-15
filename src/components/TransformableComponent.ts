@@ -10,7 +10,9 @@ interface TransformableComponentData {
 }
 
 export default class TransformableComponent extends Component {
-  public name: ComponentType = ComponentType.TRANSFORMABLE;
+  public name: string = 'Transform';
+
+  public type: ComponentType = ComponentType.TRANSFORMABLE;
 
   public position: RenderableAttribute<Vector2D, typeof PositionInput>;
 

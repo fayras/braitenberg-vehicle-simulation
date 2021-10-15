@@ -11,7 +11,9 @@ interface SourceComponentData {
 }
 
 export default class SourceComponent extends Component {
-  public name: ComponentType = ComponentType.SOURCE;
+  public name: string = 'Quelle';
+
+  public type: ComponentType = ComponentType.SOURCE;
 
   public range: RenderableAttribute<number, typeof NumberInput>;
 

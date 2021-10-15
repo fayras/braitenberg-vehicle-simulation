@@ -12,7 +12,9 @@ interface MotorComponentData {
 }
 
 export default class MotorComponent extends Component {
-  public name: ComponentType = ComponentType.MOTOR;
+  public name: string = 'Motor';
+
+  public type: ComponentType = ComponentType.MOTOR;
 
   public position: Attribute<Vector2D, typeof PositionInput>;
 

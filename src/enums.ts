@@ -4,13 +4,13 @@ export enum BodyShape {
 }
 
 export enum ComponentType {
-  SOLID_BODY = 'Körper',
-  SENSOR = 'Sensor',
-  RENDER = 'Rendering',
-  MOTOR = 'Motor',
-  SOURCE = 'Quelle',
-  TRANSFORMABLE = 'Transform',
-  CONNECTION = 'Verbindung',
+  SOLID_BODY = 1 << 0,
+  SENSOR = 1 << 1,
+  RENDER = 1 << 2,
+  MOTOR = 1 << 3,
+  SOURCE = 1 << 4,
+  TRANSFORMABLE = 1 << 5,
+  CONNECTION = 1 << 6,
 }
 
 export enum SubstanceType {

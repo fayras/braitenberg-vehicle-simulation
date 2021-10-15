@@ -128,8 +128,8 @@ class EntityManager {
       const entity = new Entity();
 
       serializedEntity.components.forEach((serializedComponent) => {
-        const { name, id, attributes } = serializedComponent;
-        const component = EntityManager.getComponent(name, attributes);
+        const { type, id, attributes } = serializedComponent;
+        const component = EntityManager.getComponent(type, attributes);
 
         // Normalerweise sollte es immer eine richtige Komponente sein, wenn diese
         // mit der App exportiert wurde. Falls aber aus welchen Gründen auch immer
@@ -153,8 +153,8 @@ class EntityManager {
    *                   Überprüfung auch Richtigkeit der Werte gibt! Für nähere Infos
    *                   zu den möglichen Attributen siehe jeweilige Komponenten-Klasse.
    */
-  private static getComponent(name: ComponentType, attributes: any): Component | undefined {
-    switch (name) {
+  private static getComponent(type: ComponentType, attributes: any): Component | undefined {
+    switch (type) {
       case ComponentType.TRANSFORMABLE:
         return new TransformableComponent(attributes);
       case ComponentType.SOURCE:

@@ -17,7 +17,9 @@ interface RenderComponentData {
 }
 
 export default class RenderComponent extends Component {
-  public name: ComponentType = ComponentType.RENDER;
+  public name: string = 'Anzeige';
+
+  public type: ComponentType = ComponentType.RENDER;
 
   public asset: Attribute<AssetKey | Color, typeof SelectInput>;
 
