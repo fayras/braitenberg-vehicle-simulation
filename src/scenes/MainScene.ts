@@ -168,6 +168,7 @@ export default class MainScene extends Phaser.Scene {
       // new ReactionSystem(this),
       // new RenderSystem(this),
       new RenderSystem(this),
+      new PhysicsBodySystem(this),
     ];
   }
 
