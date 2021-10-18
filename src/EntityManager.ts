@@ -10,6 +10,7 @@ import SensorComponent from './components/SensorComponent';
 
 import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
+import { IReactionDisposer } from 'mobx';
 
 export class EntityQuery {
   private mEntities: Set<Entity> = new Set();
@@ -50,13 +51,13 @@ export class EntityQuery {
   public onEntityAdded(callback: (entity: Entity) => any): IDisposable {
     this.onAddedHandlers.add(callback);
 
-    return { dispose: () => this.onAddedHandlers.delete(callback) };
+    return () => this.onAddedHandlers.delete(callback);
   }
 
   public onEntityRemoved(callback: (entity: Entity) => any): IDisposable {
     this.onRemovedHandlers.add(callback);
 
-    return { dispose: () => this.onRemovedHandlers.delete(callback) };
+    return () => this.onRemovedHandlers.delete(callback);
   }
 }
 

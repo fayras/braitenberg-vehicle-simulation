@@ -1,168 +1,151 @@
 import Phaser from 'phaser';
 import System from './System';
-import Entity from '../Entity';
-import { ComponentType, EventType } from '../enums';
+import Entity, { EntityID } from '../Entity';
+import { ComponentType } from '../enums';
 import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
-import EventBus from '../EventBus';
-import SolidBodyComponent from '../components/SolidBodyComponent';
-import Component from '../components/Component';
 import { store as selectedEntityStore } from '../gui/_store/selectedEntity';
-import { reaction } from 'mobx';
+import { autorun, reaction, IReactionDisposer } from 'mobx';
 
-interface RenderObjectDictionary {
-  [entityId: number]: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
-}
+type Renderable = Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
 
-export default class RenderSystem extends System {
-  public expectedComponents: ComponentType[] = [ComponentType.TRANSFORMABLE, ComponentType.RENDER];
+export class RenderSystem extends System {
+  private renderables: Map<EntityID, Renderable> = new Map();
+  private renderableDisposers: Map<EntityID, IReactionDisposer[]> = new Map();
 
-  private renderObjects: RenderObjectDictionary = {};
+  private globalDisposers: IDisposable[] = [];
 
-  private selected: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle | null = null;
+  private selected: EntityID | null = null;
 
   public constructor(scene: Phaser.Scene) {
-    super(scene);
+    super(scene, [ComponentType.TRANSFORMABLE, ComponentType.RENDER], false);
 
-    reaction(
+    const disposableOnSelected = reaction(
       () => selectedEntityStore.selectedEntity,
       (entity) => {
-        this.removeHighlight();
-        if (entity !== null) {
-          this.highlight(entity);
-        }
+        this.selected = entity?.id || null;
       },
     );
-  }
 
-  private highlight(entity: Entity): void {
-    const image = this.renderObjects[entity.id];
-    if (image) {
-      this.selected = image;
-      this.selected.setData('originalDepth', image.depth);
-      this.selected.setDepth(999);
+    const disposableOnAdded = this.query.onEntityAdded((entity) => {
+      this.createRenderable(entity);
 
-      if (image instanceof Phaser.GameObjects.Image) {
-        image.setTint(0xddddff);
-      }
-
-      if (image instanceof Phaser.GameObjects.Rectangle) {
-        this.selected.setData('originalColor', image.fillColor);
-        image.setFillStyle(0xddddff);
-      }
-    }
-  }
-
-  private removeHighlight(): void {
-    if (this.selected && this.scene.children.exists(this.selected)) {
-      if (this.selected instanceof Phaser.GameObjects.Image) {
-        this.selected.setTint(0xffffff);
-      }
-      if (this.selected instanceof Phaser.GameObjects.Rectangle) {
-        const color = this.selected.getData('originalColor') || 0xcccccc;
-        this.selected.setFillStyle(color);
-      }
-      this.selected.setDepth(this.selected.getData('originalDepth') || 0);
-    }
-    this.selected = null;
-  }
-
-  public update(): void {
-    this.entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-      const renderObject = this.renderObjects[entity.id];
+      const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
 
-      renderObject.setPosition(transform.position.get().x, transform.position.get().y);
-      renderObject.setRotation(transform.angle.get());
+      const updateTexture = () => {
+        const renderable = this.renderables.get(entity.id)!;
+        (renderable as Phaser.GameObjects.Image).setTexture(render.asset.value as string);
+      };
+
+      const updateScale = () => {
+        const renderable = this.renderables.get(entity.id)!;
+        const scaleX = render.size.value.width / renderable.width;
+        const scaleY = render.size.value.height === 0 ? scaleX : render.size.value.height / renderable.height;
+        renderable.setScale(scaleX, scaleY);
+      };
+
+      const updatePosition = () => {
+        const renderable = this.renderables.get(entity.id)!;
+        renderable.setPosition(transform.position.value.x, transform.position.value.y);
+      };
+
+      const updateRotation = () => {
+        const renderable = this.renderables.get(entity.id)!;
+        renderable.setRotation(transform.angle.value);
+      };
+
+      const updateBlendMode = () => {
+        const renderable = this.renderables.get(entity.id)!;
+        if (render.blendMode.value) {
+          renderable.setBlendMode(render.blendMode.value);
+        }
+      };
+
+      this.renderableDisposers.set(entity.id, [
+        autorun(updateTexture),
+        autorun(updateScale),
+        autorun(updatePosition),
+        autorun(updateRotation),
+        autorun(updateBlendMode),
+      ]);
+    });
+
+    const disposableOnRemoved = this.query.onEntityRemoved((entity) => {
+      this.cleanUp(entity);
+      this.renderableDisposers.get(entity.id)?.forEach((disposer) => disposer());
+    });
+
+    this.globalDisposers.push(disposableOnSelected, disposableOnAdded, disposableOnRemoved);
+  }
+
+  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+    entities.forEach((entity) => {
+      this.updateEntity(entity);
     });
   }
 
-  protected onEntityCreated(entity: Entity): void {
-    const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
-
-    render.asset.onChange((value) => {
-      this.onEntityDestroyed(entity);
-      this.createImage(entity, render);
-    });
-
-    render.size.onChange((value) => {
-      const image = this.renderObjects[entity.id];
-      const scaleX = value.width / image.width;
-      const scaleY = value.height === 0 ? scaleX : value.height / image.height;
-      image.setScale(scaleX, scaleY);
-    });
-
-    this.createImage(entity, render);
+  private updateEntity(entity: Entity) {
+    // this.setApperance(entity, transform, render);
+    this.setHighlight(entity);
   }
 
-  protected createImage(entity: Entity, render: RenderComponent): void {
+  private createRenderable(entity: Entity) {
+    if (this.renderables.has(entity.id)) {
+      return;
+    }
+
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-    const body = entity.getComponent(ComponentType.SOLID_BODY) as SolidBodyComponent;
-
-    let image: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
-    if ((body && typeof render.asset.get() === 'number') || typeof render.asset.get() === 'number') {
-      const renderHeight = render.size.get().height === 0 ? render.size.get().width : render.size.get().height;
-      image = this.scene.add.rectangle(
-        transform.position.get().x,
-        transform.position.get().y,
-        body ? body.size.get().width : render.size.get().width,
-        body ? body.size.get().height : renderHeight,
-        render.asset.get() as number,
-      );
-    } else {
-      image = this.scene.add.image(
-        transform.position.get().x,
-        transform.position.get().y,
-        render.asset.get() as string,
-      );
-      const scaleX = render.size.get().width / image.width;
-      const scaleY = render.size.get().height === 0 ? scaleX : render.size.get().height / image.height;
-      image.setScale(scaleX, scaleY);
-    }
-
-    if (render.blendMode.get()) {
-      image.setBlendMode(render.blendMode.get() as Phaser.BlendModes);
-    }
+    const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+    const renderable: Renderable = this.scene.add.image(
+      transform.position.value.x,
+      transform.position.value.y,
+      render.asset.value as string,
+    );
 
     // Alles was man rendert, kann man auch verschieben. Macht es trotzdem
     // vielleicht Sinn eine eigene "DraggableComponent" zu erzeugen und
     // nur anhand dessen ein Objekt draggable zu machen oder nicht?
-    image.setInteractive({ draggable: true, useHandCursor: true });
-    image.on('drag', (gameObject: unknown, x: number, y: number) => {
-      transform.position.set({ x, y });
+    this.makeInteractable(renderable, transform, entity);
+
+    this.renderables.set(entity.id, renderable);
+  }
+
+  private cleanUp(entity: Entity) {
+    const renderable = this.renderables.get(entity.id);
+
+    if (renderable) {
+      renderable.destroy();
+      this.renderables.delete(entity.id);
+    }
+  }
+
+  private makeInteractable(renderable: Renderable, transform: TransformableComponent, entity: Entity) {
+    renderable.setInteractive({ draggable: true, useHandCursor: true });
+    renderable.on('drag', (gameObject: unknown, x: number, y: number) => {
+      transform.position.value = { x, y };
     });
 
-    image.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+    renderable.on('pointerup', (pointer: Phaser.Input.Pointer) => {
       const dragThreshold = 1;
-      if (pointer.getDistance() > dragThreshold) {
-        return;
+      if (pointer.getDistance() <= dragThreshold) {
+        selectedEntityStore.select(entity);
       }
-      selectedEntityStore.select(entity);
     });
-
-    this.renderObjects[entity.id] = image;
   }
 
-  protected onEntityDestroyed(entity: Entity): void {
-    const render = this.renderObjects[entity.id];
+  private setHighlight(entity: Entity) {
+    const renderable = this.renderables.get(entity.id)!;
 
-    render.destroy();
-    delete this.renderObjects[entity.id];
-  }
-
-  // falls die neu hinzugefügte Komponente  nicht die Render Komponente ist
-  // wird in die Method onEntity Created aufgerufen um ein neues Entity zu erstellen
-  protected onEntityComponentAdded(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.RENDER) return;
-
-    this.onEntityCreated(entity);
-  }
-
-  // falls die zu Entfernende nicht die Render Komponente ist
-  // wird in die Method onEntityDestroyed aufgerufen um das Entity zu zerstören
-  protected onEntityComponentRemoved(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.RENDER) return;
-
-    this.onEntityDestroyed(entity);
+    (renderable as Phaser.GameObjects.Image).setTint(0xffffff);
+    const originalDepth = renderable.getData('originalDepth');
+    if (originalDepth) {
+      renderable.setDepth(originalDepth);
+    }
+    if (this.selected === entity.id) {
+      (renderable as Phaser.GameObjects.Image).setTint(0xddddff);
+      renderable.setData('originalDepth', renderable.depth);
+      renderable.setDepth(999);
+    }
   }
 }

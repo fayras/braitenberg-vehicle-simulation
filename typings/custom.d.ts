@@ -98,6 +98,10 @@ interface ConnectionNetworkData {
   weights: number[][];
 }
 
+interface IDisposable {
+  (): void;
+}
+
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };

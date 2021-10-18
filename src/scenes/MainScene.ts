@@ -10,12 +10,12 @@ import ConnectionComponent from '../components/ConnectionComponent';
 
 import Entity from '../Entity';
 
-import EventBus from '../EventBus';
 import System from '../systems/System';
 import PhysicsSystem from '../systems/PhysicsSystem';
-import RenderSystem from '../systems/RenderSystem';
 import EngineSystem from '../systems/EngineSystem';
 import SensorSystem from '../systems/SensorSystem';
+import { RenderSystem } from '../systems/RenderSystem';
+import { PhysicsBodySystem } from '../systems/PhysicsBodySystem';
 
 import ConnectionSystem from '../systems/ConnectionSystem';
 import SourceSystem from '../systems/SourceSystem';
@@ -73,7 +73,7 @@ export default class MainScene extends Phaser.Scene {
     const transform = new TransformableComponent({
       position: { x: 100, y: 500 },
     });
-    transform.angle.set(-Math.PI / 2);
+    transform.angle.value = -Math.PI / 2;
     entity.addComponent(transform);
     entity.addComponent(
       new SolidBodyComponent({
@@ -160,12 +160,13 @@ export default class MainScene extends Phaser.Scene {
 
   private createSystems(): void {
     this.systems = [
-      new PhysicsSystem(this),
-      new SourceSystem(this),
-      new EngineSystem(this),
-      new SensorSystem(this),
+      // new PhysicsSystem(this),
+      // new SourceSystem(this),
+      // new EngineSystem(this),
+      // new SensorSystem(this),
       // new ConnectionSystem(this),
       // new ReactionSystem(this),
+      // new RenderSystem(this),
       new RenderSystem(this),
     ];
   }
