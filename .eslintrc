@@ -11,8 +11,9 @@
       "version": "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
     }
   },
-  "plugins": ["plugin:react/recommended", "@typescript-eslint"],
+  "plugins": ["@typescript-eslint"],
   "extends": [
+    "eslint:recommended",
     "airbnb-typescript/base",
     "prettier",
     "plugin:@typescript-eslint/recommended",
@@ -28,6 +29,8 @@
     "no-param-reassign": ["error", { "props": false }],
     "class-methods-use-this": ["error", { "exceptMethods": ["update", "onEntityCreated", "onEntityDestroyed"] }],
     "no-prototype-builtins": "off",
+    "import/prefer-default-export": "off",
+    "import/no-default-export": "error",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
@@ -45,7 +48,7 @@
         "ts": "never",
         "tsx": "never"
       }
-    ],
+    ]
   },
   "overrides": [
     {
