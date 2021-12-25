@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { pickBy } from 'lodash-es';
 import System from './System';
-import Entity, { EntityID } from '../Entity';
+import { EntityID, Entity } from '../Entity';
 import { ComponentType, BodyShape } from '../enums';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import TransformableComponent from '../components/TransformableComponent';
@@ -16,8 +16,8 @@ export class PhysicsBodySystem extends System {
 
   public override internalUpdate(entities: Set<Entity>, delta: number): void {}
 
-  protected override enter(entity: Entity) {
-    const updateTransform = () => {
+  protected override enter(entity: Entity): void {
+    const updateTransform = (): IDisposable => {
       const transform = entity.getComponent<TransformableComponent>(ComponentType.TRANSFORMABLE)!;
       const solidBody = entity.getComponent<SolidBodyComponent>(ComponentType.SOLID_BODY)!;
 
@@ -48,7 +48,7 @@ export class PhysicsBodySystem extends System {
     this.disposers.set(entity.id, [updateTransform()]);
   }
 
-  protected override exit(entity: Entity) {
+  protected override exit(entity: Entity): void {
     this.disposers.get(entity.id)?.forEach((disposer) => disposer());
   }
 }

@@ -6,7 +6,7 @@ import Component, { ComponentId } from './components/Component';
 
 export type EntityID = string;
 
-export default class Entity {
+export class Entity {
   public id: EntityID;
 
   // private components: Component[] = [];
@@ -48,7 +48,7 @@ export default class Entity {
       this.components.set(component.type, []);
     }
 
-    let current = this.components.get(component.type)!;
+    const current = this.components.get(component.type);
     // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
     if (current && current.length >= component.getMaxAmount()) {
       // TODO: Alert auslösen
@@ -56,7 +56,7 @@ export default class Entity {
       return undefined;
     }
 
-    current.push(component);
+    current?.push(component);
     return component.id;
   }
 
