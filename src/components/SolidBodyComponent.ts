@@ -22,6 +22,8 @@ export default class SolidBodyComponent extends Component {
 
   public isStatic: RenderableAttribute<boolean, typeof CheckboxInput>;
 
+  public physicsBody: Phaser.Physics.Matter.Matter.Body | undefined;
+
   protected maxAmount = 1;
 
   public constructor(data: SolidBodyComponentData) {
@@ -44,5 +46,7 @@ export default class SolidBodyComponent extends Component {
       options: BodyShape,
     });
     this.isStatic = new RenderableAttribute(data.isStatic || false, CheckboxInput, { label: 'Statisch' });
+
+    this.physicsBody = undefined;
   }
 }

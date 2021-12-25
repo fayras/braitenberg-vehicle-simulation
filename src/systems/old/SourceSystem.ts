@@ -9,22 +9,22 @@ import SourceComponent from '../components/SourceComponent';
 import { gaussian, flatRect } from '../utils/reactions';
 import SolidBodyComponent from '../components/SolidBodyComponent';
 import EventBus from '../EventBus';
-import Component from '../components/Component';
+import Component, { ComponentId } from '../components/Component';
 
 export default class SourceSystem extends System {
   public expectedComponents: ComponentType[] = [ComponentType.SOURCE, ComponentType.TRANSFORMABLE];
 
   private textures: {
-    [componentId: number]: Phaser.GameObjects.Image;
+    [componentId: ComponentId]: Phaser.GameObjects.Image;
   } = {};
 
   private handlers: {
-    [componentId: number]: (() => void)[];
+    [componentId: ComponentId]: (() => void)[];
   } = {};
 
   public update(): void {}
 
-  private addHandler(componentId: number, handler: () => void): () => void {
+  private addHandler(componentId: ComponentId, handler: () => void): () => void {
     if (!this.handlers[componentId]) {
       this.handlers[componentId] = [];
     }
@@ -36,7 +36,7 @@ export default class SourceSystem extends System {
 
   protected onEntityCreated(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
-    sources.forEach(source => {
+    sources.forEach((source) => {
       this.addSourceObject(entity, source);
       this.addHandlers(entity, source);
     });
@@ -69,13 +69,13 @@ export default class SourceSystem extends System {
 
   protected onEntityDestroyed(entity: Entity): void {
     const sources = entity.getMultipleComponents(ComponentType.SOURCE) as SourceComponent[];
-    sources.forEach(source => {
+    sources.forEach((source) => {
       this.removeSourceObject(source, source.substance.get());
     });
   }
 
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.SOURCE) return;
+    if (component.type !== ComponentType.SOURCE) return;
 
     const source = component as SourceComponent;
     this.addSourceObject(entity, source);
@@ -83,13 +83,13 @@ export default class SourceSystem extends System {
   }
 
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.SOURCE) return;
+    if (component.type !== ComponentType.SOURCE) return;
 
     const source = component as SourceComponent;
     this.removeSourceObject(source, source.substance.get());
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const handlers = this.handlers[component.id] || [];
-    handlers.forEach(handler => {
+    handlers.forEach((handler) => {
       transform.position.removeHandler(handler);
       transform.angle.removeHandler(handler);
     });

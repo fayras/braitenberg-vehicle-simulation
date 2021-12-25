@@ -1,4 +1,5 @@
-import Entity from '../Entity';
+import Component from '../components/Component';
+import { Entity } from '../Entity';
 import EntityManager, { EntityQuery } from '../EntityManager';
 import { ComponentType } from '../enums';
 
@@ -15,7 +16,9 @@ export default abstract class System {
     this.canBePaused = canBePaused;
 
     this.query = EntityManager.createQuery(this.expectedComponents);
-    // query.onEntityAdded((entity) => this.createPhysicsObject(entity))
+    this.query.onEnter((entity) => this.enter(entity));
+    this.query.onExit((entity) => this.exit(entity));
+    this.query.onChange((entity, added, removed) => this.change(entity, added, removed));
   }
 
   public pause(flag: boolean): void {
@@ -29,4 +32,14 @@ export default abstract class System {
   }
 
   protected abstract internalUpdate(entities: ReadonlySet<Entity>, delta: number): void;
+
+  protected enter(entity: Entity): void {
+    console.log('System enter');
+  }
+  protected exit(entity: Entity): void {
+    console.log('System exit');
+  }
+  protected change(entity: Entity, added?: Component, removed?: Component): void {
+    console.log('System change');
+  }
 }

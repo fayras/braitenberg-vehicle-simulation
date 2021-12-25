@@ -15,8 +15,8 @@ type Props = {
 export default observer((props: Props): JSX.Element => {
   const [selectedSensor, selectSensor] = useState<ComponentId | null>(null);
   const entity = selectedEntityStore.selectedEntity;
-  const sensors = entity?.getMultipleComponents(ComponentType.SENSOR);
-  const motors = entity?.getMultipleComponents(ComponentType.MOTOR);
+  const sensors = entity?.getComponents(ComponentType.SENSOR);
+  const motors = entity?.getComponents(ComponentType.MOTOR);
 
   if (!sensors || !motors) {
     return <div>Es können keine Verbindungen geschaffen werden.</div>;

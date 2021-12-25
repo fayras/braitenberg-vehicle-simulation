@@ -9,7 +9,8 @@ export type EntityID = string;
 export default class Entity {
   public id: EntityID;
 
-  private components: Component[] = [];
+  // private components: Component[] = [];
+  private components: Map<ComponentType, Component[]> = new Map();
 
   /**
    * Erzeugt eine neue Entität.
@@ -28,6 +29,7 @@ export default class Entity {
       // getAllComponents: computed,
       // hasComponents: computed,
     });
+    console.log('constrcutor', this.id, this.components);
   }
 
   /**
@@ -40,56 +42,64 @@ export default class Entity {
    *          hinzugefügt, dann wird `-1` zurückgegeben.
    */
   public addComponent(component: Component): ComponentId | undefined {
-    const currentAmount = this.getMultipleComponents(component.type).length;
+    console.log('addComponent', this.id, component.type, console.trace());
 
+    if (this.components.get(component.type) === undefined) {
+      this.components.set(component.type, []);
+    }
+
+    let current = this.components.get(component.type)!;
     // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
-    if (currentAmount >= component.getMaxAmount()) {
+    if (current && current.length >= component.getMaxAmount()) {
       // TODO: Alert auslösen
       // `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`
       return undefined;
     }
 
-    this.components.push(component);
+    current.push(component);
     return component.id;
   }
 
   // entfernt die übergebene Komponente falls vorhanden
   // gibt entfernte Komponentezurück
   public removeComponent(component: Component): Component | undefined {
-    const index = this.components.indexOf(component);
-    if (index >= 0) {
-      return this.components.splice(index, 1)[0];
+    const current = this.components.get(component.type);
+    const index = current?.indexOf(component);
+
+    if (current === undefined || index === undefined || index < 0) {
+      return undefined;
     }
 
-    return undefined;
+    return current.splice(index, 1)[0];
   }
 
   // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
   public getComponent<T extends Component>(type: ComponentType): T | undefined {
-    return this.components.find((c) => c.type === type) as T;
+    const current = this.components.get(type);
+    return current ? (current[0] as T) : undefined;
   }
 
   // gibt alle Komponente mit dem übergebenen Component Type zurück
-  public getMultipleComponents(type: ComponentType): Component[] {
-    return this.components.filter((c) => c.type === type);
+  public getComponents<T extends Component>(type: ComponentType): T[] {
+    return (this.components.get(type) as T[]) || [];
   }
 
   //
   public hasComponents(...components: ComponentType[]): boolean {
-    const available = this.components.map((c) => c.type);
-    return components.every((type) => available.includes(type));
+    // const available = this.components.map((c) => c.type);
+    return components.every((type) => this.components.has(type));
   }
 
   // gibt alle Komponente der Entität zurück
   public getAllComponents(): Component[] {
-    return this.components;
+    return ([] as Component[]).concat(...this.components.values());
   }
 
   // Serialisierungsfunktion für die Umwandlung in JSON
   public serialize(): SerializedEntity {
     return {
       id: this.id,
-      components: this.components.map((component) => component.serialize()),
+      components: this.getAllComponents().map((component) => component.serialize()),
     };
   }
 }

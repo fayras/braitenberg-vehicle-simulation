@@ -8,28 +8,26 @@ import SourceComponent from '../components/SourceComponent';
 import TransformableComponent from '../components/TransformableComponent';
 import ConnectionComponent from '../components/ConnectionComponent';
 
-import Entity from '../Entity';
+import { Entity } from '../Entity';
 
 import System from '../systems/System';
-import PhysicsSystem from '../systems/PhysicsSystem';
-import EngineSystem from '../systems/EngineSystem';
-import SensorSystem from '../systems/SensorSystem';
 import { RenderSystem } from '../systems/RenderSystem';
 import { PhysicsBodySystem } from '../systems/PhysicsBodySystem';
 
-import ConnectionSystem from '../systems/ConnectionSystem';
-import SourceSystem from '../systems/SourceSystem';
-import { SubstanceType, EventType, BodyShape, EmissionType } from '../enums';
-import ReactionSystem from '../systems/ReactionSystem';
+import { SubstanceType, BodyShape, EmissionType } from '../enums';
 import EntityManager from '../EntityManager';
 
 import { store as mainNavigationStore } from '../gui/_store/mainNavigation';
 import { reaction } from 'mobx';
+import { SolidBodySystem } from '../systems/SolidBodySystem';
+import { MovementSystem } from '../systems/MovementSystem';
 
 export default class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
   private running: boolean = false;
+
+  private fpsText?: Phaser.GameObjects.Text;
 
   public constructor() {
     super({ key: 'MainScene' });
@@ -37,6 +35,14 @@ export default class MainScene extends Phaser.Scene {
 
   public create(): void {
     this.createSystems();
+    // @ts-ignore
+    window.em = EntityManager;
+    // @ts-ignore
+    window.scene = this;
+
+    this.fpsText = this.add.text(10, 100, 'FPS: --', {
+      font: 'bold 26px Arial',
+    });
 
     // Anpassen der Szene an aktuelle Bildschirmgröße
     this.scale.on('resize', this.handleResize.bind(this));
@@ -168,11 +174,14 @@ export default class MainScene extends Phaser.Scene {
       // new ReactionSystem(this),
       // new RenderSystem(this),
       new RenderSystem(this),
+      new SolidBodySystem(this),
       new PhysicsBodySystem(this),
+      new MovementSystem(this),
     ];
   }
 
   public update(time: number, delta: number): void {
+    this.fpsText?.setText('FPS: ' + (1000 / delta).toFixed(3));
     this.systems.forEach((s) => s.update(delta));
   }
 

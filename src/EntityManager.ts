@@ -1,4 +1,4 @@
-import Entity, { EntityID } from './Entity';
+import { EntityID, Entity } from './Entity';
 
 import Component from './components/Component';
 import { EventType, ComponentType } from './enums';
@@ -10,13 +10,13 @@ import SensorComponent from './components/SensorComponent';
 
 import ConnectionComponent from './components/ConnectionComponent';
 import SourceComponent from './components/SourceComponent';
-import { IReactionDisposer } from 'mobx';
 
 export class EntityQuery {
   private mEntities: Set<Entity> = new Set();
   public types: readonly ComponentType[];
   private onAddedHandlers: Set<(entity: Entity) => any> = new Set();
   private onRemovedHandlers: Set<(entity: Entity) => any> = new Set();
+  private onUpdateHandlers: Set<(entity: Entity, added?: Component, removed?: Component) => any> = new Set();
 
   constructor(types: ComponentType[]) {
     this.types = types;
@@ -44,20 +44,27 @@ export class EntityQuery {
     this.onRemovedHandlers.forEach((handler) => handler(entity));
   }
 
+  public update(entity: Entity, added?: Component, removed?: Component) {
+    this.onUpdateHandlers.forEach((handler) => handler(entity, added, removed));
+  }
+
   public has(entity: Entity) {
     return this.mEntities.has(entity);
   }
 
-  public onEntityAdded(callback: (entity: Entity) => any): IDisposable {
+  public onEnter(callback: (entity: Entity) => any): IDisposable {
     this.onAddedHandlers.add(callback);
-
     return () => this.onAddedHandlers.delete(callback);
   }
 
-  public onEntityRemoved(callback: (entity: Entity) => any): IDisposable {
+  public onExit(callback: (entity: Entity) => any): IDisposable {
     this.onRemovedHandlers.add(callback);
-
     return () => this.onRemovedHandlers.delete(callback);
+  }
+
+  public onChange(callback: (entity: Entity, added?: Component, removed?: Component) => any): IDisposable {
+    this.onUpdateHandlers.add(callback);
+    return () => this.onUpdateHandlers.delete(callback);
   }
 }
 
@@ -78,6 +85,7 @@ class EntityManager {
 
     for (const entity of entities) {
       if (entity.hasComponents(...types)) {
+        console.log('A', entity.getAllComponents(), types);
         query.add(entity);
       }
     }
@@ -93,16 +101,6 @@ class EntityManager {
     return this.queries.get(key);
   }
 
-  private updateQueries(entity: Entity) {
-    for (const [key, query] of this.queries) {
-      if (this.entities[entity.id] && entity.hasComponents(...query.types)) {
-        query.add(entity);
-      } else if (query.has(entity)) {
-        query.remove(entity);
-      }
-    }
-  }
-
   /**
    * Falls eine Entität manuell angelegt werden musste, kann diese hiermit
    * der Entity-Pool hinzugefügt werden. Das löst auch die Nachricht
@@ -112,7 +110,12 @@ class EntityManager {
    */
   public addExistingEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
-    this.updateQueries(entity);
+    for (const [key, query] of this.queries) {
+      if (entity.hasComponents(...query.types)) {
+        console.log('B', entity.getAllComponents(), query.types);
+        query.add(entity);
+      }
+    }
   }
 
   /**
@@ -125,8 +128,8 @@ class EntityManager {
     components.forEach((c) => {
       entity.addComponent(c);
     });
-    this.entities[entity.id] = entity;
-    this.updateQueries(entity);
+
+    this.addExistingEntity(entity);
 
     return entity;
   }
@@ -138,9 +141,14 @@ class EntityManager {
    */
   public destroyEntity(id: EntityID): void {
     const entity = this.entities[id];
-    delete this.entities[id];
 
-    this.updateQueries(entity);
+    for (const [key, query] of this.queries) {
+      if (query.has(entity)) {
+        query.remove(entity);
+      }
+    }
+
+    delete this.entities[id];
   }
 
   /**
@@ -172,7 +180,14 @@ class EntityManager {
       return undefined;
     }
 
-    this.updateQueries(entity);
+    for (const [key, query] of this.queries) {
+      if (query.has(entity)) {
+        query.update(entity, component);
+      } else if (entity.hasComponents(...query.types)) {
+        console.log('C', entity.getAllComponents(), query.types);
+        query.add(entity);
+      }
+    }
 
     return entity;
   }
@@ -193,7 +208,16 @@ class EntityManager {
     }
 
     entity.removeComponent(component);
-    this.updateQueries(entity);
+
+    for (const [key, query] of this.queries) {
+      if (query.has(entity)) {
+        if (entity.hasComponents(...query.types)) {
+          query.update(entity, undefined, component);
+        } else {
+          query.remove(entity);
+        }
+      }
+    }
   }
 
   /**

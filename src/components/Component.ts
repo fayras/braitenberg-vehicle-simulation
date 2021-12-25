@@ -13,7 +13,7 @@ export default abstract class Component {
   // Hier wird einmal festgelegt, was für Typen die Klasse enthalten kann,
   // das ist nötig, damit später über diese mit `Object.keys(this)` drüber
   // iteriert werden kann.
-  [key: string]: number | boolean | string | RenderableAttribute<any, any> | Function;
+  [key: string]: number | boolean | string | RenderableAttribute<any, any> | Function | unknown;
 
   public abstract type: ComponentType;
 

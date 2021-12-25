@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import System from './System';
-import Entity, { EntityID } from '../Entity';
+import { EntityID, Entity } from '../Entity';
 import { ComponentType } from '../enums';
 import RenderComponent from '../components/RenderComponent';
 import TransformableComponent from '../components/TransformableComponent';
@@ -11,6 +11,7 @@ type Renderable = Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
 
 export class RenderSystem extends System {
   private renderables: Map<EntityID, Renderable> = new Map();
+
   private renderableDisposers: Map<EntityID, IReactionDisposer[]> = new Map();
 
   private globalDisposers: IDisposable[] = [];
@@ -27,67 +28,63 @@ export class RenderSystem extends System {
       },
     );
 
-    const disposableOnAdded = this.query.onEntityAdded((entity) => {
-      this.createRenderable(entity);
-
-      const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
-      const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
-
-      const updateTexture = () => {
-        const renderable = this.renderables.get(entity.id)!;
-        (renderable as Phaser.GameObjects.Image).setTexture(render.asset.value as string);
-      };
-
-      const updateScale = () => {
-        const renderable = this.renderables.get(entity.id)!;
-        const scaleX = render.size.value.width / renderable.width;
-        const scaleY = render.size.value.height === 0 ? scaleX : render.size.value.height / renderable.height;
-        renderable.setScale(scaleX, scaleY);
-      };
-
-      const updatePosition = () => {
-        const renderable = this.renderables.get(entity.id)!;
-        renderable.setPosition(transform.position.value.x, transform.position.value.y);
-      };
-
-      const updateRotation = () => {
-        const renderable = this.renderables.get(entity.id)!;
-        renderable.setRotation(transform.angle.value);
-      };
-
-      const updateBlendMode = () => {
-        const renderable = this.renderables.get(entity.id)!;
-        if (render.blendMode.value) {
-          renderable.setBlendMode(render.blendMode.value);
-        }
-      };
-
-      this.renderableDisposers.set(entity.id, [
-        autorun(updateTexture),
-        autorun(updateScale),
-        autorun(updatePosition),
-        autorun(updateRotation),
-        autorun(updateBlendMode),
-      ]);
-    });
-
-    const disposableOnRemoved = this.query.onEntityRemoved((entity) => {
-      this.cleanUp(entity);
-      this.renderableDisposers.get(entity.id)?.forEach((disposer) => disposer());
-    });
-
-    this.globalDisposers.push(disposableOnSelected, disposableOnAdded, disposableOnRemoved);
+    this.globalDisposers.push(disposableOnSelected);
   }
 
   public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
     entities.forEach((entity) => {
-      this.updateEntity(entity);
+      this.setHighlight(entity);
     });
   }
 
-  private updateEntity(entity: Entity) {
-    // this.setApperance(entity, transform, render);
-    this.setHighlight(entity);
+  protected override enter(entity: Entity) {
+    console.log(entity.serialize());
+    this.createRenderable(entity);
+
+    const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+    const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+
+    const updateTexture = (): void => {
+      const renderable = this.renderables.get(entity.id)!;
+      (renderable as Phaser.GameObjects.Image).setTexture(render.asset.value as string);
+    };
+
+    const updateScale = () => {
+      const renderable = this.renderables.get(entity.id)!;
+      const scaleX = render.size.value.width / renderable.width;
+      const scaleY = render.size.value.height === 0 ? scaleX : render.size.value.height / renderable.height;
+      renderable.setScale(scaleX, scaleY);
+    };
+
+    const updatePosition = () => {
+      const renderable = this.renderables.get(entity.id)!;
+      renderable.setPosition(transform.position.value.x, transform.position.value.y);
+    };
+
+    const updateRotation = () => {
+      const renderable = this.renderables.get(entity.id)!;
+      renderable.setRotation(transform.angle.value);
+    };
+
+    const updateBlendMode = () => {
+      const renderable = this.renderables.get(entity.id)!;
+      if (render.blendMode.value) {
+        renderable.setBlendMode(render.blendMode.value);
+      }
+    };
+
+    this.renderableDisposers.set(entity.id, [
+      autorun(updateTexture),
+      autorun(updateScale),
+      autorun(updatePosition),
+      autorun(updateRotation),
+      autorun(updateBlendMode),
+    ]);
+  }
+
+  protected override exit(entity: Entity) {
+    this.cleanUp(entity);
+    this.renderableDisposers.get(entity.id)?.forEach((disposer) => disposer());
   }
 
   private createRenderable(entity: Entity) {
@@ -97,6 +94,10 @@ export class RenderSystem extends System {
 
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const render = entity.getComponent(ComponentType.RENDER) as RenderComponent;
+
+    console.log(entity, transform, render);
+    console.log(this.query.entities);
+
     const renderable: Renderable = this.scene.add.image(
       transform.position.value.x,
       transform.position.value.y,

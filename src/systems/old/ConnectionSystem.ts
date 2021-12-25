@@ -43,7 +43,7 @@ export default class ConnectionSystem extends System {
 
   // eslint-disable-next-line
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.MOTOR && component.name !== ComponentType.SENSOR) return;
+    if (component.type !== ComponentType.MOTOR && component.type !== ComponentType.SENSOR) return;
 
     if (!entity.hasComponents(ComponentType.CONNECTION)) {
       return;
@@ -58,7 +58,7 @@ export default class ConnectionSystem extends System {
     let { inputIds, outputIds } = connection.network.get();
     let weights;
 
-    if (component.name === ComponentType.MOTOR) {
+    if (component.type === ComponentType.MOTOR) {
       // `size[1]` ist die Größe des "inneren" Arrays, das heißt ist size == 0, dann wissen
       // wir, dass keine Motoren davor verhanden waren, also müssen wir auch die Werte
       // für die Inputs neu anlegen und somit die gesamte Gewichtsmatrix.
@@ -69,7 +69,7 @@ export default class ConnectionSystem extends System {
       }
     }
 
-    if (component.name === ComponentType.SENSOR) {
+    if (component.type === ComponentType.SENSOR) {
       if (size[1] > 0) {
         weights = resize(m, [size[0] + 1, size[1]]).toArray();
       } else {
@@ -89,7 +89,7 @@ export default class ConnectionSystem extends System {
 
   // eslint-disable-next-line
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.MOTOR && component.name !== ComponentType.SENSOR) return;
+    if (component.type !== ComponentType.MOTOR && component.type !== ComponentType.SENSOR) return;
 
     if (!entity.hasComponents(ComponentType.CONNECTION)) {
       return;
@@ -100,7 +100,7 @@ export default class ConnectionSystem extends System {
     const size = m.size();
     let { inputIds, outputIds, weights } = connection.network.get();
 
-    if (component.name === ComponentType.MOTOR) {
+    if (component.type === ComponentType.MOTOR) {
       const index = outputIds.findIndex((id) => id === component.id);
       const rows = range(0, size[0]).toArray();
       const cols = range(0, size[1]).toArray();
@@ -117,7 +117,7 @@ export default class ConnectionSystem extends System {
       outputIds = motors.map((motor) => motor.id);
     }
 
-    if (component.name === ComponentType.SENSOR) {
+    if (component.type === ComponentType.SENSOR) {
       const index = inputIds.findIndex((id) => id === component.id);
       const rows = range(0, size[0]).toArray();
       const cols = range(0, size[1]).toArray();

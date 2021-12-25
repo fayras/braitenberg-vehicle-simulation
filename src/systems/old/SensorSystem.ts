@@ -21,7 +21,7 @@ export default class SensorSystem extends System {
   } = {};
 
   public update(): void {
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
 
@@ -30,7 +30,7 @@ export default class SensorSystem extends System {
         return Math.abs(curr - currentAngle) < Math.abs(prev - currentAngle) ? curr : prev;
       });
 
-      sensors.forEach(sensor => {
+      sensors.forEach((sensor) => {
         if (!this.textures[sensor.id]) {
           return;
         }
@@ -56,20 +56,20 @@ export default class SensorSystem extends System {
 
   protected onEntityCreated(entity: Entity): void {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-    sensors.forEach(sensor => {
+    sensors.forEach((sensor) => {
       this.addSensorObject(entity, sensor);
 
-      sensor.angle.onChange(value => {
+      sensor.angle.onChange((value) => {
         this.removeSensorObject(sensor);
         this.addSensorObject(entity, sensor);
       });
 
-      sensor.range.onChange(value => {
+      sensor.range.onChange((value) => {
         this.removeSensorObject(sensor);
         this.addSensorObject(entity, sensor);
       });
 
-      sensor.reactsTo.onChange(value => {
+      sensor.reactsTo.onChange((value) => {
         this.removeSensorObject(sensor);
         this.addSensorObject(entity, sensor);
       });
@@ -78,35 +78,35 @@ export default class SensorSystem extends System {
 
   protected onEntityDestroyed(entity: Entity): void {
     const sensors = entity.getMultipleComponents(ComponentType.SENSOR) as SensorComponent[];
-    sensors.forEach(sensor => {
+    sensors.forEach((sensor) => {
       this.removeSensorObject(sensor);
     });
   }
 
   protected onEntityComponentAdded(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.SENSOR) return;
+    if (component.type !== ComponentType.SENSOR) return;
 
     const sensor = component as SensorComponent;
     this.addSensorObject(entity, sensor);
 
-    sensor.angle.onChange(value => {
+    sensor.angle.onChange((value) => {
       this.removeSensorObject(sensor);
       this.addSensorObject(entity, sensor);
     });
 
-    sensor.range.onChange(value => {
+    sensor.range.onChange((value) => {
       this.removeSensorObject(sensor);
       this.addSensorObject(entity, sensor);
     });
 
-    sensor.reactsTo.onChange(value => {
+    sensor.reactsTo.onChange((value) => {
       this.removeSensorObject(sensor);
       this.addSensorObject(entity, sensor);
     });
   }
 
   protected onEntityComponentRemoved(entity: Entity, component: Component): void {
-    if (component.name !== ComponentType.SENSOR) return;
+    if (component.type !== ComponentType.SENSOR) return;
 
     this.removeSensorObject(component as SensorComponent);
   }
@@ -136,7 +136,7 @@ export default class SensorSystem extends System {
 
     const textures: { [angle: string]: Phaser.GameObjects.Image } = {};
     const values: { [angle: string]: Float32Array } = {};
-    angles.forEach(angle => {
+    angles.forEach((angle) => {
       const texture = this.scene.textures.createCanvas(`sensor_texture_${sensor.id}_${angle}`, width, height);
       const context = texture.getContext();
       const angleValues = new Float32Array(width * height);
@@ -184,7 +184,7 @@ export default class SensorSystem extends System {
   private removeSensorObject(sensor: SensorComponent): void {
     const angleTextures = this.textures[sensor.id];
 
-    Object.keys(angleTextures).forEach(key => {
+    Object.keys(angleTextures).forEach((key) => {
       angleTextures[key].destroy();
       this.scene.textures.remove(`sensor_texture_${sensor.id}_${key}`);
     });
