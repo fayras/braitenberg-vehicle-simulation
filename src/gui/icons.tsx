@@ -70,6 +70,18 @@ export const RightIcon = (props: IconProps) => (
   </Icon>
 );
 
+export const DoubleRightIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+  </Icon>
+);
+
+export const DoubleLeftIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+  </Icon>
+);
+
 export const PlusIcon = (props: IconProps) => (
   <Icon {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

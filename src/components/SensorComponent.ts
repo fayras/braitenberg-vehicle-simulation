@@ -1,19 +1,21 @@
+import Phaser from 'phaser';
 import { ComponentType, SubstanceType } from '../enums';
-import Component from './Component';
-import RenderableAttribute from './RenderableAttribute';
-import NumberInput from '../gui/Inputs/NumberInput';
-import SelectInput from '../gui/Inputs/SelectInput';
-import PositionInput from '../gui/Inputs/PositionInput';
+import { Component } from './Component';
+import { RenderableAttribute } from './attributes/RenderableAttribute';
+import { VolatileAttribute } from './attributes/VolatileAttribute';
+import { NumberInput } from '../gui/Inputs/NumberInput';
+import { SelectInput } from '../gui/Inputs/SelectInput';
+
+export type Renderable = Phaser.GameObjects.Image;
 
 interface SensorComponentData {
-  position: Vector2D;
   range: number;
   angle: number;
   reactsTo?: SubstanceType;
 }
 
-export default class SensorComponent extends Component {
-  public name: string = 'Sensor';
+export class SensorComponent extends Component {
+  public label = 'Sensor';
 
   public type: ComponentType = ComponentType.SENSOR;
 
@@ -21,16 +23,15 @@ export default class SensorComponent extends Component {
 
   public angle: RenderableAttribute<number, typeof NumberInput>;
 
-  public position: RenderableAttribute<Vector2D, typeof PositionInput>;
-
   public activation: RenderableAttribute<number, typeof NumberInput>;
 
   public reactsTo: RenderableAttribute<SubstanceType, typeof SelectInput>;
 
+  public renderableObject: VolatileAttribute<Renderable>;
+
   // Konstruktor der Klasse mit Erstellung von Attributen für alle Parameter
   public constructor(data: SensorComponentData) {
     super();
-    this.position = new RenderableAttribute(data.position, PositionInput, { label: 'Position' });
     this.range = new RenderableAttribute(data.range, NumberInput, { label: 'Reichweite' });
     this.angle = new RenderableAttribute(data.angle, NumberInput, { label: 'Öffnungswinkel' });
     this.reactsTo = new RenderableAttribute(data.reactsTo || SubstanceType.LIGHT, SelectInput, {
@@ -40,5 +41,7 @@ export default class SensorComponent extends Component {
     this.activation = new RenderableAttribute(0 as number, NumberInput, {
       label: 'Grad der Aktivierung' /* toFixed: 4 */,
     });
+
+    this.renderableObject = new VolatileAttribute();
   }
 }

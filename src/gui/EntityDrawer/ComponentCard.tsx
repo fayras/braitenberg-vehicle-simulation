@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Heading, IconButton, Tooltip, Collapse, useDisclosure, Spacer } from '@chakra-ui/react';
-import Component from '../../components/Component';
+import { Component } from '../../components/Component';
 import { DownIcon, RightIcon, TrashIcon } from '../icons';
 
 interface ComponentCardProps {
@@ -8,7 +8,7 @@ interface ComponentCardProps {
   onDelete?: () => void;
 }
 
-export default function ComponentCard({ component, onDelete }: ComponentCardProps) {
+export function ComponentCard({ component, onDelete }: ComponentCardProps): JSX.Element {
   const { isOpen, onToggle } = useDisclosure();
   const [isHover, setHover] = useState(false);
   const IndicatorIcon = isOpen ? DownIcon : RightIcon;
@@ -31,7 +31,7 @@ export default function ComponentCard({ component, onDelete }: ComponentCardProp
     >
       <Box d="flex" alignItems="center" cursor="pointer" onClick={onToggle}>
         <IndicatorIcon w={4} h={4} mr="1" />
-        <Heading size="sm">{component.name}</Heading>
+        <Heading size="sm">{component.label}</Heading>
         <Spacer />
         {isHover && (
           <Tooltip placement="top-end" label={'Komponente löschen'}>

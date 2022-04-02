@@ -1,21 +1,21 @@
 import { makeAutoObservable } from 'mobx';
 
 class PrefabDrawerStore {
-  isOpen: boolean = false;
+  isOpen = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  open() {
+  open(): void {
     this.isOpen = true;
   }
 
-  close() {
+  close(): void {
     this.isOpen = false;
   }
 
-  toggle() {
+  toggle(): void {
     this.isOpen = !this.isOpen;
   }
 }

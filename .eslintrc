@@ -27,7 +27,9 @@
   "rules": {
     "no-continue": "off",
     "no-param-reassign": ["error", { "props": false }],
-    "class-methods-use-this": ["error", { "exceptMethods": ["update", "onEntityCreated", "onEntityDestroyed"] }],
+    "class-methods-use-this": ["error", { "exceptMethods": [
+      "internalUpdate", "enter", "exit", "getBody"
+    ]}],
     "no-prototype-builtins": "off",
     "import/prefer-default-export": "off",
     "import/no-default-export": "error",
@@ -39,6 +41,7 @@
         "allowTypedFunctionExpressions": true
       }
     ],
+    "no-bitwise": "off",
     "import/extensions": [
       "error",
       "never",

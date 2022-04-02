@@ -41,7 +41,7 @@ export function flatCircle(center: VectorLike, radius: number): KernelFunction {
   const r2 = radius ** 2;
 
   return (x: number, y: number) => {
-    return (x - x0) ** 2 + (y - y0) ** 2 <= r2 ? 3 : 0;
+    return (x - x0) ** 2 + (y - y0) ** 2 <= r2 ? 1 : 0;
   };
 }
 
@@ -54,7 +54,7 @@ export function flatCircle(center: VectorLike, radius: number): KernelFunction {
  * @param height
  * @param angle
  */
-export function flatRect(topLeft: VectorLike, width: number, height: number, angle: number = 0): KernelFunction {
+export function flatRect(topLeft: VectorLike, width: number, height: number, angle = 0): KernelFunction {
   const x0 = topLeft.x || 0;
   const y0 = topLeft.y || 0;
 
@@ -78,7 +78,7 @@ export function flatRect(topLeft: VectorLike, width: number, height: number, ang
     const rotatedX = newPoint.x * c - newPoint.y * s;
     const rotatedY = newPoint.x * s + newPoint.y * c;
     if (rect.contains(rotatedX + origin.x, rotatedY + origin.y)) {
-      return 3;
+      return 1;
     }
 
     return 0;

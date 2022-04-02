@@ -1,14 +1,14 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Flex, Spacer, FormLabel, Checkbox } from '@chakra-ui/react';
+import { Box, Flex, Spacer, FormLabel, Input } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
-  attribute: RenderableAttribute<boolean, any>;
+  attribute: RenderableAttribute<string, any>;
   label: string;
 };
 
-export const CheckboxInput = observer((props: Props): JSX.Element => {
+export const StringInput = observer((props: Props): JSX.Element => {
   return (
     <Box mb="2.5">
       <Flex alignItems={'center'}>
@@ -16,10 +16,12 @@ export const CheckboxInput = observer((props: Props): JSX.Element => {
           {props.label}
         </FormLabel>
         <Spacer mx="1" />
-        <Checkbox
-          isChecked={props.attribute.value}
-          onChange={(val) => {
-            props.attribute.value = val.target.checked;
+        <Input
+          size={'sm'}
+          variant={'filled'}
+          value={props.attribute.value}
+          onChange={(event) => {
+            props.attribute.value = event.target.value;
           }}
         />
       </Flex>

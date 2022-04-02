@@ -1,31 +1,37 @@
 import Phaser from 'phaser';
 
-import SolidBodyComponent from '../components/SolidBodyComponent';
-import RenderComponent from '../components/RenderComponent';
-import MotorComponent from '../components/MotorComponent';
-import SensorComponent from '../components/SensorComponent';
-import SourceComponent from '../components/SourceComponent';
-import TransformableComponent from '../components/TransformableComponent';
-import ConnectionComponent from '../components/ConnectionComponent';
+import { reaction } from 'mobx';
+import { RectangleBodyComponent } from '../components/RectangleBodyComponent';
+import { SpriteComponent } from '../components/SpriteComponent';
+import { MotorComponent } from '../components/MotorComponent';
+import { SensorComponent } from '../components/SensorComponent';
+import { SourceComponent } from '../components/SourceComponent';
+import { TransformableComponent } from '../components/TransformableComponent';
+import { ConnectionComponent } from '../components/ConnectionComponent';
 
 import { Entity } from '../Entity';
 
-import System from '../systems/System';
-import { RenderSystem } from '../systems/RenderSystem';
-import { PhysicsBodySystem } from '../systems/PhysicsBodySystem';
+import { System } from '../systems/System';
+import { RenderSpriteSystem } from '../systems/RenderSpriteSystem';
+import { PhysicsSystem } from '../systems/PhysicsSystem';
 
-import { SubstanceType, BodyShape, EmissionType } from '../enums';
+import { SubstanceType, EmissionType } from '../enums';
 import EntityManager from '../EntityManager';
 
 import { store as mainNavigationStore } from '../gui/_store/mainNavigation';
-import { reaction } from 'mobx';
 import { SolidBodySystem } from '../systems/SolidBodySystem';
 import { MovementSystem } from '../systems/MovementSystem';
+import { CreateRectangleBodySystem } from '../systems/CreateRectangleBodySystem';
+import { CreateCircleBodySystem } from '../systems/CreateCircleBodySystem';
+import { NameComponent } from '../components/NameComponent';
+import { RenderSensorSystem } from '../systems/RenderSensorSystem';
+import { RenderSourceSystem } from '../systems/RenderSourceSystem';
+import { CollisionComponent } from '../components/CollisionComponent';
 
-export default class MainScene extends Phaser.Scene {
+export class MainScene extends Phaser.Scene {
   private systems: System[] = [];
 
-  private running: boolean = false;
+  private running = false;
 
   private fpsText?: Phaser.GameObjects.Text;
 
@@ -59,9 +65,8 @@ export default class MainScene extends Phaser.Scene {
 
     EntityManager.createEntity(
       new TransformableComponent({ position: { x: 600, y: 450 } }),
-      new SolidBodyComponent({
+      new RectangleBodyComponent({
         size: { width: 20, height: 400 },
-        shape: BodyShape.RECTANGLE,
         isStatic: true,
       }),
       new SourceComponent({
@@ -69,9 +74,10 @@ export default class MainScene extends Phaser.Scene {
         substance: SubstanceType.BARRIER,
         emissionType: EmissionType.FLAT,
       }),
-      new RenderComponent({
-        asset: 0xcccccc,
-        size: 110,
+      new CollisionComponent('source'),
+      new SpriteComponent({
+        asset: 'vehicle',
+        size: { width: 110, height: 110 },
       }),
     );
 
@@ -82,75 +88,143 @@ export default class MainScene extends Phaser.Scene {
     transform.angle.value = -Math.PI / 2;
     entity.addComponent(transform);
     entity.addComponent(
-      new SolidBodyComponent({
+      new RectangleBodyComponent({
         size: { width: 100, height: 150 },
       }),
     );
     entity.addComponent(
-      new RenderComponent({
+      new SpriteComponent({
         asset: 'vehicle',
-        size: 100,
+        size: { width: 100, height: 100 },
       }),
     );
-    const motor1 = entity.addComponent(
-      new MotorComponent({
-        position: { x: -50, y: 0 },
-        maxSpeed: 30,
-        defaultSpeed: 1,
-      }),
-    );
-    const motor2 = entity.addComponent(
-      new MotorComponent({
+
+    const motorEntity1 = new Entity();
+    motorEntity1.setParent(entity);
+    motorEntity1.addComponent(new NameComponent('Motor A'));
+    motorEntity1.addComponent(
+      new TransformableComponent({
         position: { x: 50, y: 0 },
+      }),
+    );
+    motorEntity1.addComponent(
+      new MotorComponent({
         maxSpeed: 30,
         defaultSpeed: 1,
       }),
     );
-    const sensor1 = entity.addComponent(
-      new SensorComponent({
+
+    const motorEntity2 = new Entity();
+    motorEntity2.setParent(entity);
+    motorEntity2.addComponent(new NameComponent('Motor B'));
+    motorEntity2.addComponent(
+      new TransformableComponent({
+        position: { x: -50, y: 0 },
+      }),
+    );
+    motorEntity2.addComponent(
+      new MotorComponent({
+        maxSpeed: 30,
+        defaultSpeed: 1,
+      }),
+    );
+
+    const sensorEntity1 = new Entity();
+    sensorEntity1.setParent(entity);
+    sensorEntity1.addComponent(new CollisionComponent('sensor'));
+    sensorEntity1.addComponent(new NameComponent('Sensor A'));
+    sensorEntity1.addComponent(
+      new TransformableComponent({
         position: { x: -50, y: 75 },
+      }),
+    );
+    sensorEntity1.addComponent(
+      new SensorComponent({
         range: 20,
         angle: 0.4,
       }),
     );
-    const sensor2 = entity.addComponent(
-      new SensorComponent({
+
+    const sensorEntity2 = new Entity();
+    sensorEntity2.setParent(entity);
+    sensorEntity2.addComponent(new CollisionComponent('sensor'));
+    sensorEntity2.addComponent(new NameComponent('Sensor B'));
+    sensorEntity2.addComponent(
+      new TransformableComponent({
         position: { x: 50, y: 75 },
+      }),
+    );
+    sensorEntity2.addComponent(
+      new SensorComponent({
         range: 20,
-        angle: 0.4,
+        angle: 0.05,
       }),
     );
-    const sensor3 = entity.addComponent(
-      new SensorComponent({
-        position: { x: -50, y: 75 },
-        range: 30,
-        angle: 0.4,
-        reactsTo: SubstanceType.BARRIER,
-      }),
-    );
-    const sensor4 = entity.addComponent(
-      new SensorComponent({
-        position: { x: 50, y: 75 },
-        range: 30,
-        angle: 0.4,
-        reactsTo: SubstanceType.BARRIER,
-      }),
-    );
-    entity.addComponent(
-      new ConnectionComponent([
-        { input: sensor1, output: motor2, weight: 1 },
-        { input: sensor2, output: motor1, weight: 1 },
-        { input: sensor3, output: motor1, weight: 1 },
-        { input: sensor4, output: motor2, weight: 1 },
-      ]),
-    );
-    EntityManager.addExistingEntity(entity);
+
+    // const motor1 = entity.addComponent(
+    //   new MotorComponent({
+    //     position: { x: -50, y: 0 },
+    //     maxSpeed: 30,
+    //     defaultSpeed: 1,
+    //   }),
+    // );
+    // const motor2 = entity.addComponent(
+    //   new MotorComponent({
+    //     position: { x: 50, y: 0 },
+    //     maxSpeed: 30,
+    //     defaultSpeed: 1,
+    //   }),
+    // );
+    // const sensor1 = entity.addComponent(
+    //   new SensorComponent({
+    //     position: { x: -50, y: 75 },
+    //     range: 20,
+    //     angle: 0.4,
+    //   }),
+    // );
+    // const sensor2 = entity.addComponent(
+    //   new SensorComponent({
+    //     position: { x: 50, y: 75 },
+    //     range: 20,
+    //     angle: 0.4,
+    //   }),
+    // );
+    // const sensor3 = entity.addComponent(
+    //   new SensorComponent({
+    //     position: { x: -50, y: 75 },
+    //     range: 30,
+    //     angle: 0.4,
+    //     reactsTo: SubstanceType.BARRIER,
+    //   }),
+    // );
+    // const sensor4 = entity.addComponent(
+    //   new SensorComponent({
+    //     position: { x: 50, y: 75 },
+    //     range: 30,
+    //     angle: 0.4,
+    //     reactsTo: SubstanceType.BARRIER,
+    //   }),
+    // );
+    // entity.addComponent(
+    //   new ConnectionComponent([
+    //     { input: sensor1, output: motor2, weight: 1 },
+    //     { input: sensor2, output: motor1, weight: 1 },
+    //     { input: sensor3, output: motor1, weight: 1 },
+    //     { input: sensor4, output: motor2, weight: 1 },
+    //   ]),
+    // );
+    EntityManager.addEntity(entity);
+    EntityManager.addEntity(motorEntity1);
+    EntityManager.addEntity(motorEntity2);
+
+    EntityManager.addEntity(sensorEntity1);
+    EntityManager.addEntity(sensorEntity2);
 
     EntityManager.createEntity(
       new TransformableComponent({ position: { x: 950, y: 350 } }),
-      new RenderComponent({
+      new SpriteComponent({
         asset: 'prefab-source',
-        size: 100,
+        size: { width: 100, height: 100 },
       }),
       new SourceComponent({
         range: 200,
@@ -159,7 +233,7 @@ export default class MainScene extends Phaser.Scene {
 
     // EntityManager.createEntity(
     //   new TransformableComponent({ x: 200, y: 400 }),
-    //   new RenderComponent('source', 150, Phaser.BlendModes.ADD),
+    //   new SpriteComponent('source', 150, Phaser.BlendModes.ADD),
     //   new SourceComponent(150, SubstanceType.BARRIER),
     // );
   }
@@ -173,15 +247,19 @@ export default class MainScene extends Phaser.Scene {
       // new ConnectionSystem(this),
       // new ReactionSystem(this),
       // new RenderSystem(this),
-      new RenderSystem(this),
+      new CreateRectangleBodySystem(this),
+      new CreateCircleBodySystem(this),
       new SolidBodySystem(this),
-      new PhysicsBodySystem(this),
+      new PhysicsSystem(this),
+      new RenderSpriteSystem(this),
+      new RenderSensorSystem(this),
+      new RenderSourceSystem(this),
       new MovementSystem(this),
     ];
   }
 
   public update(time: number, delta: number): void {
-    this.fpsText?.setText('FPS: ' + (1000 / delta).toFixed(3));
+    this.fpsText?.setText(`FPS: ${(1000 / delta).toFixed(3)}`);
     this.systems.forEach((s) => s.update(delta));
   }
 
@@ -215,7 +293,7 @@ export default class MainScene extends Phaser.Scene {
     let aktuellerStatus;
     if (snapshot) {
       aktuellerStatus = JSON.parse(snapshot) as SerializedEntity[];
-      entities.forEach((entity) => EntityManager.destroyEntity(entity.id));
+      entities.forEach((entity) => EntityManager.removeEntity(entity.id));
       EntityManager.loadEntities(aktuellerStatus);
     } else {
       // TODO: Alert auslösen
@@ -256,7 +334,7 @@ export default class MainScene extends Phaser.Scene {
         if (fr.result === null) return;
 
         const result = JSON.parse(fr.result as string) as SerializedEntity[];
-        entities.forEach((entity) => EntityManager.destroyEntity(entity.id));
+        entities.forEach((entity) => EntityManager.removeEntity(entity.id));
         EntityManager.loadEntities(result);
       });
 

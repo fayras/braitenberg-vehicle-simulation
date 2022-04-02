@@ -9,7 +9,7 @@ interface PrefabProps {
   src: string;
   dropHandler: PrefabHandler;
 }
-export default function Prefab({ src, dropHandler }: PrefabProps) {
+export function Prefab({ src, dropHandler }: PrefabProps): JSX.Element {
   return (
     <Center w="120px">
       <MotionImage

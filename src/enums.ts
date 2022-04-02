@@ -1,8 +1,4 @@
-export enum BodyShape {
-  RECTANGLE = 'Rechteck',
-  CIRCLE = 'Kreis',
-}
-
+/* eslint-disable no-bitwise */
 export enum ComponentType {
   SOLID_BODY = 1 << 0,
   SENSOR = 1 << 1,
@@ -11,11 +7,15 @@ export enum ComponentType {
   SOURCE = 1 << 4,
   TRANSFORMABLE = 1 << 5,
   CONNECTION = 1 << 6,
+  SOLID_BODY_RECT = 1 << 7,
+  SOLID_BODY_CIRCLE = 1 << 8,
+  NAME = 1 << 9,
+  COLLISION = 1 << 10,
 }
 
 export enum SubstanceType {
-  LIGHT = 'Licht',
-  BARRIER = 'Hindernis',
+  LIGHT = 1 << 1,
+  BARRIER = 1 << 2,
 }
 
 export enum EmissionType {

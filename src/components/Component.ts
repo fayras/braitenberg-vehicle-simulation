@@ -1,6 +1,8 @@
 import { v4 as uuidV4 } from 'uuid';
+import React from 'react';
 import { ComponentType } from '../enums';
-import RenderableAttribute from './RenderableAttribute';
+import { RenderableAttribute } from './attributes/RenderableAttribute';
+import { DisposableAttribute } from './attributes/DisposableAttribute';
 
 export type ComponentId = string;
 type UnknownRenderableAttribute = RenderableAttribute<unknown, React.FunctionComponent<unknown>>;
@@ -9,30 +11,28 @@ function isRenderableAttribute(argument: unknown): argument is UnknownRenderable
   return argument instanceof RenderableAttribute;
 }
 
-export default abstract class Component {
+function isDisposableAttribute(argument: unknown): argument is DisposableAttribute<unknown> {
+  return argument instanceof DisposableAttribute;
+}
+
+export abstract class Component {
   // Hier wird einmal festgelegt, was für Typen die Klasse enthalten kann,
   // das ist nötig, damit später über diese mit `Object.keys(this)` drüber
   // iteriert werden kann.
-  [key: string]: number | boolean | string | RenderableAttribute<any, any> | Function | unknown;
+  [key: string]: number | boolean | string | UnknownRenderableAttribute | DisposableAttribute<unknown> | unknown;
 
   public abstract type: ComponentType;
 
-  public abstract name: string;
+  public abstract label: string;
 
   public id: ComponentId;
 
-  protected maxAmount: number = Infinity;
+  protected deletable = true;
 
-  protected deletable: boolean = true;
+  protected infoTip = '';
 
-  protected infoTip: string = '';
-
-  public constructor() {
+  protected constructor() {
     this.id = uuidV4();
-  }
-
-  public getMaxAmount(): number {
-    return this.maxAmount;
   }
 
   public isDeletable(): boolean {
@@ -43,15 +43,24 @@ export default abstract class Component {
     return this.infoTip;
   }
 
+  public dispose(): void {
+    Object.values(this)
+      .filter(isDisposableAttribute)
+      .forEach((attr) => {
+        attr.dispose();
+      });
+  }
+
   public getRenderableAttributes(): UnknownRenderableAttribute[] {
     return Object.values(this).filter(isRenderableAttribute);
   }
 
-  protected serializeAttributes(): any {
-    const attrs: { [key: string]: any } = {};
+  protected serializeAttributes(): Record<string, unknown> {
+    const attrs: Record<string, unknown> = {};
     Object.keys(this).forEach((attr) => {
-      if (this[attr] instanceof RenderableAttribute) {
-        attrs[attr] = (this[attr] as RenderableAttribute<any, any>).value;
+      const attribute = this[attr];
+      if (isRenderableAttribute(attribute)) {
+        attrs[attr] = attribute.value;
       }
     });
 

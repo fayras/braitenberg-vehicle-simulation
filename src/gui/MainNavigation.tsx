@@ -1,9 +1,9 @@
 import React from 'react';
 import { IconButton, Flex, Spacer } from '@chakra-ui/react';
+import { observer } from 'mobx-react-lite';
 import { store } from './_store/mainNavigation';
 import { store as prefabDrawerStore } from './_store/prefabDrawer';
 import { PauseIcon, PlayIcon, RewindIcon, BookmarkIcon, MenuIcon } from './icons';
-import { observer } from 'mobx-react-lite';
 
 const TogglePlayButton = observer((): JSX.Element => {
   return (
@@ -29,7 +29,7 @@ const ResetButton = observer((): JSX.Element => {
   );
 });
 
-export default function MainNavigation(): JSX.Element {
+export function MainNavigation(): JSX.Element {
   return (
     <Flex className="main-navigation click-through">
       <TogglePlayButton />

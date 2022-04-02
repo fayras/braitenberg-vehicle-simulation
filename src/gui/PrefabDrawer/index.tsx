@@ -1,18 +1,19 @@
 import React from 'react';
 import { Drawer, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody, Flex } from '@chakra-ui/react';
+import { observer } from 'mobx-react-lite';
 import { store } from '../_store/prefabDrawer';
-import Prefab from './Prefab';
+import { Prefab } from './Prefab';
 
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
 import EntityManager from '../../EntityManager';
 
-import SolidBodyComponent from '../../components/SolidBodyComponent';
-import RenderComponent from '../../components/RenderComponent';
-import MotorComponent from '../../components/MotorComponent';
-import SensorComponent from '../../components/SensorComponent';
-import SourceComponent from '../../components/SourceComponent';
-import TransformableComponent from '../../components/TransformableComponent';
-import ConnectionComponent from '../../components/ConnectionComponent';
+import { RectangleBodyComponent } from '../../components/RectangleBodyComponent';
+import { SpriteComponent } from '../../components/SpriteComponent';
+import { MotorComponent } from '../../components/MotorComponent';
+import { SensorComponent } from '../../components/SensorComponent';
+import { SourceComponent } from '../../components/SourceComponent';
+import { TransformableComponent } from '../../components/TransformableComponent';
+import { ConnectionComponent } from '../../components/ConnectionComponent';
 
 import blank from '../../../assets/prefabs/blank.png';
 import source from '../../../assets/prefabs/source.png';
@@ -20,9 +21,8 @@ import vehicle2a from '../../../assets/prefabs/2a.png';
 import vehicle2b from '../../../assets/prefabs/2b.png';
 import vehicle3a from '../../../assets/prefabs/3a.png';
 import vehicle3b from '../../../assets/prefabs/3b.png';
-import { observer } from 'mobx-react-lite';
 
-export default observer((): JSX.Element => {
+export const PrefabDrawer = observer((): JSX.Element => {
   return (
     <Drawer
       variant="clickThrough"
@@ -44,7 +44,7 @@ export default observer((): JSX.Element => {
                   // In der Simulations-Welt ist Grad 0 nach unten zeigend, damit die Entität,
                   // wie auf der Vorlage, nach oben zeigt, wird die einmal um 180° gedreht.
                   new TransformableComponent({ position, angle: Math.PI }),
-                  new RenderComponent({ asset: 'prefab-blank', size: 100 }),
+                  new SpriteComponent({ asset: 'prefab-blank', size: { width: 100, height: 100 } }),
                 );
               }}
             />
@@ -57,7 +57,7 @@ export default observer((): JSX.Element => {
                   new SourceComponent({
                     range: 100,
                   }),
-                  new RenderComponent({ asset: 'prefab-source', size: 100 }),
+                  new SpriteComponent({ asset: 'prefab-source', size: { width: 100, height: 100 } }),
                 );
               }}
             />
@@ -72,19 +72,18 @@ export default observer((): JSX.Element => {
                 });
                 entity.addComponent(transform);
                 entity.addComponent(
-                  new SolidBodyComponent({
+                  new RectangleBodyComponent({
                     size: { width: 100, height: 150 },
                   }),
                 );
                 entity.addComponent(
-                  new RenderComponent({
+                  new SpriteComponent({
                     asset: 'vehicle',
-                    size: 100,
+                    size: { width: 100, height: 100 },
                   }),
                 );
                 const motor1 = entity.addComponent(
                   new MotorComponent({
-                    position: { x: -50, y: 0 },
                     maxSpeed: 30,
                     defaultSpeed: 1,
                   }),
@@ -116,7 +115,7 @@ export default observer((): JSX.Element => {
                     { input: sensor2, output: motor2, weight: 1 },
                   ]),
                 );
-                EntityManager.addExistingEntity(entity);
+                EntityManager.addEntity(entity);
               }}
             />
 
@@ -131,14 +130,14 @@ export default observer((): JSX.Element => {
                 transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
-                  new SolidBodyComponent({
+                  new RectangleBodyComponent({
                     size: { width: 100, height: 150 },
                   }),
                 );
                 entity.addComponent(
-                  new RenderComponent({
+                  new SpriteComponent({
                     asset: 'vehicle',
-                    size: 100,
+                    size: { width: 100, height: 100 },
                   }),
                 );
                 const motor1 = entity.addComponent(
@@ -175,7 +174,7 @@ export default observer((): JSX.Element => {
                     { input: sensor2, output: motor1, weight: 1 },
                   ]),
                 );
-                EntityManager.addExistingEntity(entity);
+                EntityManager.addEntity(entity);
               }}
             />
 
@@ -190,14 +189,14 @@ export default observer((): JSX.Element => {
                 transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
-                  new SolidBodyComponent({
+                  new RectangleBodyComponent({
                     size: { width: 100, height: 150 },
                   }),
                 );
                 entity.addComponent(
-                  new RenderComponent({
+                  new SpriteComponent({
                     asset: 'vehicle',
-                    size: 100,
+                    size: { width: 100, height: 100 },
                   }),
                 );
                 const motor1 = entity.addComponent(
@@ -234,7 +233,7 @@ export default observer((): JSX.Element => {
                     { input: sensor2, output: motor2, weight: -1 },
                   ]),
                 );
-                EntityManager.addExistingEntity(entity);
+                EntityManager.addEntity(entity);
               }}
             />
 
@@ -249,14 +248,14 @@ export default observer((): JSX.Element => {
                 transform.angle.value = -Math.PI / 2;
                 entity.addComponent(transform);
                 entity.addComponent(
-                  new SolidBodyComponent({
+                  new RectangleBodyComponent({
                     size: { width: 100, height: 150 },
                   }),
                 );
                 entity.addComponent(
-                  new RenderComponent({
+                  new SpriteComponent({
                     asset: 'vehicle',
-                    size: 100,
+                    size: { width: 100, height: 100 },
                   }),
                 );
                 const motor1 = entity.addComponent(
@@ -293,7 +292,7 @@ export default observer((): JSX.Element => {
                     { input: sensor2, output: motor1, weight: -1 },
                   ]),
                 );
-                EntityManager.addExistingEntity(entity);
+                EntityManager.addEntity(entity);
               }}
             />
           </Flex>

@@ -1,67 +1,60 @@
 import Phaser from 'phaser';
-import { autorun, reaction, IReactionDisposer } from 'mobx';
-import System from './System';
+import { System } from './System';
 import { Entity } from '../Entity';
-import { ComponentType } from '../enums';
-import RenderComponent from '../components/RenderComponent';
-import TransformableComponent from '../components/TransformableComponent';
-import { ComponentId } from '../components/Component';
-import SensorComponent from '../components/SensorComponent';
+import { ComponentType, SubstanceType } from '../enums';
+import { TransformableComponent } from '../components/TransformableComponent';
+import { SensorComponent } from '../components/SensorComponent';
 import { gaussian } from '../utils/reactions';
-
-type Renderable = Phaser.GameObjects.Image;
+import { getWorldAngle, getWorldPosition } from '../utils/transform';
 
 export class RenderSensorSystem extends System {
-  private renderables: Map<ComponentId, Renderable> = new Map();
-
-  private renderableDisposers: Map<ComponentId, IReactionDisposer[]> = new Map();
-
   public constructor(scene: Phaser.Scene) {
     super(scene, [ComponentType.TRANSFORMABLE, ComponentType.SENSOR], false);
   }
 
   public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
     entities.forEach((entity) => {
+      const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
+      const sensor = entity.getComponent(ComponentType.SENSOR) as SensorComponent;
 
+      const renderable = sensor.renderableObject.value;
+      if (!renderable) {
+        return;
+      }
+
+      const position = getWorldPosition(entity, transform);
+      renderable.setPosition(position.x, position.y);
+
+      const angle = getWorldAngle(entity, transform);
+      renderable.setRotation(angle);
     });
   }
 
-  protected override change(entity: Entity, added?: SensorComponent, removed?: SensorComponent) {
-    if(added) {
-
-    }
-
-    if(removed) {
-
-    }
-  }
-
-  protected override enter(entity: Entity) {
+  protected override enter(entity: Entity): void {
     const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
     const sensor = entity.getComponent(ComponentType.SENSOR) as SensorComponent;
 
-    this.createRenderable(transform, sensor);
+    console.log('enter sensor', entity);
+    this.createRenderable(entity, transform, sensor);
 
-    const updateTexture = (): void => {
-      const renderable = this.renderables.get(sensor.id)!;
-      sensor.
-    };
-
-    this.renderableDisposers.set(entity.id, [
-      autorun(updateTexture)
-    ]);
+    // const updateTexture = (): void => {
+    //   const renderable = this.renderables.get(sensor.id)!;
+    // };
+    //
+    // this.renderableDisposers.set(entity.id, [autorun(updateTexture)]);
   }
 
-  protected override exit(entity: Entity) {
-    this.cleanUp(entity);
-    this.renderableDisposers.get(entity.id)?.forEach((disposer) => disposer());
-  }
+  protected override exit(entity: Entity): void {
+    const renderable = entity.getComponent<SensorComponent>(ComponentType.SENSOR)?.renderableObject;
 
-  private createRenderable(transform: TransformableComponent, sensor: SensorComponent) {
-    if (this.renderables.has(sensor.id)) {
-      return;
+    if (renderable?.value) {
+      renderable.value.destroy();
+      renderable.value = undefined;
     }
+  }
 
+  private createRenderable(entity: Entity, transform: TransformableComponent, sensor: SensorComponent): void {
+    console.log('createRenderable sensor', entity, sensor);
     const halfWidth = Math.ceil(sensor.range.value * 3);
     const halfHeight = Math.ceil(sensor.range.value * 3);
     const width = halfWidth * 2;
@@ -82,39 +75,40 @@ export class RenderSensorSystem extends System {
 
     const texture = this.scene.textures.createCanvas(`sensor_texture_${sensor.id}`, width, height);
     const context = texture.getContext();
-    const angleValues = new Float32Array(width * height);
+    const values = new Float32Array(width * height);
 
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const v = f(x - halfWidth, y - halfHeight);
 
-        angleValues[y * width + x] = v;
+        values[y * width + x] = v;
 
-        context.fillStyle = `rgba(50, 50, 100, ${v * 0.6})`;
+        if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
+          context.fillStyle = `rgba(255, 0, 0, 0.5)`;
+        } else if (x === halfWidth || y === halfHeight) {
+          context.fillStyle = `rgba(0, 0, 255, 0.3)`;
+        } else {
+          context.fillStyle = `rgba(50, 50, 100, ${v * 0.6})`;
+        }
         context.fillRect(x, y, 1, 1);
       }
     }
 
     texture.refresh();
 
-    const x = transform.position.value.x + sensor.position.value.x;
-    const y = transform.position.value.y + sensor.position.value.y;
-    const image = this.scene.add.image(x, y, `sensor_texture_${sensor.id}`);
+    const position = getWorldPosition(entity, transform);
+
+    const image = this.scene.matter.add.image(position.x, position.y, `sensor_texture_${sensor.id}`, undefined, {
+      isSensor: true,
+      collisionFilter: {
+        mask: sensor.reactsTo.value,
+      },
+    });
 
     // image.setBlendMode(Phaser.BlendModes.SCREEN);
-    image.setVisible(false);
     image.setDepth(99);
     this.scene.children.bringToTop(image);
 
-    this.renderables.set(sensor.id, image);
-  }
-
-  private cleanUp(entity: Entity) {
-    const renderable = this.renderables.get(entity.id);
-
-    if (renderable) {
-      renderable.destroy();
-      this.renderables.delete(entity.id);
-    }
+    sensor.renderableObject.value = image;
   }
 }

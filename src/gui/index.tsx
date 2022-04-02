@@ -1,12 +1,12 @@
 import React from 'react';
 
-import MainNavigation from './MainNavigation';
-import EntityDrawer from './EntityDrawer';
-import PrefabDrawer from './PrefabDrawer';
+import { MainNavigation } from './MainNavigation';
+import { EntityDrawer } from './EntityDrawer';
+import { PrefabDrawer } from './PrefabDrawer';
 
 // import 'rsuite/dist/styles/rsuite-default.css';
 
-export default function App(): JSX.Element {
+export function Ui(): JSX.Element {
   // const { test: count, increase } = testStore();
 
   return (

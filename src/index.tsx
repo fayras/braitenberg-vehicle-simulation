@@ -2,15 +2,15 @@ import Phaser from 'phaser';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import MainScene from './scenes/MainScene';
-import LoadingScene from './scenes/LoadingScene';
-import Ui from './gui/index';
+import { MainScene } from './scenes/MainScene';
+import { LoadingScene } from './scenes/LoadingScene';
+import { Ui } from './gui';
 
 // import '../assets/css/picnic.min.css';
 import '../assets/css/styling.css';
 
 class Game extends React.Component {
-  componentDidMount() {
+  componentDidMount(): void {
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       backgroundColor: '#EAEAEA',
@@ -36,11 +36,11 @@ class Game extends React.Component {
     new Phaser.Game(config);
   }
 
-  shouldComponentUpdate() {
+  public override shouldComponentUpdate(): boolean {
     return false;
   }
 
-  public render() {
+  public override render(): JSX.Element {
     return <div id="phaser-game" />;
   }
 }

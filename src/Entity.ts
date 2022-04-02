@@ -2,7 +2,25 @@ import { makeObservable, observable, action } from 'mobx';
 import { v4 as uuidV4 } from 'uuid';
 
 import { ComponentType } from './enums';
-import Component, { ComponentId } from './components/Component';
+import { Component, ComponentId } from './components/Component';
+
+function splitIntoSingleBitNumbers(n: number): number[] {
+  const numbers: number[] = [];
+  let current = n;
+  while (current) {
+    // extract lowest set bit in number
+    // eslint-disable-next-line no-bitwise
+    const m = n & -n;
+    numbers.push(m);
+
+    // remove lowest set bit from number
+    current -= 1;
+    // eslint-disable-next-line no-bitwise
+    current &= current;
+  }
+
+  return numbers;
+}
 
 export type EntityID = string;
 
@@ -10,7 +28,11 @@ export class Entity {
   public id: EntityID;
 
   // private components: Component[] = [];
-  private components: Map<ComponentType, Component[]> = new Map();
+  private components: Map<ComponentType, Component> = new Map();
+
+  public readonly children: Set<Entity> = new Set();
+
+  private parent: Entity | null = null;
 
   /**
    * Erzeugt eine neue Entität.
@@ -29,7 +51,27 @@ export class Entity {
       // getAllComponents: computed,
       // hasComponents: computed,
     });
-    console.log('constrcutor', this.id, this.components);
+  }
+
+  public setParent(entity: Entity): void {
+    if (this.parent !== null) {
+      this.parent.removeChild(entity);
+    }
+
+    entity.addChild(this);
+    this.parent = entity;
+  }
+
+  public getParent(): Entity | null {
+    return this.parent;
+  }
+
+  public addChild(entity: Entity): void {
+    this.children.add(entity);
+  }
+
+  public removeChild(entity: Entity): boolean {
+    return this.children.delete(entity);
   }
 
   /**
@@ -41,53 +83,41 @@ export class Entity {
    * @returns Liefert die ID der Komponente zurück. Wurde die Komponente nicht
    *          hinzugefügt, dann wird `-1` zurückgegeben.
    */
-  public addComponent(component: Component): ComponentId | undefined {
-    console.log('addComponent', this.id, component.type, console.trace());
-
-    if (this.components.get(component.type) === undefined) {
-      this.components.set(component.type, []);
+  public addComponent(component: Component): ComponentId {
+    if (this.components.get(component.type) !== undefined) {
+      throw new Error(`Component of type ${component.type} already present.`);
     }
 
-    const current = this.components.get(component.type);
-    // Komponenten können angeben, wie viele davon zu einer Entität hinzugefügt werden dürfen.
-    if (current && current.length >= component.getMaxAmount()) {
-      // TODO: Alert auslösen
-      // `Die Entität besitzt bereits die maximale Anzahl an Komponenten des Typs ${component.name}`
-      return undefined;
-    }
+    this.components.set(component.type, component);
 
-    current?.push(component);
     return component.id;
   }
 
   // entfernt die übergebene Komponente falls vorhanden
   // gibt entfernte Komponentezurück
-  public removeComponent(component: Component): Component | undefined {
+  public removeComponent(component: Component): boolean {
     const current = this.components.get(component.type);
-    const index = current?.indexOf(component);
-
-    if (current === undefined || index === undefined || index < 0) {
-      return undefined;
+    if (current !== component) {
+      throw new Error(`Component mismatch`);
     }
 
-    return current.splice(index, 1)[0];
+    component.dispose();
+    return this.components.delete(component.type);
   }
 
   // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
   public getComponent<T extends Component>(type: ComponentType): T | undefined {
     const current = this.components.get(type);
-    return current ? (current[0] as T) : undefined;
-  }
-
-  // gibt alle Komponente mit dem übergebenen Component Type zurück
-  public getComponents<T extends Component>(type: ComponentType): T[] {
-    return (this.components.get(type) as T[]) || [];
+    return current ? (current as T) : undefined;
   }
 
   //
   public hasComponents(...components: ComponentType[]): boolean {
     // const available = this.components.map((c) => c.type);
-    return components.every((type) => this.components.has(type));
+    return components.every((type) => {
+      const types = splitIntoSingleBitNumbers(type);
+      return types.some((t) => this.components.has(t));
+    });
   }
 
   // gibt alle Komponente der Entität zurück

@@ -1,75 +1,20 @@
 import { EntityID, Entity } from './Entity';
 
-import Component from './components/Component';
-import { EventType, ComponentType } from './enums';
-import MotorComponent from './components/MotorComponent';
-import SolidBodyComponent from './components/SolidBodyComponent';
-import TransformableComponent from './components/TransformableComponent';
-import RenderComponent from './components/RenderComponent';
-import SensorComponent from './components/SensorComponent';
+import { Component } from './components/Component';
+import { ComponentType } from './enums';
+import { MotorComponent } from './components/MotorComponent';
+import { RectangleBodyComponent } from './components/RectangleBodyComponent';
+import { TransformableComponent } from './components/TransformableComponent';
+import { SpriteComponent } from './components/SpriteComponent';
+import { SensorComponent } from './components/SensorComponent';
 
-import ConnectionComponent from './components/ConnectionComponent';
-import SourceComponent from './components/SourceComponent';
-
-export class EntityQuery {
-  private mEntities: Set<Entity> = new Set();
-  public types: readonly ComponentType[];
-  private onAddedHandlers: Set<(entity: Entity) => any> = new Set();
-  private onRemovedHandlers: Set<(entity: Entity) => any> = new Set();
-  private onUpdateHandlers: Set<(entity: Entity, added?: Component, removed?: Component) => any> = new Set();
-
-  constructor(types: ComponentType[]) {
-    this.types = types;
-  }
-
-  public static getKey(types: readonly ComponentType[]) {
-    return types.reduce((a, b) => a | b);
-  }
-
-  get key() {
-    return EntityQuery.getKey(this.types);
-  }
-
-  get entities(): ReadonlySet<Entity> {
-    return this.mEntities;
-  }
-
-  public add(entity: Entity) {
-    this.mEntities.add(entity);
-    this.onAddedHandlers.forEach((handler) => handler(entity));
-  }
-
-  public remove(entity: Entity) {
-    this.mEntities.delete(entity);
-    this.onRemovedHandlers.forEach((handler) => handler(entity));
-  }
-
-  public update(entity: Entity, added?: Component, removed?: Component) {
-    this.onUpdateHandlers.forEach((handler) => handler(entity, added, removed));
-  }
-
-  public has(entity: Entity) {
-    return this.mEntities.has(entity);
-  }
-
-  public onEnter(callback: (entity: Entity) => any): IDisposable {
-    this.onAddedHandlers.add(callback);
-    return () => this.onAddedHandlers.delete(callback);
-  }
-
-  public onExit(callback: (entity: Entity) => any): IDisposable {
-    this.onRemovedHandlers.add(callback);
-    return () => this.onRemovedHandlers.delete(callback);
-  }
-
-  public onChange(callback: (entity: Entity, added?: Component, removed?: Component) => any): IDisposable {
-    this.onUpdateHandlers.add(callback);
-    return () => this.onUpdateHandlers.delete(callback);
-  }
-}
+import { ConnectionComponent } from './components/ConnectionComponent';
+import { SourceComponent } from './components/SourceComponent';
+import { EntityQuery } from './EntityQuery';
 
 class EntityManager {
   private entities: { [id: EntityID]: Entity } = {};
+
   private queries: Map<ComponentType, EntityQuery> = new Map();
 
   public createQuery(types: ComponentType[]): EntityQuery {
@@ -83,9 +28,9 @@ class EntityManager {
     const entities = this.getEntities();
     query = new EntityQuery(types);
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const entity of entities) {
       if (entity.hasComponents(...types)) {
-        console.log('A', entity.getAllComponents(), types);
         query.add(entity);
       }
     }
@@ -108,11 +53,10 @@ class EntityManager {
    *
    * @param entity
    */
-  public addExistingEntity(entity: Entity): void {
+  public addEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
     for (const [key, query] of this.queries) {
       if (entity.hasComponents(...query.types)) {
-        console.log('B', entity.getAllComponents(), query.types);
         query.add(entity);
       }
     }
@@ -129,7 +73,7 @@ class EntityManager {
       entity.addComponent(c);
     });
 
-    this.addExistingEntity(entity);
+    this.addEntity(entity);
 
     return entity;
   }
@@ -139,7 +83,7 @@ class EntityManager {
    *
    * @param id Die ID einer Entität, die zerstört werden soll.
    */
-  public destroyEntity(id: EntityID): void {
+  public removeEntity(id: EntityID): void {
     const entity = this.entities[id];
 
     for (const [key, query] of this.queries) {
@@ -163,28 +107,19 @@ class EntityManager {
    *          zugefügt wurde, oder aber `undefined`, wenn dies nicht passiert
    *          ist.
    */
-  public addComponent(entityId: EntityID, component: Component): Entity | undefined {
+  public addComponent(entityId: EntityID, component: Component): Entity {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      // TODO: Alert auslösen
-      // new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
-      return undefined;
+      throw new Error(`Entity with ${entityId} not found.`);
     }
 
-    const id = entity.addComponent(component);
-
-    // Eine ID "undefined" heißt, dass die Komponente nicht hinzugefügt wurde. Dann
-    // dürfen wir auch keine Nachricht über den Bus schicken.
-    if (id === undefined) {
-      return undefined;
-    }
+    entity.addComponent(component);
 
     for (const [key, query] of this.queries) {
       if (query.has(entity)) {
-        query.update(entity, component);
+        // query.update(entity, component);
       } else if (entity.hasComponents(...query.types)) {
-        console.log('C', entity.getAllComponents(), query.types);
         query.add(entity);
       }
     }
@@ -202,9 +137,7 @@ class EntityManager {
     const entity = this.entities[entityId];
 
     if (!entity) {
-      // TODO: Alert auslösen
-      // new Noty({ text: `Entität mit ID ${entityId} konnte nicht gefunden werden` }).show();
-      return;
+      throw new Error(`Entity with id ${entityId} not found.`);
     }
 
     entity.removeComponent(component);
@@ -212,7 +145,7 @@ class EntityManager {
     for (const [key, query] of this.queries) {
       if (query.has(entity)) {
         if (entity.hasComponents(...query.types)) {
-          query.update(entity, undefined, component);
+          // query.update(entity, undefined, component);
         } else {
           query.remove(entity);
         }
@@ -225,6 +158,10 @@ class EntityManager {
    */
   public getEntities(): Entity[] {
     return Object.values(this.entities);
+  }
+
+  public getEntity(id: EntityID): Entity {
+    return this.entities[id];
   }
 
   /**
@@ -253,7 +190,7 @@ class EntityManager {
         }
       });
 
-      this.addExistingEntity(entity);
+      this.addEntity(entity);
     });
   }
 
@@ -261,7 +198,7 @@ class EntityManager {
    * Eine Hilfsfunktion, um anhand vom Namen und übergebenen Attributen eine neue
    * Instanz der entsprechenden Komponente zu erzeugen.
    *
-   * @param name Der Name bzw. Typ der Komponente.
+   * @param type
    * @param attributes Die Attribute als ein Objekt. Dabei ist wichtig, dass es keine
    *                   Überprüfung auch Richtigkeit der Werte gibt! Für nähere Infos
    *                   zu den möglichen Attributen siehe jeweilige Komponenten-Klasse.
@@ -273,9 +210,9 @@ class EntityManager {
       case ComponentType.SOURCE:
         return new SourceComponent(attributes);
       case ComponentType.SOLID_BODY:
-        return new SolidBodyComponent(attributes);
+        return new RectangleBodyComponent(attributes);
       case ComponentType.RENDER:
-        return new RenderComponent(attributes);
+        return new SpriteComponent(attributes);
       case ComponentType.MOTOR:
         return new MotorComponent(attributes);
       case ComponentType.SENSOR:
@@ -288,4 +225,5 @@ class EntityManager {
   }
 }
 
+// eslint-disable-next-line import/no-default-export
 export default new EntityManager();

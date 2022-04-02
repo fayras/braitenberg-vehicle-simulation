@@ -1,49 +1,41 @@
 import { ComponentType } from '../enums';
-import Component from './Component';
-import Attribute from './RenderableAttribute';
+import { Component } from './Component';
+import { RenderableAttribute } from './attributes/RenderableAttribute';
 
-import PositionInput from '../gui/Inputs/PositionInput';
-import NumberInput from '../gui/Inputs/NumberInput';
+import { NumberInput } from '../gui/Inputs/NumberInput';
 
 interface MotorComponentData {
-  position: Vector2D;
   maxSpeed?: number;
   defaultSpeed?: number;
 }
 
-export default class MotorComponent extends Component {
-  public name: string = 'Motor';
+export class MotorComponent extends Component {
+  public label = 'Motor';
 
   public type: ComponentType = ComponentType.MOTOR;
 
-  public position: Attribute<Vector2D, typeof PositionInput>;
+  public defaultSpeed: RenderableAttribute<number, typeof NumberInput>;
 
-  public defaultSpeed: Attribute<number, typeof NumberInput>;
+  public maxSpeed: RenderableAttribute<number, typeof NumberInput>;
 
-  public maxSpeed: Attribute<number, typeof NumberInput>;
-
-  public throttle: Attribute<number, typeof NumberInput>;
-
-  public visualThrottle: Attribute<string | number, typeof NumberInput>;
+  public throttle: RenderableAttribute<number, typeof NumberInput>;
 
   public constructor(data: MotorComponentData) {
     super();
-    this.position = new Attribute(data.position, PositionInput, { label: 'Position' });
 
-    this.maxSpeed = new Attribute(data.maxSpeed || 50, NumberInput, {
+    this.maxSpeed = new RenderableAttribute(data.maxSpeed || 50, NumberInput, {
       label: 'Maximalgeschwindigkeit',
       min: 1,
       max: 50,
     });
 
-    this.defaultSpeed = new Attribute(data.defaultSpeed || 0, NumberInput, {
+    this.defaultSpeed = new RenderableAttribute(data.defaultSpeed || 0, NumberInput, {
       label: 'Mindestgeschwindigkeit',
       min: 0,
       max: this.maxSpeed.value,
     });
 
-    this.throttle = new Attribute(0);
-    this.visualThrottle = new Attribute('0' as string | number, NumberInput, {
+    this.throttle = new RenderableAttribute(0, NumberInput, {
       label: 'Aktuelle Geschwindigkeit',
       readonly: true,
     });

@@ -1,29 +1,47 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { observer, Observer } from 'mobx-react-lite';
 import {
+  Button,
   Drawer,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerFooter,
+  DrawerHeader,
   Flex,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  Button,
+  MenuList,
 } from '@chakra-ui/react';
 import { PlusIcon } from '../icons';
 
 import { store as selectedEntityStore } from '../_store/selectedEntity';
-import ComponentCard from './ComponentCard';
+import { ComponentCard } from './ComponentCard';
+import { HirarchyEntityCard } from './HirarchyEntityCard';
 import EntityManager from '../../EntityManager';
-import MotorComponent from '../../components/MotorComponent';
+import { MotorComponent } from '../../components/MotorComponent';
+import { NameComponent } from '../../components/NameComponent';
 
-export default observer((): JSX.Element => {
+export const EntityDrawer = observer((): JSX.Element => {
   const entity = selectedEntityStore.selectedEntity;
-  const components = selectedEntityStore.components;
+  const { components } = selectedEntityStore;
+
+  const parent = useMemo(() => {
+    const p = selectedEntityStore.selectedEntity?.getParent();
+    if (!p) {
+      return undefined;
+    }
+
+    return <HirarchyEntityCard key={p.id} entity={p} isParent onClick={() => selectedEntityStore.select(p)} />;
+  }, [selectedEntityStore.selectedEntity]);
+
+  const children = useMemo(() => {
+    return selectedEntityStore.children?.map((child) => (
+      <HirarchyEntityCard key={child.id} entity={child} onClick={() => selectedEntityStore.select(child)} />
+    ));
+  }, [selectedEntityStore.selectedEntity]);
+
   if (entity === null) {
     return <></>;
   }
@@ -38,7 +56,7 @@ export default observer((): JSX.Element => {
     >
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Ausgewählte Entität (ID {entity.id})</DrawerHeader>
+        <DrawerHeader>{selectedEntityStore.name || entity.id}</DrawerHeader>
 
         <DrawerBody>
           <Observer>
@@ -51,6 +69,8 @@ export default observer((): JSX.Element => {
                     onDelete={() => EntityManager.removeComponent(entity.id, component)}
                   />
                 ))}
+                {parent}
+                {children}
               </Flex>
             )}
           </Observer>
@@ -73,10 +93,16 @@ export default observer((): JSX.Element => {
             <MenuList>
               <MenuItem
                 onClick={() => {
+                  EntityManager.addComponent(entity.id, new NameComponent('Name'));
+                }}
+              >
+                Name
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
                   EntityManager.addComponent(
                     entity.id,
                     new MotorComponent({
-                      position: { x: 0, y: 0 },
                       maxSpeed: 50,
                       defaultSpeed: 5,
                     }),

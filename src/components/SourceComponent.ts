@@ -1,8 +1,12 @@
+import Phaser from 'phaser';
 import { ComponentType, SubstanceType, EmissionType } from '../enums';
-import Component from './Component';
-import RenderableAttribute from './RenderableAttribute';
-import SelectInput from '../gui/Inputs/SelectInput';
-import NumberInput from '../gui/Inputs/NumberInput';
+import { Component } from './Component';
+import { RenderableAttribute } from './attributes/RenderableAttribute';
+import { VolatileAttribute } from './attributes/VolatileAttribute';
+import { SelectInput } from '../gui/Inputs/SelectInput';
+import { NumberInput } from '../gui/Inputs/NumberInput';
+
+export type Renderable = Phaser.GameObjects.Image;
 
 interface SourceComponentData {
   range: number;
@@ -10,8 +14,8 @@ interface SourceComponentData {
   emissionType?: EmissionType;
 }
 
-export default class SourceComponent extends Component {
-  public name: string = 'Quelle';
+export class SourceComponent extends Component {
+  public label = 'Quelle';
 
   public type: ComponentType = ComponentType.SOURCE;
 
@@ -20,6 +24,8 @@ export default class SourceComponent extends Component {
   public substance: RenderableAttribute<SubstanceType, typeof SelectInput>;
 
   public emissionType: RenderableAttribute<EmissionType, typeof SelectInput>;
+
+  public renderableObject: VolatileAttribute<Renderable>;
 
   public constructor(data: SourceComponentData) {
     super();
@@ -32,5 +38,7 @@ export default class SourceComponent extends Component {
       label: 'Charakteristik',
       options: EmissionType,
     });
+
+    this.renderableObject = new VolatileAttribute();
   }
 }

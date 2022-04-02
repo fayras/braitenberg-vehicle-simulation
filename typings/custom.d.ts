@@ -1,5 +1,6 @@
 declare module '*.png' {
   const value: string;
+  // eslint-disable-next-line import/no-default-export
   export default value;
 }
 
@@ -87,17 +88,6 @@ interface SerializedEntity {
   components: SerializedComponent[];
 }
 
-interface Settable<T> {
-  public get(): T;
-  public set(value: T): void;
-}
-
-interface ConnectionNetworkData {
-  inputs: number[];
-  outputs: number[];
-  weights: number[][];
-}
-
 interface IDisposable {
   (): void;
 }
@@ -105,24 +95,6 @@ interface IDisposable {
 // interface ReactionPair<T extends ComponentPhysicsBody, S extends ComponentPhysicsBody> {
 
 // };
-
-type AssetKey = string;
-type EventMessage =
-  | EventMessages.ApplyForce
-  | EventMessages.SensorActive
-  | EventMessages.Reaction
-  | import('../src/Entity').default
-  | EventMessages.NewSourceInfo
-  | EventMessages.SourceOrSensorDestroyedInfo
-  | EventMessages.NewSensorInfo;
-type EventHandler =
-  | ((event: EventMessages.ApplyForce) => void)
-  | ((event: EventMessages.SensorActive) => void)
-  | ((event: EventMessages.Reaction) => void)
-  | ((event: import('../src/Entity').default) => void)
-  | ((event: EventMessages.NewSensorInfo) => void)
-  | ((event: EventMessages.SourceOrSensorDestroyedInfo) => void)
-  | ((event: EventMessages.NewSourceInfo) => void);
 
 interface Dimensions {
   width: number;
@@ -136,7 +108,5 @@ type ConnectionPair = {
 };
 
 type ConnectionComponentData = ConnectionPair[];
-
-type Color = number;
 
 type Vector2D = Phaser.Physics.Matter.Matter.Vector;

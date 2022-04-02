@@ -1,10 +1,18 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import RenderableAttribute from '../../components/RenderableAttribute';
-import { Box, NumberInput, NumberInputField, FormLabel } from '@chakra-ui/react';
-import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react';
+import {
+  Box,
+  NumberInput,
+  NumberInputField,
+  FormLabel,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+} from '@chakra-ui/react';
+import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
-function mod(n: number, m: number) {
+function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
 }
 
@@ -15,7 +23,7 @@ type Props = {
   readonly?: boolean;
 };
 
-export default observer((props: Props): JSX.Element => {
+export const RotationInput = observer((props: Props): JSX.Element => {
   return (
     <Box mb="2.5">
       <FormLabel color="gray.800" fontSize="sm" mb="0">
@@ -28,7 +36,7 @@ export default observer((props: Props): JSX.Element => {
         disabled={props.readonly}
         onChange={(val) => {
           const value = Number(val);
-          if (!isNaN(value)) {
+          if (!Number.isNaN(value)) {
             props.attribute.value = value;
           }
         }}

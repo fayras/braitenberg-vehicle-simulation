@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { motion } from 'framer-motion';
 import { Box, FormLabel } from '@chakra-ui/react';
-import RenderableAttribute from '../../components/RenderableAttribute';
+import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 import { store as selectedEntityStore } from '../_store/selectedEntity';
 import { ComponentType } from '../../enums';
 import { ComponentId } from '../../components/Component';
@@ -12,7 +12,7 @@ type Props = {
   label: string;
 };
 
-export default observer((props: Props): JSX.Element => {
+export const ConnectionNetwork = observer((props: Props): JSX.Element => {
   const [selectedSensor, selectSensor] = useState<ComponentId | null>(null);
   const entity = selectedEntityStore.selectedEntity;
   const sensors = entity?.getComponents(ComponentType.SENSOR);

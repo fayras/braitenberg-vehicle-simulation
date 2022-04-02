@@ -1,21 +1,21 @@
 import { makeAutoObservable } from 'mobx';
 
 class MainNavigationStore {
-  playState: boolean = false;
+  playState = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  togglePlay() {
+  togglePlay(): void {
     this.playState = !this.playState;
   }
 
-  setPlay(state: boolean) {
+  setPlay(state: boolean): void {
     this.playState = state;
   }
 
-  reset() {}
+  reset(): void {}
 }
 
 export const store = new MainNavigationStore();

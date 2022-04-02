@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import RenderableAttribute from '../../components/RenderableAttribute';
 import { Box, Select, FormLabel } from '@chakra-ui/react';
+import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
   attribute: RenderableAttribute<string | number, any>;
@@ -13,7 +13,7 @@ type Props = {
   readonly?: boolean;
 };
 
-export default observer((props: Props): JSX.Element => {
+export const SelectInput = observer((props: Props): JSX.Element => {
   return (
     <Box mb="2.5">
       <FormLabel color="gray.800" fontSize="sm" mb="0">

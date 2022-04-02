@@ -1,5 +1,8 @@
 import { makeAutoObservable } from 'mobx';
-import Entity from '../../Entity';
+import { Entity } from '../../Entity';
+import { Component } from '../../components/Component';
+import { NameComponent } from '../../components/NameComponent';
+import { ComponentType } from '../../enums';
 
 class SelectedEntityStore {
   selectedEntity: Entity | null = null;
@@ -8,7 +11,7 @@ class SelectedEntityStore {
     makeAutoObservable(this);
   }
 
-  get components() {
+  get components(): Component[] {
     if (this.selectedEntity === null) {
       return [];
     }
@@ -16,11 +19,27 @@ class SelectedEntityStore {
     return this.selectedEntity.getAllComponents();
   }
 
-  get isSelected() {
+  get name(): string | undefined {
+    if (this.selectedEntity === null) {
+      return undefined;
+    }
+
+    return this.selectedEntity.getComponent<NameComponent>(ComponentType.NAME)?.name.value;
+  }
+
+  get children(): Entity[] | undefined {
+    if (this.selectedEntity === null) {
+      return undefined;
+    }
+
+    return [...this.selectedEntity.children];
+  }
+
+  get isSelected(): boolean {
     return this.selectedEntity !== null;
   }
 
-  select(entity: Entity | null) {
+  select(entity: Entity | null): void {
     this.selectedEntity = entity;
   }
 }
