@@ -55,7 +55,7 @@ class EntityManager {
    */
   public addEntity(entity: Entity): void {
     this.entities[entity.id] = entity;
-    for (const [key, query] of this.queries) {
+    for (const [, query] of this.queries) {
       if (entity.hasComponents(...query.types)) {
         query.add(entity);
       }
@@ -86,7 +86,7 @@ class EntityManager {
   public removeEntity(id: EntityID): void {
     const entity = this.entities[id];
 
-    for (const [key, query] of this.queries) {
+    for (const [, query] of this.queries) {
       if (query.has(entity)) {
         query.remove(entity);
       }
@@ -116,7 +116,7 @@ class EntityManager {
 
     entity.addComponent(component);
 
-    for (const [key, query] of this.queries) {
+    for (const [, query] of this.queries) {
       if (query.has(entity)) {
         // query.update(entity, component);
       } else if (entity.hasComponents(...query.types)) {
@@ -128,7 +128,7 @@ class EntityManager {
   }
 
   /**
-   * Entfernt eine Komponente von einer vorhanden Entität.
+   * Entfernt eine Komponente von einer vorhandenen Entität.
    *
    * @param entityId Die ID einer Entität.
    * @param component
@@ -142,7 +142,7 @@ class EntityManager {
 
     entity.removeComponent(component);
 
-    for (const [key, query] of this.queries) {
+    for (const [, query] of this.queries) {
       if (query.has(entity)) {
         if (entity.hasComponents(...query.types)) {
           // query.update(entity, undefined, component);
@@ -154,7 +154,7 @@ class EntityManager {
   }
 
   /**
-   * Gibt alle vorhandenen ENtität zurück.
+   * Gibt alle vorhandenen Entität zurück.
    */
   public getEntities(): Entity[] {
     return Object.values(this.entities);
