@@ -61,7 +61,7 @@ export const EntityDrawer = observer((): JSX.Element => {
         <DrawerBody>
           <Observer>
             {() => (
-              <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+              <Flex flexDirection="column" justifyContent="center" alignItems="center">
                 {components.map((component) => (
                   <ComponentCard
                     key={component.id}

@@ -14,10 +14,11 @@
   "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
-    "airbnb-typescript/base",
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
   "env": {
     "node": true,
@@ -42,14 +43,15 @@
       }
     ],
     "no-bitwise": "off",
-    "import/extensions": [
+    "no-restricted-syntax": [
       "error",
-      "never",
       {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
       }
     ]
   },

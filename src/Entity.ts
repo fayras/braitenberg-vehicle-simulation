@@ -1,4 +1,4 @@
-import { makeObservable, observable, action } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { v4 as uuidV4 } from 'uuid';
 
 import { ComponentType } from './enums';
@@ -8,14 +8,12 @@ function splitIntoSingleBitNumbers(n: number): number[] {
   const numbers: number[] = [];
   let current = n;
   while (current) {
-    // extract lowest set bit in number
-    // eslint-disable-next-line no-bitwise
+    // extract the lowest set bit in number
     const m = n & -n;
     numbers.push(m);
 
-    // remove lowest set bit from number
+    // remove the lowest set bit from number
     current -= 1;
-    // eslint-disable-next-line no-bitwise
     current &= current;
   }
 
@@ -105,7 +103,7 @@ export class Entity {
     return this.components.delete(component.type);
   }
 
-  // gibt die erste Komponentemit dem Übergebenen Component Typ zurück
+  // gibt die erste Komponente mit dem übergebenen Component Typ zurück
   public getComponent<T extends Component>(type: ComponentType): T | undefined {
     const current = this.components.get(type);
     return current ? (current as T) : undefined;

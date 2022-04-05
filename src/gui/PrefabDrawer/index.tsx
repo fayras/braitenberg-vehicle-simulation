@@ -36,7 +36,7 @@ export const PrefabDrawer = observer((): JSX.Element => {
         <DrawerHeader>Vorlagen</DrawerHeader>
 
         <DrawerBody overflow="visible">
-          <Flex flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+          <Flex flexDirection="column" justifyContent="center" alignItems="center">
             <Prefab
               src={blank}
               dropHandler={(position) => {
