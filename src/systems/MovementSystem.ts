@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { System } from './System';
-import { EntityID, Entity } from '../Entity';
+import { Entity } from '../Entity';
 import { ComponentType } from '../enums';
 import { TransformableComponent } from '../components/TransformableComponent';
 import { MotorComponent } from '../components/MotorComponent';
@@ -12,7 +12,11 @@ export class MovementSystem extends System {
     super(scene, [ComponentType.TRANSFORMABLE, ComponentType.MOTOR]);
   }
 
-  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+  protected enter(): void {}
+
+  protected exit(): void {}
+
+  public override internalUpdate(entities: ReadonlySet<Entity>): void {
     entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const motor = entity.getComponent(ComponentType.MOTOR) as MotorComponent;

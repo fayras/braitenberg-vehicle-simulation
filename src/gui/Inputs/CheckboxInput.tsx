@@ -1,17 +1,17 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Flex, Spacer, FormLabel, Checkbox } from '@chakra-ui/react';
+import { Box, Checkbox, Flex, FormLabel, Spacer } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
-  attribute: RenderableAttribute<boolean, any>;
+  attribute: RenderableAttribute<boolean>;
   label: string;
 };
 
 export const CheckboxInput = observer((props: Props): JSX.Element => {
   return (
     <Box mb="2.5">
-      <Flex alignItems={'center'}>
+      <Flex alignItems="center">
         <FormLabel color="gray.800" fontSize="sm" mb="0">
           {props.label}
         </FormLabel>

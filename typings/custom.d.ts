@@ -46,7 +46,7 @@ type ComponentPhysicsBody = Phaser.Physics.Matter.Matter.Body & {
   userData: {
     belongsTo: {
       entity: import('../src/Entity').default;
-      component: import('../src/components/Component').default;
+      component: import('../src/components/ECSComponent').default;
     };
   };
 };

@@ -1,10 +1,10 @@
 import Phaser from 'phaser';
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { SelectInput } from '../gui/Inputs/SelectInput';
 import { SizeInput } from '../gui/Inputs/SizeInput';
-import { LoadingScene, AssetKey } from '../scenes/LoadingScene';
+import { AssetKey, LoadingScene } from '../scenes/LoadingScene';
 import { VolatileAttribute } from './attributes/VolatileAttribute';
 
 interface RenderComponentData {
@@ -15,7 +15,7 @@ interface RenderComponentData {
 
 export type Renderable = Phaser.GameObjects.Image;
 
-export class SpriteComponent extends Component {
+export class SpriteComponent extends ECSComponent {
   public label = 'Anzeige';
 
   public type: ComponentType = ComponentType.RENDER;

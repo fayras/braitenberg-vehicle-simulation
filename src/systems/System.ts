@@ -36,7 +36,7 @@ export abstract class System {
 
   protected abstract internalUpdate(entities: ReadonlySet<Entity>, delta: number): void;
 
-  protected enter(entity: Entity): void {}
+  protected abstract enter(entity: Entity): void;
 
-  protected exit(entity: Entity): void {}
+  protected abstract exit(entity: Entity): void;
 }

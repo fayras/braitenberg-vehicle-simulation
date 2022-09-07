@@ -1,9 +1,9 @@
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { StringInput } from '../gui/Inputs/StringInput';
 
-export class NameComponent extends Component {
+export class NameComponent extends ECSComponent {
   public label = 'Name';
 
   public type: ComponentType = ComponentType.NAME;

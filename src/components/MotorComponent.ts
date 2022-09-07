@@ -1,5 +1,5 @@
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 
 import { NumberInput } from '../gui/Inputs/NumberInput';
@@ -9,7 +9,7 @@ interface MotorComponentData {
   defaultSpeed?: number;
 }
 
-export class MotorComponent extends Component {
+export class MotorComponent extends ECSComponent {
   public label = 'Motor';
 
   public type: ComponentType = ComponentType.MOTOR;
@@ -22,6 +22,8 @@ export class MotorComponent extends Component {
 
   public constructor(data: MotorComponentData) {
     super();
+
+    console.log(MotorComponent.name, MotorComponent.toString());
 
     this.maxSpeed = new RenderableAttribute(data.maxSpeed || 50, NumberInput, {
       label: 'Maximalgeschwindigkeit',

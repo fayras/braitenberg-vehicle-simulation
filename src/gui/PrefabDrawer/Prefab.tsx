@@ -1,10 +1,10 @@
 import React from 'react';
-import { Image, ImageProps, Center } from '@chakra-ui/react';
-import { motion, Point2D } from 'framer-motion';
+import { Center, Image, ImageProps } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 const MotionImage = motion<ImageProps>(Image);
 
-type PrefabHandler = (position: Point2D) => void;
+type PrefabHandler = (position: Vector2D) => void;
 interface PrefabProps {
   src: string;
   dropHandler: PrefabHandler;
@@ -31,7 +31,7 @@ export function Prefab({ src, dropHandler }: PrefabProps): JSX.Element {
             dropHandler(position);
           }
         }}
-      ></MotionImage>
+      />
     </Center>
   );
 }

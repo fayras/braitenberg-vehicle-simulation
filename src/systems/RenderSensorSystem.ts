@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { System } from './System';
 import { Entity } from '../Entity';
-import { ComponentType, SubstanceType } from '../enums';
+import { ComponentType } from '../enums';
 import { TransformableComponent } from '../components/TransformableComponent';
 import { SensorComponent } from '../components/SensorComponent';
 import { gaussian } from '../utils/reactions';
@@ -12,7 +12,7 @@ export class RenderSensorSystem extends System {
     super(scene, [ComponentType.TRANSFORMABLE, ComponentType.SENSOR], false);
   }
 
-  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+  public override internalUpdate(entities: ReadonlySet<Entity>): void {
     entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const sensor = entity.getComponent(ComponentType.SENSOR) as SensorComponent;

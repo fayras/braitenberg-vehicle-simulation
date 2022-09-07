@@ -5,10 +5,10 @@ import { Box, FormLabel } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 import { store as selectedEntityStore } from '../_store/selectedEntity';
 import { ComponentType } from '../../enums';
-import { ComponentId } from '../../components/Component';
+import { ComponentId } from '../../components/ECSComponent';
 
 type Props = {
-  attribute: RenderableAttribute<ConnectionComponentData, any>;
+  attribute: RenderableAttribute<ConnectionComponentData>;
   label: string;
 };
 
@@ -36,8 +36,6 @@ export const ConnectionNetwork = observer((props: Props): JSX.Element => {
         {props.attribute.value.map((pair) => {
           const sensorIndex = sensors.findIndex((s) => s.id === pair.input);
           const motorIndex = motors.findIndex((m) => m.id === pair.output);
-
-          console.log('pair:', sensorIndex, motorIndex);
 
           return (
             <motion.line

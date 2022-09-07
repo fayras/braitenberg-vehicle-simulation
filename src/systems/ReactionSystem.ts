@@ -16,7 +16,7 @@ export class ReactionSystem extends System {
     this.sourceQuery = EntityManager.createQuery([ComponentType.SOURCE]);
   }
 
-  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+  public override internalUpdate(entities: ReadonlySet<Entity>): void {
     const sources = this.sourceQuery.entities;
     entities.forEach((sensorEntity) => {
       const sensorTex = sensorEntity.getComponent<SensorComponent>(ComponentType.SENSOR)?.renderableObject.value
@@ -41,7 +41,7 @@ export class ReactionSystem extends System {
   private collide(
     sensorTex: Phaser.Textures.Texture | Phaser.Textures.CanvasTexture,
     sourceTex: Phaser.Textures.Texture | Phaser.Textures.CanvasTexture,
-  ) {
-    sensorTex.frames;
+  ): void {
+    // sensorTex.frames;
   }
 }

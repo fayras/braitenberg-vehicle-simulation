@@ -5,7 +5,7 @@ type ConditionalProps<S> = S extends React.FunctionComponent<any>
   ? Omit<React.ComponentProps<S>, 'attribute'>
   : Record<string, never>;
 
-export class RenderableAttribute<T, S extends React.FunctionComponent<any> | null> extends Attribute<T> {
+export class RenderableAttribute<T, S extends React.FunctionComponent<any> | null = null> extends Attribute<T> {
   private readonly reactComponent: S | undefined;
 
   private readonly componentProps: ConditionalProps<S> | Record<string, never>;
@@ -24,19 +24,23 @@ export class RenderableAttribute<T, S extends React.FunctionComponent<any> | nul
   }
 
   public render(): () => React.FunctionComponentElement<S> | null {
-    if (this.reactComponent === undefined) {
-      return () => null;
+    const { reactComponent, componentProps, key } = this;
+
+    if (!reactComponent) {
+      return function NullComponent() {
+        return null;
+      };
     }
 
-    const component = this.reactComponent;
+    // eslint-disable-next-line react/function-component-definition
     return () => {
       const props = {
-        ...this.componentProps,
+        ...componentProps,
         attribute: this,
-        key: this.key,
+        key,
       };
 
-      return React.createElement(component!, props, null);
+      return React.createElement(reactComponent, props, null);
     };
   }
 }

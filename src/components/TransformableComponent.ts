@@ -1,5 +1,5 @@
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { PositionInput } from '../gui/Inputs/PositionInput';
 import { RotationInput } from '../gui/Inputs/RotationInput';
@@ -9,7 +9,7 @@ interface TransformableComponentData {
   angle?: number;
 }
 
-export class TransformableComponent extends Component {
+export class TransformableComponent extends ECSComponent {
   public label = 'Transform';
 
   public type: ComponentType = ComponentType.TRANSFORMABLE;

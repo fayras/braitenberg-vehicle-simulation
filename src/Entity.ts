@@ -2,7 +2,7 @@ import { action, makeObservable, observable } from 'mobx';
 import { v4 as uuidV4 } from 'uuid';
 
 import { ComponentType } from './enums';
-import { Component, ComponentId } from './components/Component';
+import { ComponentId, ECSComponent } from './components/ECSComponent';
 
 function splitIntoSingleBitNumbers(n: number): number[] {
   const numbers: number[] = [];
@@ -26,7 +26,7 @@ export class Entity {
   public id: EntityID;
 
   // private components: Component[] = [];
-  private components: Map<ComponentType, Component> = new Map();
+  private components: Map<ComponentType, ECSComponent> = new Map();
 
   public readonly children: Set<Entity> = new Set();
 
@@ -81,7 +81,7 @@ export class Entity {
    * @returns Liefert die ID der Komponente zurück. Wurde die Komponente nicht
    *          hinzugefügt, dann wird `-1` zurückgegeben.
    */
-  public addComponent(component: Component): ComponentId {
+  public addComponent(component: ECSComponent): ComponentId {
     if (this.components.get(component.type) !== undefined) {
       throw new Error(`Component of type ${component.type} already present.`);
     }
@@ -93,7 +93,7 @@ export class Entity {
 
   // entfernt die übergebene Komponente falls vorhanden
   // gibt entfernte Komponentezurück
-  public removeComponent(component: Component): boolean {
+  public removeComponent(component: ECSComponent): boolean {
     const current = this.components.get(component.type);
     if (current !== component) {
       throw new Error(`Component mismatch`);
@@ -104,7 +104,7 @@ export class Entity {
   }
 
   // gibt die erste Komponente mit dem übergebenen Component Typ zurück
-  public getComponent<T extends Component>(type: ComponentType): T | undefined {
+  public getComponent<T extends ECSComponent>(type: ComponentType): T | undefined {
     const current = this.components.get(type);
     return current ? (current as T) : undefined;
   }
@@ -119,8 +119,8 @@ export class Entity {
   }
 
   // gibt alle Komponente der Entität zurück
-  public getAllComponents(): Component[] {
-    return ([] as Component[]).concat(...this.components.values());
+  public getAllComponents(): ECSComponent[] {
+    return ([] as ECSComponent[]).concat(...this.components.values());
   }
 
   // Serialisierungsfunktion für die Umwandlung in JSON

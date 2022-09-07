@@ -7,7 +7,8 @@
     "build": "webpack --config webpack/prod.js ",
     "compile": "tsc",
     "start": "webpack serve --config webpack/base.js --open",
-    "deploy": "git subtree push --prefix dist origin gh-pages"
+    "deploy": "git subtree push --prefix dist origin gh-pages",
+    "lint": "eslint src"
   },
   "author": "Dimitri Tarnavski",
   "devDependencies": {
@@ -28,7 +29,7 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",

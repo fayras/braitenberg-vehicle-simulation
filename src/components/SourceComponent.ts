@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { ComponentType, SubstanceType, EmissionType } from '../enums';
-import { Component } from './Component';
+import { ComponentType, EmissionType, SubstanceType } from '../enums';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { VolatileAttribute } from './attributes/VolatileAttribute';
 import { SelectInput } from '../gui/Inputs/SelectInput';
@@ -14,7 +14,7 @@ interface SourceComponentData {
   emissionType?: EmissionType;
 }
 
-export class SourceComponent extends Component {
+export class SourceComponent extends ECSComponent {
   public label = 'Quelle';
 
   public type: ComponentType = ComponentType.SOURCE;

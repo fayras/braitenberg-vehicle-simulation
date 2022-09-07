@@ -1,8 +1,8 @@
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { Attribute } from './attributes/Attribute';
 
-export class CollisionComponent extends Component {
+export class CollisionComponent extends ECSComponent {
   public label = 'Kollision';
 
   public type: ComponentType = ComponentType.COLLISION;

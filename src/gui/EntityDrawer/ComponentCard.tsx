@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Heading, IconButton, Tooltip, Collapse, useDisclosure, Spacer } from '@chakra-ui/react';
-import { Component } from '../../components/Component';
+import { Box, Collapse, Heading, IconButton, Spacer, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { ECSComponent } from '../../components/ECSComponent';
 import { DownIcon, RightIcon, TrashIcon } from '../icons';
 
 interface ComponentCardProps {
-  component: Component;
+  component: ECSComponent;
   onDelete?: () => void;
 }
 
@@ -13,10 +13,10 @@ export function ComponentCard({ component, onDelete }: ComponentCardProps): JSX.
   const [isHover, setHover] = useState(false);
   const IndicatorIcon = isOpen ? DownIcon : RightIcon;
 
-  const attributes = component.getRenderableAttributes().map((attr, index) => {
+  const attributes = component.getRenderableAttributes().map((attr) => {
     const Comp = attr.render();
 
-    return <Comp key={`ComponentCard_${component.id}_${index}`} />;
+    return <Comp key={`ComponentCard_${component.id}_${attr.key}`} />;
   });
 
   return (
@@ -34,11 +34,11 @@ export function ComponentCard({ component, onDelete }: ComponentCardProps): JSX.
         <Heading size="sm">{component.label}</Heading>
         <Spacer />
         {isHover && (
-          <Tooltip placement="top-end" label={'Komponente löschen'}>
+          <Tooltip placement="top-end" label="Komponente löschen">
             <IconButton
               variant="ghost"
               size="xs"
-              isRound={true}
+              isRound
               height="4"
               disabled={!component.isDeletable()}
               icon={<TrashIcon color="gray.400" w={4} h={4} />}

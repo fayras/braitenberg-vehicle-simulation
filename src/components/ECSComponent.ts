@@ -15,7 +15,7 @@ function isDisposableAttribute(argument: unknown): argument is DisposableAttribu
   return argument instanceof DisposableAttribute;
 }
 
-export abstract class Component {
+export abstract class ECSComponent {
   // Hier wird einmal festgelegt, was für Typen die Klasse enthalten kann,
   // das ist nötig, damit später über diese mit `Object.keys(this)` drüber
   // iteriert werden kann.

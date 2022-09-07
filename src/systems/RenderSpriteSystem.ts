@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { reaction } from 'mobx';
 import { System } from './System';
-import { EntityID, Entity } from '../Entity';
+import { Entity, EntityID } from '../Entity';
 import { ComponentType } from '../enums';
-import { SpriteComponent, Renderable } from '../components/SpriteComponent';
+import { Renderable, SpriteComponent } from '../components/SpriteComponent';
 import { TransformableComponent } from '../components/TransformableComponent';
 import { store as selectedEntityStore } from '../gui/_store/selectedEntity';
 
@@ -25,7 +25,7 @@ export class RenderSpriteSystem extends System {
     this.disposers.push(disposableOnSelected);
   }
 
-  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+  public override internalUpdate(entities: ReadonlySet<Entity>): void {
     entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const render = entity.getComponent(ComponentType.RENDER) as SpriteComponent;

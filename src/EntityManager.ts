@@ -1,6 +1,6 @@
-import { EntityID, Entity } from './Entity';
+import { Entity, EntityID } from './Entity';
 
-import { Component } from './components/Component';
+import { ECSComponent } from './components/ECSComponent';
 import { ComponentType } from './enums';
 import { MotorComponent } from './components/MotorComponent';
 import { RectangleBodyComponent } from './components/RectangleBodyComponent';
@@ -67,7 +67,7 @@ class EntityManager {
    *
    * @param components
    */
-  public createEntity(...components: Component[]): Entity {
+  public createEntity(...components: ECSComponent[]): Entity {
     const entity = new Entity();
     components.forEach((c) => {
       entity.addComponent(c);
@@ -107,7 +107,7 @@ class EntityManager {
    *          zugefügt wurde, oder aber `undefined`, wenn dies nicht passiert
    *          ist.
    */
-  public addComponent(entityId: EntityID, component: Component): Entity {
+  public addComponent(entityId: EntityID, component: ECSComponent): Entity {
     const entity = this.entities[entityId];
 
     if (!entity) {
@@ -133,7 +133,7 @@ class EntityManager {
    * @param entityId Die ID einer Entität.
    * @param component
    */
-  public removeComponent(entityId: EntityID, component: Component): void {
+  public removeComponent(entityId: EntityID, component: ECSComponent): void {
     const entity = this.entities[entityId];
 
     if (!entity) {
@@ -203,7 +203,7 @@ class EntityManager {
    *                   Überprüfung auch Richtigkeit der Werte gibt! Für nähere Infos
    *                   zu den möglichen Attributen siehe jeweilige Komponenten-Klasse.
    */
-  private static getComponent(type: ComponentType, attributes: any): Component | undefined {
+  private static getComponent(type: ComponentType, attributes: any): ECSComponent | undefined {
     switch (type) {
       case ComponentType.TRANSFORMABLE:
         return new TransformableComponent(attributes);

@@ -19,7 +19,7 @@ export class SolidBodySystem extends System {
     this.bodiesGraphic.setDepth(Number.MAX_VALUE);
   }
 
-  public override internalUpdate(entities: Set<Entity>, delta: number): void {
+  public override internalUpdate(entities: Set<Entity>): void {
     this.bodiesGraphic.clear();
     const bodyColor = 0x999999;
 

@@ -14,7 +14,7 @@ export class RenderSourceSystem extends System {
     super(scene, [ComponentType.TRANSFORMABLE, ComponentType.SOURCE], false);
   }
 
-  public override internalUpdate(entities: ReadonlySet<Entity>, delta: number): void {
+  public override internalUpdate(entities: ReadonlySet<Entity>): void {
     entities.forEach((entity) => {
       const transform = entity.getComponent(ComponentType.TRANSFORMABLE) as TransformableComponent;
       const source = entity.getComponent(ComponentType.SOURCE) as SourceComponent;

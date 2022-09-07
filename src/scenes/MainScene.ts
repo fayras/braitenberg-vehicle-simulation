@@ -7,7 +7,6 @@ import { MotorComponent } from '../components/MotorComponent';
 import { SensorComponent } from '../components/SensorComponent';
 import { SourceComponent } from '../components/SourceComponent';
 import { TransformableComponent } from '../components/TransformableComponent';
-import { ConnectionComponent } from '../components/ConnectionComponent';
 
 import { Entity } from '../Entity';
 
@@ -15,7 +14,7 @@ import { System } from '../systems/System';
 import { RenderSpriteSystem } from '../systems/RenderSpriteSystem';
 import { PhysicsSystem } from '../systems/PhysicsSystem';
 
-import { SubstanceType, EmissionType } from '../enums';
+import { EmissionType, SubstanceType } from '../enums';
 import EntityManager from '../EntityManager';
 
 import { store as mainNavigationStore } from '../gui/_store/mainNavigation';

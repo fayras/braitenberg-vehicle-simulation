@@ -2,13 +2,13 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
+  FormLabel,
   NumberInput,
   NumberInputField,
-  FormLabel,
   Slider,
-  SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  SliderTrack,
 } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
@@ -17,7 +17,7 @@ function mod(n: number, m: number): number {
 }
 
 type Props = {
-  attribute: RenderableAttribute<number, any>;
+  attribute: RenderableAttribute<number>;
   label: string;
   onInput?: (value: string | number) => void;
   readonly?: boolean;
@@ -33,7 +33,7 @@ export const RotationInput = observer((props: Props): JSX.Element => {
         value={props.attribute.value}
         size="sm"
         variant="filled"
-        disabled={props.readonly}
+        isDisabled={props.readonly}
         onChange={(val) => {
           const value = Number(val);
           if (!Number.isNaN(value)) {

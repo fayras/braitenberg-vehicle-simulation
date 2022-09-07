@@ -34,6 +34,8 @@
     "no-prototype-builtins": "off",
     "import/prefer-default-export": "off",
     "import/no-default-export": "error",
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": ["warn", { "exceptions": ["Icon"] }],
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/explicit-function-return-type": [
       "error",

@@ -18,32 +18,41 @@ import { PlusIcon } from '../icons';
 
 import { store as selectedEntityStore } from '../_store/selectedEntity';
 import { ComponentCard } from './ComponentCard';
-import { HirarchyEntityCard } from './HirarchyEntityCard';
+import { HierarchyEntityCard } from './HierarchyEntityCard';
 import EntityManager from '../../EntityManager';
 import { MotorComponent } from '../../components/MotorComponent';
 import { NameComponent } from '../../components/NameComponent';
 
-export const EntityDrawer = observer((): JSX.Element => {
+export const EntityDrawer = observer((): React.ReactElement | null => {
   const entity = selectedEntityStore.selectedEntity;
-  const { components } = selectedEntityStore;
+  const parent = entity?.getParent();
+  const { children, components } = selectedEntityStore;
 
-  const parent = useMemo(() => {
-    const p = selectedEntityStore.selectedEntity?.getParent();
-    if (!p) {
+  const parentComponent = useMemo(() => {
+    if (!parent) {
       return undefined;
     }
 
-    return <HirarchyEntityCard key={p.id} entity={p} isParent onClick={() => selectedEntityStore.select(p)} />;
-  }, [selectedEntityStore.selectedEntity]);
+    return (
+      <HierarchyEntityCard
+        key={parent.id}
+        entity={parent}
+        isParent
+        onClick={() => selectedEntityStore.select(parent)}
+      />
+    );
+  }, [parent]);
 
-  const children = useMemo(() => {
-    return selectedEntityStore.children?.map((child) => (
-      <HirarchyEntityCard key={child.id} entity={child} onClick={() => selectedEntityStore.select(child)} />
-    ));
-  }, [selectedEntityStore.selectedEntity]);
+  const childrenComponent = useMemo(
+    () =>
+      children?.map((child) => (
+        <HierarchyEntityCard key={child.id} entity={child} onClick={() => selectedEntityStore.select(child)} />
+      )),
+    [children],
+  );
 
   if (entity === null) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -62,6 +71,7 @@ export const EntityDrawer = observer((): JSX.Element => {
           <Observer>
             {() => (
               <Flex flexDirection="column" justifyContent="center" alignItems="center">
+                {parentComponent}
                 {components.map((component) => (
                   <ComponentCard
                     key={component.id}
@@ -69,8 +79,7 @@ export const EntityDrawer = observer((): JSX.Element => {
                     onDelete={() => EntityManager.removeComponent(entity.id, component)}
                   />
                 ))}
-                {parent}
-                {children}
+                {childrenComponent}
               </Flex>
             )}
           </Observer>

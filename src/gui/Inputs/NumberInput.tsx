@@ -1,10 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, NumberInput as ChakraNumberInput, NumberInputField, FormLabel } from '@chakra-ui/react';
+import { Box, FormLabel, NumberInput as ChakraNumberInput, NumberInputField } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
-  attribute: RenderableAttribute<number, any>;
+  attribute: RenderableAttribute<number>;
   label: string;
   min?: number;
   max?: number;
@@ -21,7 +21,7 @@ export const NumberInput = observer((props: Props): JSX.Element => {
         value={props.attribute.value}
         size="sm"
         variant="filled"
-        disabled={props.readonly}
+        isDisabled={props.readonly}
         onChange={(val) => {
           props.attribute.value = Number(val);
         }}

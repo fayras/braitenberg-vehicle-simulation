@@ -1,10 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, NumberInput, NumberInputField, FormLabel, Flex, Spacer } from '@chakra-ui/react';
+import { Box, Flex, FormLabel, NumberInput, NumberInputField, Spacer } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
-  attribute: RenderableAttribute<Vector2D, any>;
+  attribute: RenderableAttribute<Vector2D>;
   label: string;
 };
 

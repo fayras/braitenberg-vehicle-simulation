@@ -1,10 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Box, Select, FormLabel } from '@chakra-ui/react';
+import { Box, FormLabel, Select } from '@chakra-ui/react';
 import { RenderableAttribute } from '../../components/attributes/RenderableAttribute';
 
 type Props = {
-  attribute: RenderableAttribute<string | number, any>;
+  attribute: RenderableAttribute<string | number>;
   label: string;
   options: Record<string, unknown>;
   onInput?: (value: string | number) => void;

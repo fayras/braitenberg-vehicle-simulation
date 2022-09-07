@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import { Entity } from '../../Entity';
-import { Component } from '../../components/Component';
+import { ECSComponent } from '../../components/ECSComponent';
 import { NameComponent } from '../../components/NameComponent';
 import { ComponentType } from '../../enums';
 
@@ -11,7 +11,7 @@ class SelectedEntityStore {
     makeAutoObservable(this);
   }
 
-  get components(): Component[] {
+  get components(): ECSComponent[] {
     if (this.selectedEntity === null) {
       return [];
     }

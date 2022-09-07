@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { ComponentType, SubstanceType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { VolatileAttribute } from './attributes/VolatileAttribute';
 import { NumberInput } from '../gui/Inputs/NumberInput';
@@ -14,7 +14,7 @@ interface SensorComponentData {
   reactsTo?: SubstanceType;
 }
 
-export class SensorComponent extends Component {
+export class SensorComponent extends ECSComponent {
   public label = 'Sensor';
 
   public type: ComponentType = ComponentType.SENSOR;

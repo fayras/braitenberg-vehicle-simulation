@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { System } from './System';
-import { EntityID, Entity } from '../Entity';
+import { Entity, EntityID } from '../Entity';
 import { ComponentType } from '../enums';
 import { RectangleBodyComponent } from '../components/RectangleBodyComponent';
 import { TransformableComponent } from '../components/TransformableComponent';
@@ -14,11 +14,13 @@ export class PhysicsSystem extends System {
     super(scene, [ComponentType.TRANSFORMABLE, ComponentType.SOLID_BODY_RECT | ComponentType.SOLID_BODY_CIRCLE]);
   }
 
-  public override internalUpdate(entities: Set<Entity>, delta: number): void {}
+  public override internalUpdate(): void {}
 
   protected override enter(entity: Entity): void {
     const updateTransform = (): IDisposable => {
-      const transform = entity.getComponent<TransformableComponent>(ComponentType.TRANSFORMABLE)!;
+      const transform = entity.getComponent<TransformableComponent>(
+        ComponentType.TRANSFORMABLE,
+      ) as TransformableComponent;
       const solidBody: RectangleBodyComponent | CircleBodyComponent | undefined =
         entity.getComponent<RectangleBodyComponent>(ComponentType.SOLID_BODY_RECT) ||
         entity.getComponent<CircleBodyComponent>(ComponentType.SOLID_BODY_CIRCLE);

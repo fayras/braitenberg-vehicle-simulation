@@ -1,5 +1,5 @@
 import { ComponentType } from '../enums';
-import { Component } from './Component';
+import { ECSComponent } from './ECSComponent';
 import { RenderableAttribute } from './attributes/RenderableAttribute';
 import { VolatileAttribute } from './attributes/VolatileAttribute';
 import { CheckboxInput } from '../gui/Inputs/CheckboxInput';
@@ -10,7 +10,7 @@ interface SolidBodyComponentData {
   isStatic?: boolean;
 }
 
-export class RectangleBodyComponent extends Component {
+export class RectangleBodyComponent extends ECSComponent {
   public label = 'Fester Körper';
 
   public type: ComponentType = ComponentType.SOLID_BODY_RECT;

@@ -10,6 +10,7 @@ import { Ui } from './gui';
 import '../assets/css/styling.css';
 
 class Game extends React.Component {
+  // eslint-disable-next-line class-methods-use-this
   componentDidMount(): void {
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
@@ -32,14 +33,16 @@ class Game extends React.Component {
       },
     };
 
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-new
     new Phaser.Game(config);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public override shouldComponentUpdate(): boolean {
     return false;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public override render(): JSX.Element {
     return <div id="phaser-game" />;
   }
@@ -63,25 +66,23 @@ const theme = extendTheme({
   },
 });
 
-class App extends React.Component {
-  render() {
-    return (
-      <ChakraProvider theme={theme}>
-        <div
-          style={{
-            display: 'flex',
-            alignContent: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            height: '100vh',
-          }}
-        >
-          <Ui />
-          <Game />
-        </div>
-      </ChakraProvider>
-    );
-  }
+function App(): React.ReactElement {
+  return (
+    <ChakraProvider theme={theme}>
+      <div
+        style={{
+          display: 'flex',
+          alignContent: 'center',
+          justifyContent: 'center',
+          flexDirection: 'row',
+          height: '100vh',
+        }}
+      >
+        <Ui />
+        <Game />
+      </div>
+    </ChakraProvider>
+  );
 }
 
 ReactDOM.render(<App />, document.body);

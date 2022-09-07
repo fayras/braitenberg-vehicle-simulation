@@ -5,15 +5,14 @@ import { DoubleLeftIcon, DoubleRightIcon } from '../icons';
 import { NameComponent } from '../../components/NameComponent';
 import { ComponentType } from '../../enums';
 
-interface HirarchyEntityCardProps {
+interface HierarchyEntityCardProps {
   entity: Entity;
   isParent?: boolean;
   onClick?: () => void;
-  onDelete?: () => void;
 }
 
-export function HirarchyEntityCard({ entity, isParent, onClick }: HirarchyEntityCardProps): JSX.Element {
-  const [isHover, setHover] = useState(false);
+export function HierarchyEntityCard({ entity, isParent, onClick }: HierarchyEntityCardProps): JSX.Element {
+  const [, setHover] = useState(false);
   const nameComponent = entity.getComponent<NameComponent>(ComponentType.NAME);
   const name = nameComponent ? nameComponent.name.value : entity.id;
   const IndicatorIcon = isParent ? DoubleLeftIcon : DoubleRightIcon;

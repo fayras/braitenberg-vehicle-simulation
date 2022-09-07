@@ -1,9 +1,9 @@
-import { makeObservable, observable, computed } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 
 export class Attribute<T> {
   protected internalValue: T;
 
-  protected readonly key: string;
+  public readonly key: string;
 
   /**
    * Der Konstruktor!

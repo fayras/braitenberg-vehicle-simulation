@@ -13,7 +13,7 @@ export class CreateRectangleBodySystem extends System {
     this.expectedComponent = expected;
   }
 
-  public override internalUpdate(entities: Set<Entity>, delta: number): void {}
+  public override internalUpdate(): void {}
 
   protected override enter(entity: Entity): void {
     const solidBody = entity.getComponent<RectangleBodyComponent>(this.expectedComponent)!;
